@@ -81,12 +81,12 @@ clean: CMakeFiles/Calculator.dir/clean
 CMakeFiles/Calculator.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Calculator.dir/build.make CMakeFiles/Calculator.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Calculator.dir/build.make CMakeFiles/Calculator.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/Temp/build/CMakeFiles --progress-num=1,2,3 "Built target Calculator"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/Temp/build/CMakeFiles --progress-num=1,2,3,4 "Built target Calculator"
 .PHONY : CMakeFiles/Calculator.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/Calculator.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /root/Temp/build/CMakeFiles 3
+	$(CMAKE_COMMAND) -E cmake_progress_start /root/Temp/build/CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/Calculator.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /root/Temp/build/CMakeFiles 0
 .PHONY : CMakeFiles/Calculator.dir/rule

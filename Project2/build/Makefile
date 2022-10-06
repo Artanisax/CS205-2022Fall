@@ -177,6 +177,30 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Calculator.dir/build.make CMakeFiles/Calculator.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/number.o: src/number.cpp.o
+.PHONY : src/number.o
+
+# target to build an object file
+src/number.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Calculator.dir/build.make CMakeFiles/Calculator.dir/src/number.cpp.o
+.PHONY : src/number.cpp.o
+
+src/number.i: src/number.cpp.i
+.PHONY : src/number.i
+
+# target to preprocess a source file
+src/number.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Calculator.dir/build.make CMakeFiles/Calculator.dir/src/number.cpp.i
+.PHONY : src/number.cpp.i
+
+src/number.s: src/number.cpp.s
+.PHONY : src/number.s
+
+# target to generate assembly for a file
+src/number.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Calculator.dir/build.make CMakeFiles/Calculator.dir/src/number.cpp.s
+.PHONY : src/number.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -192,6 +216,9 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/number.o"
+	@echo "... src/number.i"
+	@echo "... src/number.s"
 .PHONY : help
 
 
