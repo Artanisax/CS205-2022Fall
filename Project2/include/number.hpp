@@ -6,15 +6,17 @@
 using namespace std;
 
 struct number {
-    bool negative;
-    int exp;
-    vector<short> digit;  // use short to save memory
+	bool negative;
+	int exp;
+	vector<short> digit;  // use short to save memory
 
-    number(const string &s);
+	number();
 
-    bool isnumber(const string &s) const;
+	number(const string &s);
 
-    void simplify();
+	bool isnumber(const string &s) const;
 
-    void print() const;
+	void simplify();
+
+	void print() const;
 };

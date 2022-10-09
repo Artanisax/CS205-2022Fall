@@ -38,11 +38,28 @@ int calculator::comp(const number &a, const number &b) const {
 }
 
 number calculator::add(const number &a, const number &b) const {
+    number ret;
     if (a.negative == b.negative) {
-
+        ret.negative = a.negative;
+        int low = min(a.exp, b.exp),
+            high = max(a.exp+(int)a.digit.size(), b.exp+(int)b.digit.size())-1;
+        ret.exp = low;
+        size_t idx;
+        for (int i = low; i <= high; ++i) {
+            idx = i-low;
+            if (ret.digit.size() == idx) ret.digit.push_back(0);
+            ret.digit[idx] += ((i >= a.exp && i < a.exp+(int)a.digit.size()) ? a.digit[i-a.exp] : 0)+
+                              ((i >= b.exp && i < b.exp+(int)a.digit.size()) ? b.digit[i-b.exp] : 0);
+            if (ret.digit[idx] >= 10) {
+                ret.digit[idx] -= 10;
+                ret.digit.push_back(1);
+            }
+        }
     } else {
 
     }
+    ret.simplify();
+    return ret;
 }
 
 // number calculator::minus(const number &a, const number &b) const {

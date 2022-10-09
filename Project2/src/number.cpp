@@ -5,6 +5,10 @@
 
 using namespace std;
 
+number::number() {
+    number("");
+}
+
 number::number(const string &s) {
     negative = false;
     exp = 0;
@@ -70,17 +74,19 @@ void number::print() const {
     }
     if (negative) cout << '-';
     cout << digit[digit.size()-1];
-    if (digit.size() == 1) {  // only one precise digit
-        if (exp) cout << 'e' << exp;
-        return;
-    }
+    // if (digit.size() == 1) {  // only one precise digit
+    //     if (exp) cout << 'e' << exp;
+    //     return;
+    // }
     if (exp >= 0) {  // positive exponent
-        if (exp < (digit.size()>>1)) {  // use postfix 0
+        if (exp <= digit.size()) {  // use postfix 0
             for (int i = digit.size()-2; ~i; --i) cout << digit[i];
             for (int i = 0; i < exp; ++i) cout << 0;
         } else {  // use scientific notation
-            cout << '.';
-            for (int i = digit.size()-2; ~i; --i) cout << digit[i];
+            if (digit.size() > 1) {
+               cout << '.';
+                for (int i = digit.size()-2; ~i; --i) cout << digit[i]; 
+            }
             cout << 'e' << exp+(int)digit.size()-1;
         }
     }
@@ -90,8 +96,10 @@ void number::print() const {
             cout << '.';
             for (int i = -exp-1; ~i; --i) cout << digit[i];
         } else {  // use scientific notation
-            cout << '.';
-            for (int i = digit.size()-2; ~i; --i) cout << digit[i];
+            if (digit.size() > 1) {
+               cout << '.';
+                for (int i = digit.size()-2; ~i; --i) cout << digit[i]; 
+            }
             cout << 'e' << exp+(int)digit.size()-1;
         }
     }

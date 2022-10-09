@@ -15,7 +15,7 @@ int main() {
         cout << ' ';
         n2.print();
         cout << endl;
-        cout << cal.comp(n1, n2) << endl;
+        cal.add(n1, n2).print();
     }
     return 0;
 }
