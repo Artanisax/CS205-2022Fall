@@ -40,11 +40,6 @@ number::number(const string &s) {
     simplify();
 }
 
-// check whether a string can be transferred into number
-bool number::isnumber(const string &s) const {  
-    return true;
-}
-
 /*
  * Delete prefix & postfix zeros
  * For efficiency, reload the whole vector instead of erasing iterators

@@ -14,8 +14,6 @@ struct number {
 
 	number(const string &s);
 
-	bool isnumber(const string &s) const;
-
 	void simplify();
 
 	void print() const;

@@ -16,6 +16,7 @@ int main() {
         n2.print();
         cout << endl;
         cal.add(n1, n2).print();
+        cout << endl;
     }
     return 0;
 }

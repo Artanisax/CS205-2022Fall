@@ -13,7 +13,7 @@ struct calculator {
 
     void store(const string &s);
 
-    int comp(const number &a, const number &b) const;
+    int compare(const number &a, const number &b) const;
 
     number add(const number &a, const number &b) const;
 
@@ -22,6 +22,8 @@ struct calculator {
     number multiply(const number &a, const number &b) const;
 
     number divide(const number &a, const number &b) const;
+
+    number abs(const number &a) const;
 
     number calculate(const string &s) const;
 };
