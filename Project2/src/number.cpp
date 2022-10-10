@@ -10,8 +10,6 @@ number::number() {
 }
 
 number::number(const string &s) {
-    negative = false;
-    exp = 0;
     if (s[0] == '-') negative = true;
     int dot = -1, e = -1, ms = -1, temp = 0;
     for (size_t i = (s[0] == '-'); i < s.length(); i++)
@@ -52,6 +50,11 @@ void number::copy(const number &x) {
  * For efficiency, reload the whole vector instead of erasing iterators
  */
 void number::simplify() {
+    if (digit.empty()) {
+        negative = false;
+        exp = 0;
+        return;
+    }
     int tail = 0, head = digit.size()-1;
     while (tail < digit.size() && !digit[tail]) ++tail;
     while (~head && !digit[head]) --head;
@@ -75,7 +78,7 @@ void number::print() const {
         return;
     }
     if (!~digit[0]) {
-        cout << "Nan";
+        cout << "NaN";
         return;
     }
     if (negative) cout << '-';

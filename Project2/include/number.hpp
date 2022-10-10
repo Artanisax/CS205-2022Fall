@@ -6,8 +6,8 @@
 using namespace std;
 
 struct number {
-	bool negative;
-	int exp;
+	bool negative = false;
+	int exp = 0;
 	vector<short> digit;  // use short to save memory
 
 	number();

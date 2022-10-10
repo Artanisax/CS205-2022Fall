@@ -115,16 +115,18 @@ number calculator::multiply(const number &a, const number &b) const {
 
 number calculator::divide(const number &a, const number &b) const {
     number ret;
-    if (b.digit.empty() || !~b.digit[0]) {
+    if (b.digit.empty() || !~b.digit[0] || (!a.digit.empty() && !~a.digit[0])) {  // NaN
         ret.digit.push_back(-1);
         return ret;
-    } 
+    }
+    if (a.digit.empty()) return ret;  // 0
     ret.negative = a.negative^b.negative;
-    ret.exp = a.exp-b.exp;
+    ret.exp = a.exp-b.exp+1;
+    cout << "ret.exp = " << ret.exp << endl;
     number x, y;
-    x.negative = false, y.negative = true;
+    // vector<short> temp;
     size_t ia = a.digit.size()-1;
-    for (size_t ib = b.digit.size()-1; ~ib; --ib) {
+    for (size_t ib = 0; ib < b.digit.size(); ++ib) {
         if (~ia) x.digit.push_back(a.digit[ia--]);
         else {
             ++x.exp;
@@ -132,30 +134,45 @@ number calculator::divide(const number &a, const number &b) const {
         }
         y.digit.push_back(b.digit[ib]);
     }
+    reverse(x.digit.begin(), x.digit.end());
     if (!~compare(x, y))
-        if (~ia) x.digit.push_back(a.digit[ia--]);
+        if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
         else {
             ++x.exp;
             --ret.exp;
         }
+    x.print(); cout << ' '; y.print(); cout <<endl;
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
         if (x.digit.size()+x.exp < y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
             ret.digit.push_back(0);
-            if (~ia) x.digit.push_back(a.digit[ia--]);
+            if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
             else {
                 ++x.exp;
                 --ret.exp;
             }
+            x.simplify();
+            continue;
         }
-        l = 2;
-        r = (x.digit.size() == y.digit.size() ? x.digit.back()/y.digit.back() : 9);
+        l = 2, r = (x.digit.size() == y.digit.size() ? x.digit.back()/y.digit.back() : 9);
         while (l <= r) {
             mid = l+r>>1;
-            if (!~compare(add(x, multiply(y, number(to_string(mid)))), number(""))) r = mid-1;
+            if (!~compare(add(x, multiply(y, number(to_string(mid)))), number())) r = mid-1;
             else l = mid+1;
         }
         ret.digit.push_back(r);
+        cout << "i = " << i << ':'; x.print(); cout << endl;
+        x = add(x, multiply(y, number("-"+to_string(r))));
+        cout << "i = " << i << ':'; x.print(); cout << endl;
+        if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
+            else {
+                ++x.exp;
+                --ret.exp;
+            }
+        x.simplify();
     }
+    cout << ret.exp << ": ";
+    for (int i = 0; i < ret.digit.size(); ++i) cout << ret.digit[i] << ' ';
+    cout <<endl;
     reverse(ret.digit.begin(), ret.digit.end());
     ret.simplify();
     return ret;
