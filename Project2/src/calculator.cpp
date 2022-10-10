@@ -69,10 +69,18 @@ number calculator::add(const number &a, const number &b) const {
             swap(x, y);
         } else ret.copy(a);  // abs(a) > abs(b)
         vector<short> temp;
-        for (int i = x.exp-y.exp; i; --i) temp.push_back(0);
-        for (size_t i = 0; i < ret.digit.size(); ++i) temp.push_back(ret.digit[i]);
-        swap(ret.digit, temp);
-        ret.exp = y.exp;
+        if (x.exp > y.exp) {
+            for (int i = x.exp-y.exp; i > 0; --i) {
+                temp.push_back(0);
+                --ret.exp;
+            }
+            for (size_t i = 0; i < ret.digit.size(); ++i) temp.push_back(ret.digit[i]);
+            swap(ret.digit, temp);
+        } else if (y.exp > x.exp) {
+            for (int i = y.exp-x.exp; i > 0; --i) temp.push_back(0);
+            for (size_t i = 0; i < y.digit.size(); ++i) temp.push_back(y.digit[i]);
+            swap(y.digit, temp);
+        }
         for (size_t i = 0; i < y.digit.size(); ++i) ret.digit[i] -= y.digit[i];
         for (size_t i = 0; i < ret.digit.size(); ++i)
             if (ret.digit[i] < 0) {
