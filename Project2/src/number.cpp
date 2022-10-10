@@ -43,7 +43,8 @@ number::number(const string &s) {
 void number::copy(const number &x) {
     negative = x.negative;
     exp = x.exp;
-    for (size_t i = x.digit.size()-1; ~i; --i) digit.push_back(x.digit[i]);
+    digit.clear();
+    for (size_t i = 0; i < x.digit.size(); ++i) digit.push_back(x.digit[i]);
 }
 
 /*

@@ -201,11 +201,7 @@ CMakeFiles/Calculator.dir/src/calculator.cpp.o: ../src/calculator.cpp \
   /usr/include/c++/11/bits/ostream.tcc \
   /usr/include/c++/11/istream \
   /usr/include/c++/11/bits/istream.tcc \
-  /usr/include/c++/11/stack \
-  /usr/include/c++/11/deque \
-  /usr/include/c++/11/bits/stl_deque.h \
-  /usr/include/c++/11/bits/deque.tcc \
-  /usr/include/c++/11/bits/stl_stack.h \
+  /usr/include/c++/11/stdlib.h \
   /usr/include/c++/11/algorithm \
   /usr/include/c++/11/bits/stl_algo.h \
   /usr/include/c++/11/bits/algorithmfwd.h \
@@ -221,7 +217,12 @@ CMakeFiles/Calculator.dir/src/calculator.cpp.o: ../src/calculator.cpp \
   /usr/include/c++/11/bits/hashtable_policy.h \
   /usr/include/c++/11/bits/enable_special_members.h \
   /usr/include/c++/11/bits/unordered_map.h \
-  /usr/include/c++/11/pstl/execution_defs.h
+  /usr/include/c++/11/pstl/execution_defs.h \
+  /usr/include/c++/11/stack \
+  /usr/include/c++/11/deque \
+  /usr/include/c++/11/bits/stl_deque.h \
+  /usr/include/c++/11/bits/deque.tcc \
+  /usr/include/c++/11/bits/stl_stack.h
 
 CMakeFiles/Calculator.dir/src/main.cpp.o: ../src/main.cpp \
   /usr/include/stdc-predef.h \
@@ -641,6 +642,10 @@ CMakeFiles/Calculator.dir/src/number.cpp.o: ../src/number.cpp \
 
 ../src/main.cpp:
 
+/usr/include/c++/11/bits/stl_stack.h:
+
+/usr/include/c++/11/bits/stl_deque.h:
+
 /usr/include/c++/11/bits/enable_special_members.h:
 
 /usr/include/c++/11/bits/hashtable_policy.h:
@@ -655,9 +660,7 @@ CMakeFiles/Calculator.dir/src/number.cpp.o: ../src/number.cpp \
 
 /usr/include/c++/11/bits/stl_algo.h:
 
-/usr/include/c++/11/bits/stl_stack.h:
-
-/usr/include/c++/11/bits/stl_deque.h:
+/usr/include/c++/11/stdlib.h:
 
 /usr/include/c++/11/bits/istream.tcc:
 
@@ -1033,9 +1036,9 @@ CMakeFiles/Calculator.dir/src/number.cpp.o: ../src/number.cpp \
 
 /usr/include/c++/11/bits/cxxabi_forced.h:
 
-/usr/include/c++/11/algorithm:
-
 /usr/include/c++/11/bits/deque.tcc:
+
+/usr/include/c++/11/algorithm:
 
 /usr/include/c++/11/iostream:
 

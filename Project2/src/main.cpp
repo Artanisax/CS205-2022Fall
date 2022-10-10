@@ -15,7 +15,7 @@ int main() {
         cout << ' ';
         n2.print();
         cout << endl;
-        cal.divide(n1, n2);
+        cal.add(n1, n2).print();
         cout << endl;
     }
     return 0;

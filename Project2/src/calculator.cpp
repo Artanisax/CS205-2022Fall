@@ -31,8 +31,8 @@ int calculator::compare(const number &a, const number &b) const {
     if (a.negative && !b.negative) return -1;
     if (!a.negative && b.negative) return 1;
     int coe = (a.negative ? -1 : 1);
-    if (a.exp+a.digit.size() > b.exp+b.digit.size()) return coe;
-    if (a.exp+a.digit.size() < b.exp+b.digit.size()) return -coe;
+    if (a.exp+(int)a.digit.size() > b.exp+(int)b.digit.size()) return coe;
+    if (a.exp+(int)a.digit.size() < b.exp+(int)b.digit.size()) return -coe;
     for (size_t ia = a.digit.size()-1, ib = b.digit.size()-1; ~ia && ~ib; --ia, --ib) {
         if (a.digit[ia] > b.digit[ib]) return coe;
         if (a.digit[ia] < b.digit[ib]) return -coe;
@@ -62,12 +62,12 @@ number calculator::add(const number &a, const number &b) const {
         }
     } else {  // oposite sign
         number x = abs(a), y = abs(b);
-        int comp = compare(a, b);
+        int comp = compare(x, y);
         if (!comp) return ret;
         if (!~comp) {  // abs(b) > abs(a)
-            ret = b;
+            ret.copy(b);
             swap(x, y);
-        } else ret = a;  // abs(a) > abs(b)
+        } else ret.copy(a);  // abs(a) > abs(b)
         vector<short> temp;
         for (int i = x.exp-y.exp; i; --i) temp.push_back(0);
         for (size_t i = 0; i < ret.digit.size(); ++i) temp.push_back(ret.digit[i]);
