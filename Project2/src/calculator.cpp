@@ -40,7 +40,6 @@ int calculator::compare(const number &a, const number &b) const {
 number calculator::add(const number &a, const number &b) const {
     number ret;
     if (a.negative == b.negative) {  // same sign
-        cout << "add:" <<endl;
         ret.negative = a.negative;
         int low = min(a.exp, b.exp),
             high = max(a.exp+(int)a.digit.size(), b.exp+(int)b.digit.size())-1;
@@ -80,13 +79,26 @@ number calculator::add(const number &a, const number &b) const {
     return ret;
 }
 
-// number calculator::minus(const number &a, const number &b) const {
-
-// }
-
-// number calculator::multiply(const number &a, const number &b) const {
-
-// }
+number calculator::multiply(const number &a, const number &b) const {
+    number ret;
+    if (a.digit.empty() || b.digit.empty()) return ret;
+    ret.negative = a.negative^b.negative;
+    ret.exp = a.exp+b.exp;
+    for (int i = a.digit.size()+b.digit.size(); i; --i) ret.digit.push_back(0);
+    for (size_t i = 0, idx; i < a.digit.size(); ++i) {
+        if (!a.digit[i]) continue;
+        for (size_t j = 0; j < b.digit.size(); ++j) {
+            idx = i+j;
+            ret.digit[idx] += a.digit[i]*b.digit[j];
+            if (ret.digit[idx] >= 10) {
+                ret.digit[idx] -= 10;
+                ret.digit[idx+1] += 1;
+            }
+        }
+    }
+    ret.simplify();
+    return ret;
+}
 
 // number calculator::divide(const number &a, const number &b) const {
 

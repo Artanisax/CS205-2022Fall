@@ -17,8 +17,6 @@ struct calculator {
 
     number add(const number &a, const number &b) const;
 
-    number minus(const number &a, const number &b) const;
-
     number multiply(const number &a, const number &b) const;
 
     number divide(const number &a, const number &b) const;
