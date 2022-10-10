@@ -40,6 +40,12 @@ number::number(const string &s) {
     simplify();
 }
 
+void number::copy(const number &x) {
+    negative = x.negative;
+    exp = x.exp;
+    for (size_t i = x.digit.size()-1; ~i; --i) digit.push_back(x.digit[i]);
+}
+
 /*
  * Delete prefix & postfix zeros
  * For efficiency, reload the whole vector instead of erasing iterators
@@ -65,6 +71,10 @@ void number::simplify() {
 void number::print() const {
     if (digit.empty()) { // 0 alone
         cout << 0;
+        return;
+    }
+    if (!~digit[0]) {
+        cout << "Nan";
         return;
     }
     if (negative) cout << '-';

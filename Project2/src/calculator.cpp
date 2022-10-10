@@ -1,10 +1,15 @@
 #include "calculator.hpp"
 
 #include <iostream>
-#include <stack>
+#include <stdlib.h>
 #include <algorithm>
+#include <stack>
 
 using namespace std;
+
+calculator::calculator() {
+    srand(time(NULL));
+}
 
 void calculator::print(const number &x) const {
     x.print();
@@ -84,7 +89,7 @@ number calculator::multiply(const number &a, const number &b) const {
     if (a.digit.empty() || b.digit.empty()) return ret;
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp+b.exp;
-    for (int i = a.digit.size()+b.digit.size(); i; --i) ret.digit.push_back(0);
+    for (int i = a.digit.size()+b.digit.size(); ~i; --i) ret.digit.push_back(0);
     for (size_t i = 0, idx; i < a.digit.size(); ++i) {
         if (!a.digit[i]) continue;
         for (size_t j = 0; j < b.digit.size(); ++j) {
@@ -100,13 +105,65 @@ number calculator::multiply(const number &a, const number &b) const {
     return ret;
 }
 
-// number calculator::divide(const number &a, const number &b) const {
+number calculator::divide(const number &a, const number &b) const {
+    number ret;
+    if (b.digit.empty() || !~b.digit[0]) {
+        ret.digit.push_back(-1);
+        return ret;
+    } 
+    ret.negative = a.negative^b.negative;
+    ret.exp = a.exp-b.exp;
+    number x, y;
+    x.negative = false, y.negative = true;
+    size_t ia = a.digit.size()-1;
+    for (size_t ib = b.digit.size()-1; ~ib; --ib) {
+        if (~ia) x.digit.push_back(a.digit[ia--]);
+        else {
+            ++x.exp;
+            --ret.exp;
+        }
+        y.digit.push_back(b.digit[ib]);
+    }
+    if (!~compare(x, y))
+        if (~ia) x.digit.push_back(a.digit[ia--]);
+        else {
+            ++x.exp;
+            --ret.exp;
+        }
+    for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
+        if (x.digit.size()+x.exp < y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
+            ret.digit.push_back(0);
+            if (~ia) x.digit.push_back(a.digit[ia--]);
+            else {
+                ++x.exp;
+                --ret.exp;
+            }
+        }
+        l = 2;
+        r = (x.digit.size() == y.digit.size() ? x.digit.back()/y.digit.back() : 9);
+        while (l <= r) {
+            mid = l+r>>1;
+            if (!~compare(add(x, multiply(y, number(to_string(mid)))), number(""))) r = mid-1;
+            else l = mid+1;
+        }
+        ret.digit.push_back(r);
+    }
+    reverse(ret.digit.begin(), ret.digit.end());
+    ret.simplify();
+    return ret;
+}
 
-// }
+number calculator::abs(const number &x) const {
+    number ret;
+    ret.copy(x);
+    ret.negative = false;
+    return ret;
+}
 
-number calculator::abs(const number &a) const {
-    number ret = a;
-    ret.negative = true;
+number calculator::opp(const number &x) const {
+    number ret;
+    ret.copy(x);
+    ret.negative = !x.negative;
     return ret;
 }
 

@@ -14,6 +14,8 @@ struct number {
 
 	number(const string &s);
 
+	void copy(const number &x);
+
 	void simplify();
 
 	void print() const;
