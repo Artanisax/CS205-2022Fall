@@ -3,14 +3,20 @@
 #include <vector>
 #include <string>
 
+typedef long long ll;
+
 using namespace std;
 
 struct number {
 	bool negative = false;
-	int exp = 0;
+	ll exp = 0;
 	vector<short> digit;  // use short to save memory
 
 	number();
+
+	number(const int &x);
+
+	number(const ll &x);
 
 	number(const string &s);
 

@@ -97,15 +97,15 @@ number calculator::multiply(const number &a, const number &b) const {
     if (a.digit.empty() || b.digit.empty()) return ret;
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp+b.exp;
-    for (int i = a.digit.size()+b.digit.size(); ~i; --i) ret.digit.push_back(0);
+    for (size_t i = a.digit.size()+b.digit.size(); ~i; --i) ret.digit.push_back(0);
     for (size_t i = 0, idx; i < a.digit.size(); ++i) {
         if (!a.digit[i]) continue;
         for (size_t j = 0; j < b.digit.size(); ++j) {
             idx = i+j;
             ret.digit[idx] += a.digit[i]*b.digit[j];
             if (ret.digit[idx] >= 10) {
-                ret.digit[idx] -= 10;
-                ret.digit[idx+1] += 1;
+                ret.digit[idx+1] += ret.digit[idx]/10;
+                ret.digit[idx] %= 10;
             }
         }
     }
@@ -143,7 +143,7 @@ number calculator::divide(const number &a, const number &b) const {
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
         if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
             ret.digit.push_back(0);
-            if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
+            if (~ia) x = add(multiply(x, number("10")), number(to_string(a.digit[ia--])));
             else {
                 ++x.exp;
                 --ret.exp;
@@ -159,12 +159,15 @@ number calculator::divide(const number &a, const number &b) const {
         }
         ret.digit.push_back(r);
         x = add(x, multiply(y, number("-"+to_string(r))));
-        if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
-            else {
-                ++x.exp;
-                --ret.exp;
-            }
+        cout << "i = " << i << " : " << r << ' '; multiply(y, number(to_string(r))).print(); cout << ':'; x.print(); cout << ' '; y.print(); cout << endl;
+        
+        if (~ia) x = add(multiply(x, number("10")), number(to_string(a.digit[ia--])));
+        else {
+            ++x.exp;
+            --ret.exp;
+        }
         x.simplify();
+        cout << "i = " << i << " : " << r << ' '; multiply(y, number(to_string(r))).print(); cout << ':'; x.print(); cout << ' '; y.print(); cout << endl;
     }
     reverse(ret.digit.begin(), ret.digit.end());
     ret.simplify();
