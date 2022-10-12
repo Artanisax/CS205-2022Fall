@@ -122,7 +122,6 @@ number calculator::divide(const number &a, const number &b) const {
     if (a.digit.empty()) return ret;  // 0
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp-b.exp+1;
-    cout << "ret.exp = " << ret.exp << endl;
     number x, y;
     // vector<short> temp;
     size_t ia = a.digit.size()-1;
@@ -141,9 +140,8 @@ number calculator::divide(const number &a, const number &b) const {
             ++x.exp;
             --ret.exp;
         }
-    x.print(); cout << ' '; y.print(); cout <<endl;
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
-        if (x.digit.size()+x.exp < y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
+        if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
             ret.digit.push_back(0);
             if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
             else {
@@ -153,16 +151,14 @@ number calculator::divide(const number &a, const number &b) const {
             x.simplify();
             continue;
         }
-        l = 2, r = (x.digit.size() == y.digit.size() ? x.digit.back()/y.digit.back() : 9);
+        l = 2, r = 9;
         while (l <= r) {
             mid = l+r>>1;
-            if (!~compare(add(x, multiply(y, number(to_string(mid)))), number())) r = mid-1;
+            if (!~compare(add(x, multiply(y, number("-"+to_string(mid)))), number())) r = mid-1;
             else l = mid+1;
         }
         ret.digit.push_back(r);
-        cout << "i = " << i << ':'; x.print(); cout << endl;
         x = add(x, multiply(y, number("-"+to_string(r))));
-        cout << "i = " << i << ':'; x.print(); cout << endl;
         if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
             else {
                 ++x.exp;
@@ -170,9 +166,6 @@ number calculator::divide(const number &a, const number &b) const {
             }
         x.simplify();
     }
-    cout << ret.exp << ": ";
-    for (int i = 0; i < ret.digit.size(); ++i) cout << ret.digit[i] << ' ';
-    cout <<endl;
     reverse(ret.digit.begin(), ret.digit.end());
     ret.simplify();
     return ret;
