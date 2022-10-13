@@ -123,7 +123,6 @@ number calculator::divide(const number &a, const number &b) const {
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp-b.exp+1;
     number x, y;
-    // vector<short> temp;
     size_t ia = a.digit.size()-1;
     for (size_t ib = 0; ib < b.digit.size(); ++ib) {
         if (~ia) x.digit.push_back(a.digit[ia--]);
@@ -134,12 +133,6 @@ number calculator::divide(const number &a, const number &b) const {
         y.digit.push_back(b.digit[ib]);
     }
     reverse(x.digit.begin(), x.digit.end());
-    if (!~compare(x, y))
-        if (~ia) x.digit.insert(x.digit.begin(), a.digit[ia--]);
-        else {
-            ++x.exp;
-            --ret.exp;
-        }
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
         if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
             ret.digit.push_back(0);
@@ -159,15 +152,12 @@ number calculator::divide(const number &a, const number &b) const {
         }
         ret.digit.push_back(r);
         x = add(x, multiply(y, number("-"+to_string(r))));
-        cout << "i = " << i << " : " << r << ' '; multiply(y, number(to_string(r))).print(); cout << ':'; x.print(); cout << ' '; y.print(); cout << endl;
-        
         if (~ia) x = add(multiply(x, number("10")), number(to_string(a.digit[ia--])));
         else {
             ++x.exp;
             --ret.exp;
         }
         x.simplify();
-        cout << "i = " << i << " : " << r << ' '; multiply(y, number(to_string(r))).print(); cout << ':'; x.print(); cout << ' '; y.print(); cout << endl;
     }
     reverse(ret.digit.begin(), ret.digit.end());
     ret.simplify();
