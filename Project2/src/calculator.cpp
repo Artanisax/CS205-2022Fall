@@ -122,6 +122,8 @@ number calculator::divide(const number &a, const number &b) const {
     if (a.digit.empty()) return ret;  // 0
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp-b.exp+1;
+
+    // initialize dividend x and divisor y
     number x, y;
     size_t ia = a.digit.size()-1;
     for (size_t ib = 0; ib < b.digit.size(); ++ib) {
@@ -133,6 +135,8 @@ number calculator::divide(const number &a, const number &b) const {
         y.digit.push_back(b.digit[ib]);
     }
     reverse(x.digit.begin(), x.digit.end());
+    x.simplify();
+
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
         if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
             ret.digit.push_back(0);
@@ -176,6 +180,10 @@ number calculator::opp(const number &x) const {
     ret.copy(x);
     ret.negative = !x.negative;
     return ret;
+}
+
+void calculator::error() const {
+    cout << "Syntax Error!\n";
 }
 
 number calculator::calculate(const string &s) const {

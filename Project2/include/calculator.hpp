@@ -7,7 +7,7 @@
 using namespace std;
 
 struct calculator {
-    int precision = 4;  // used in division & sqrt, 4 digit more by default
+    ll precision = 4;  // used in division & sqrt, 4 digit more by default
     map<string, number> string_to_number;
 
     calculator();
@@ -33,6 +33,8 @@ struct calculator {
     number pow(const number &x, int t) const;
 
     number random() const;
+
+    void error() const;
 
     number calculate(const string &s) const;
 };
