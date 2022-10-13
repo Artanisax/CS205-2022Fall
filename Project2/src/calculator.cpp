@@ -15,7 +15,7 @@ void calculator::print(const number &x) const {
     cout << x.to_s() << '\n';
 }
 
-// define and modify variables
+// define or modify variables
 void calculator::assign(string s) {
     size_t eq = s.find('=');
     variable.insert_or_assign(s.substr(0, eq),
@@ -177,6 +177,7 @@ number calculator::divide(const number &a, const number &b) const {
     return ret;
 }
 
+// generate the absolute number of x
 number calculator::abs(const number &x) const {
     number ret;
     ret.copy(x);
@@ -184,10 +185,21 @@ number calculator::abs(const number &x) const {
     return ret;
 }
 
+// generate the opposite number of x
 number calculator::opp(const number &x) const {
     number ret;
     ret.copy(x);
     ret.negative = !x.negative;
+    return ret;
+}
+
+// generate a random number
+number calculator::random(size_t len, ll exp) const {
+    number ret;
+    while (len--) ret.digit.push_back(rand()%10);
+    while (!ret.digit.back()) ret.digit.back() = rand()%10;  // make sure the most significant bit is not 0
+    ret.exp = exp;
+    ret.simplify();
     return ret;
 }
 

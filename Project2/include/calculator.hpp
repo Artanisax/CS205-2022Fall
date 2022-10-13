@@ -32,7 +32,7 @@ struct calculator {
     
     number pow(const number &x, int t) const;
 
-    number random() const;
+    number random(size_t len, ll exp) const;
 
     void error() const;
 
