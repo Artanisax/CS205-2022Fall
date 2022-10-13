@@ -9,6 +9,11 @@ number::number() {
     number("");
 }
 
+// number::number(const int &x) {
+//     string s = to_string(x);
+//     number(s);
+// }
+
 number::number(const string &s) {
     if (s[0] == '-') negative = true;
     int dot = -1, e = -1, ms = -1, temp = 0;

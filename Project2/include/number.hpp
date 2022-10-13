@@ -16,8 +16,6 @@ struct number {
 
 	number(const int &x);
 
-	number(const ll &x);
-
 	number(const string &s);
 
 	void copy(const number &x);

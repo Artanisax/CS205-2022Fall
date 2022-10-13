@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/root/GitHub/CS205-2022Fall/Project2/src/calculator.cpp" "CMakeFiles/Calculator.dir/src/calculator.cpp.o" "gcc" "CMakeFiles/Calculator.dir/src/calculator.cpp.o.d"
+  "/root/GitHub/CS205-2022Fall/Project2/src/main.cpp" "CMakeFiles/Calculator.dir/src/main.cpp.o" "gcc" "CMakeFiles/Calculator.dir/src/main.cpp.o.d"
   "/root/GitHub/CS205-2022Fall/Project2/src/number.cpp" "CMakeFiles/Calculator.dir/src/number.cpp.o" "gcc" "CMakeFiles/Calculator.dir/src/number.cpp.o.d"
   )
 

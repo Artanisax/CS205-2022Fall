@@ -8,13 +8,13 @@ using namespace std;
 
 struct calculator {
     ll precision = 4;  // used in division & sqrt, 4 digit more by default
-    map<string, number> string_to_number;
+    map<string, number> variable;
 
     calculator();
 
     void print(const number &number) const;
 
-    void store(const string &s);
+    void assign(string s);
 
     int compare(const number &a, const number &b) const;
 
@@ -36,5 +36,5 @@ struct calculator {
 
     void error() const;
 
-    number calculate(const string &s) const;
+    number calculate(string s) const;
 };

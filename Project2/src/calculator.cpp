@@ -13,12 +13,14 @@ calculator::calculator() {
 
 void calculator::print(const number &x) const {
     x.print();
-    cout << endl;
+    cout << '\n';
 }
 
-void calculator::store(const string &s) {
+// define and modify variables
+void calculator::assign(string s) {
     size_t eq = s.find('=');
-    string_to_number.insert(make_pair(s.substr(0, eq), number(s.substr(eq+1, s.length()-(eq+1)))));
+    variable.insert_or_assign(s.substr(0, eq),
+                              calculate(s.substr(eq+1, s.length()-(eq+1))));
 }
 
 /*
@@ -42,9 +44,10 @@ int calculator::compare(const number &a, const number &b) const {
     return 0;
 }
 
+// addition and substraction
 number calculator::add(const number &a, const number &b) const {
     number ret;
-    if (a.negative == b.negative) {  // same sign
+    if (a.negative == b.negative) {  // same sign, true addition
         ret.negative = a.negative;
         int low = min(a.exp, b.exp),
             high = max(a.exp+(int)a.digit.size(), b.exp+(int)b.digit.size())-1;
@@ -60,7 +63,7 @@ number calculator::add(const number &a, const number &b) const {
                 ret.digit.push_back(1);
             }
         }
-    } else {  // oposite sign
+    } else {  // oposite sign, substraction actually
         number x = abs(a), y = abs(b);
         int comp = compare(x, y);
         if (!comp) return ret;
@@ -92,18 +95,20 @@ number calculator::add(const number &a, const number &b) const {
     return ret;
 }
 
+
+// multiplication
 number calculator::multiply(const number &a, const number &b) const {
     number ret;
     if (a.digit.empty() || b.digit.empty()) return ret;
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp+b.exp;
-    for (size_t i = a.digit.size()+b.digit.size(); ~i; --i) ret.digit.push_back(0);
+    for (size_t i = a.digit.size()+b.digit.size(); ~i; --i) ret.digit.push_back(0);  // initiallize possible length
     for (size_t i = 0, idx; i < a.digit.size(); ++i) {
         if (!a.digit[i]) continue;
         for (size_t j = 0; j < b.digit.size(); ++j) {
             idx = i+j;
             ret.digit[idx] += a.digit[i]*b.digit[j];
-            if (ret.digit[idx] >= 10) {
+            if (ret.digit[idx] >= 10) {  // carry
                 ret.digit[idx+1] += ret.digit[idx]/10;
                 ret.digit[idx] %= 10;
             }
@@ -113,6 +118,7 @@ number calculator::multiply(const number &a, const number &b) const {
     return ret;
 }
 
+// division
 number calculator::divide(const number &a, const number &b) const {
     number ret;
 
@@ -142,7 +148,6 @@ number calculator::divide(const number &a, const number &b) const {
 
     // calculate each bit of quotient
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
-        cout << "WTF\n";
         if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
             ret.digit.push_back(0);
             if (~ia) x = add(multiply(x, number("10")), number(to_string(a.digit[ia--])));
@@ -191,7 +196,7 @@ void calculator::error() const {
     cout << "Syntax Error!\n";
 }
 
-number calculator::calculate(const string &s) const {
+number calculator::calculate(string s) const {
     number ret("0");
     return ret;
 }
