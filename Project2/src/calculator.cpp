@@ -48,21 +48,27 @@ number calculator::add(const number &a, const number &b) const {
     number ret;
     if (a.negative == b.negative) {  // same sign, true addition
         ret.negative = a.negative;
+
+        // initialize the length of the result
         int low = min(a.exp, b.exp),
             high = max(a.exp+(int)a.digit.size(), b.exp+(int)b.digit.size())-1;
         ret.exp = low;
+
+        // digit addition
         size_t idx;
         for (int i = low; i <= high; ++i) {
             idx = i-low;
             if (ret.digit.size() == idx) ret.digit.push_back(0);
             ret.digit[idx] += ((i >= a.exp && i < a.exp+(int)a.digit.size()) ? a.digit[i-a.exp] : 0)+
                               ((i >= b.exp && i < b.exp+(int)b.digit.size()) ? b.digit[i-b.exp] : 0);
-            if (ret.digit[idx] >= 10) {
+            if (ret.digit[idx] >= 10) {  // carry
                 ret.digit[idx] -= 10;
                 ret.digit.push_back(1);
             }
         }
     } else {  // oposite sign, substraction actually
+
+        // make sure it's big - small
         number x = abs(a), y = abs(b);
         int comp = compare(x, y);
         if (!comp) return ret;
@@ -70,6 +76,8 @@ number calculator::add(const number &a, const number &b) const {
             ret.copy(b);
             swap(x, y);
         } else ret.copy(a);  // abs(a) > abs(b)
+
+        // digit substraction
         vector<short> temp;
         if (x.exp > y.exp) {
             for (int i = x.exp-y.exp; i > 0; --i) {
@@ -84,6 +92,8 @@ number calculator::add(const number &a, const number &b) const {
             swap(y.digit, temp);
         }
         for (size_t i = 0; i < y.digit.size(); ++i) ret.digit[i] -= y.digit[i];
+
+        // borrow
         for (size_t i = 0; i < ret.digit.size(); ++i)
             if (ret.digit[i] < 0) {
                 ret.digit[i] += 10;
