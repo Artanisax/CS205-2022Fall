@@ -115,11 +115,14 @@ number calculator::multiply(const number &a, const number &b) const {
 
 number calculator::divide(const number &a, const number &b) const {
     number ret;
+
+    // speacial cases
     if (b.digit.empty() || !~b.digit[0] || (!a.digit.empty() && !~a.digit[0])) {  // NaN
         ret.digit.push_back(-1);
         return ret;
     }
     if (a.digit.empty()) return ret;  // 0
+
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp-b.exp+1;
 
@@ -137,8 +140,10 @@ number calculator::divide(const number &a, const number &b) const {
     reverse(x.digit.begin(), x.digit.end());
     x.simplify();
 
+    // calculate each bit of quotient
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
-        if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {// skip 0
+        cout << "WTF\n";
+        if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
             ret.digit.push_back(0);
             if (~ia) x = add(multiply(x, number("10")), number(to_string(a.digit[ia--])));
             else {
@@ -149,7 +154,7 @@ number calculator::divide(const number &a, const number &b) const {
             continue;
         }
         l = 2, r = 9;
-        while (l <= r) {
+        while (l <= r) {  // try possible digits, with binary optimization
             mid = l+r>>1;
             if (!~compare(add(x, multiply(y, number("-"+to_string(mid)))), number())) r = mid-1;
             else l = mid+1;

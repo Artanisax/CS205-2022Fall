@@ -1,6 +1,9 @@
 CMakeFiles/Calculator.dir/src/calculator.cpp.o: \
- /root/Temp/src/calculator.cpp /usr/include/stdc-predef.h \
- /root/Temp/include/calculator.hpp /root/Temp/include/number.hpp \
+ /root/GitHub/CS205-2022Fall/Project2/src/calculator.cpp \
+ /usr/include/stdc-predef.h \
+ /root/GitHub/CS205-2022Fall/Project2/include/calculator.hpp \
+ /root/GitHub/CS205-2022Fall/Project2/include/number.hpp \
+ /root/GitHub/CS205-2022Fall/Project2/include/typdef.hpp \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \

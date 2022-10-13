@@ -1,5 +1,8 @@
-CMakeFiles/Calculator.dir/src/number.cpp.o: /root/Temp/src/number.cpp \
- /usr/include/stdc-predef.h /root/Temp/include/number.hpp \
+CMakeFiles/Calculator.dir/src/number.cpp.o: \
+ /root/GitHub/CS205-2022Fall/Project2/src/number.cpp \
+ /usr/include/stdc-predef.h \
+ /root/GitHub/CS205-2022Fall/Project2/include/number.hpp \
+ /root/GitHub/CS205-2022Fall/Project2/include/typdef.hpp \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \

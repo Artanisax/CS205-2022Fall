@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/root/Temp/include
+CXX_INCLUDES = -I/root/GitHub/CS205-2022Fall/Project2/include
 
 CXX_FLAGS = 
 
