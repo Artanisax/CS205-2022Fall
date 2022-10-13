@@ -74,44 +74,36 @@ void number::simplify() {
 }
 
 // Make numbers look more friendly ~qwq~
-void number::print() const {
-    if (digit.empty()) { // 0 alone
-        cout << 0;
-        return;
-    }
-    if (!~digit[0]) {
-        cout << "NaN";
-        return;
-    }
-    if (negative) cout << '-';
-    cout << digit[digit.size()-1];
-    // if (digit.size() == 1) {  // only one precise digit
-    //     if (exp) cout << 'e' << exp;
-    //     return;
-    // }
+string number::to_s() const {
+    if (digit.empty()) return "0";  // 0 alone
+    if (!~digit[0]) return "NaN";  // not a number
+    string ret;
+    if (negative) ret += "-";
+    ret += to_string(digit[digit.size()-1]);
     if (exp >= 0) {  // positive exponent
         if (exp <= digit.size()) {  // use postfix 0
-            for (int i = digit.size()-2; ~i; --i) cout << digit[i];
-            for (int i = 0; i < exp; ++i) cout << 0;
+            for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
+            for (int i = 0; i < exp; ++i) ret += "0";
         } else {  // use scientific notation
             if (digit.size() > 1) {
-               cout << '.';
-                for (int i = digit.size()-2; ~i; --i) cout << digit[i]; 
+                ret += ".";
+                for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]); 
             }
-            cout << 'e' << exp+(int)digit.size()-1;
+            ret += "e" + to_string(exp+(int)digit.size()-1);
         }
     }
     else {  // negative exponent
         if (-exp < digit.size()) {  // radix point in middle
-            for (int i = digit.size()-2; i >= -exp; --i) cout << digit[i];
-            cout << '.';
-            for (int i = -exp-1; ~i; --i) cout << digit[i];
+            for (int i = digit.size()-2; i >= -exp; --i) ret += to_string(digit[i]);
+            ret += ".";
+            for (int i = -exp-1; ~i; --i) ret += to_string(digit[i]);
         } else {  // use scientific notation
             if (digit.size() > 1) {
-               cout << '.';
-                for (int i = digit.size()-2; ~i; --i) cout << digit[i]; 
+                ret += ".";
+                for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
             }
-            cout << 'e' << exp+(int)digit.size()-1;
+            ret += "e" + to_string(exp+(int)digit.size()-1);
         }
     }
+    return ret;
 }

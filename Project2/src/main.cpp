@@ -11,7 +11,7 @@ int main() {
     while (true) {
         cin >> s1 >> s2;
         number n1(s1), n2(s2);
-        cal.divide(n1, n2).print();
+        cout << cal.divide(n1, n2).to_s();
         cout << '\n';
     }
     return 0;

@@ -22,5 +22,5 @@ struct number {
 
 	void simplify();
 
-	void print() const;
+	string to_s() const;
 };

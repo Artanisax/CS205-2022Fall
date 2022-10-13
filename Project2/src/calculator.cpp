@@ -12,8 +12,7 @@ calculator::calculator() {
 }
 
 void calculator::print(const number &x) const {
-    x.print();
-    cout << '\n';
+    cout << x.to_s() << '\n';
 }
 
 // define and modify variables
