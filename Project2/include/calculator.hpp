@@ -29,6 +29,8 @@ struct calculator {
     number opp(const number &ax) const;
 
     number sqrt(const number &x) const;
+    
+    number pow(const number &x, int t) const;
 
     number random() const;
 
