@@ -12,11 +12,11 @@ struct number {
 	ll exp = 0;
 	vector<short> digit;  // use short to save memory
 
+	number(const string &s);
+	
 	number();
 
-	number(const int &x);
-
-	number(const string &s);
+	number(const ll &x);
 
 	void copy(const number &x);
 

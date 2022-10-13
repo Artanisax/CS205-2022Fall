@@ -5,15 +5,6 @@
 
 using namespace std;
 
-number::number() {
-    number("");
-}
-
-// number::number(const int &x) {
-//     string s = to_string(x);
-//     number(s);
-// }
-
 number::number(const string &s) {
     if (s[0] == '-') negative = true;
     int dot = -1, e = -1, ms = -1, temp = 0;
@@ -41,6 +32,12 @@ number::number(const string &s) {
     exp += temp;
     reverse(digit.begin(), digit.end());
     simplify();
+}
+
+number::number() {}
+
+number::number(const ll &x) {
+    new (this) number(to_string(x));
 }
 
 void number::copy(const number &x) {

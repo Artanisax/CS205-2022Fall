@@ -150,7 +150,7 @@ number calculator::divide(const number &a, const number &b) const {
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
         if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
             ret.digit.push_back(0);
-            if (~ia) x = add(multiply(x, number("10")), number(to_string(a.digit[ia--])));
+            if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
             else {
                 ++x.exp;
                 --ret.exp;
@@ -161,12 +161,12 @@ number calculator::divide(const number &a, const number &b) const {
         l = 2, r = 9;
         while (l <= r) {  // try possible digits, with binary optimization
             mid = l+r>>1;
-            if (!~compare(add(x, multiply(y, number("-"+to_string(mid)))), number())) r = mid-1;
+            if (!~compare(add(x, multiply(y, number(-mid))), number())) r = mid-1;
             else l = mid+1;
         }
         ret.digit.push_back(r);
-        x = add(x, multiply(y, number("-"+to_string(r))));
-        if (~ia) x = add(multiply(x, number("10")), number(to_string(a.digit[ia--])));
+        x = add(x, multiply(y, number(-r)));
+        if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
         else {
             ++x.exp;
             --ret.exp;
