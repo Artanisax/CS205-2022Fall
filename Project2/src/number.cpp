@@ -79,30 +79,35 @@ string number::to_s() const {
     if (!~digit[0]) return "NaN";  // not a number
     string ret;
     if (negative) ret += "-";
-    ret += to_string(digit[digit.size()-1]);
-    if (exp >= 0) {  // positive exponent
-        if (exp <= digit.size()) {  // use postfix 0
-            for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
-            for (int i = 0; i < exp; ++i) ret += "0";
-        } else {  // use scientific notation
-            if (digit.size() > 1) {
-                ret += ".";
-                for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]); 
-            }
-            ret += "e" + to_string(exp+(int)digit.size()-1);
-        }
-    }
-    else {  // negative exponent
-        if (-exp < digit.size()) {  // radix point in middle
-            for (int i = digit.size()-2; i >= -exp; --i) ret += to_string(digit[i]);
-            ret += ".";
-            for (int i = -exp-1; ~i; --i) ret += to_string(digit[i]);
-        } else {  // use scientific notation
-            if (digit.size() > 1) {
-                ret += ".";
+    if (-exp == digit.size()) {  // 0.
+        ret += "0.";
+        for (int i = digit.size()-1; ~i; --i) ret += to_string(digit[i]);
+    } else {
+        ret += to_string(digit[digit.size()-1]);
+        if (exp >= 0) {  // positive exponent
+            if (exp <= digit.size()) {  // use postfix 0
                 for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
+                for (int i = 0; i < exp; ++i) ret += "0";
+            } else {  // use scientific notation
+                if (digit.size() > 1) {
+                    ret += ".";
+                    for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]); 
+                }
+                ret += "e" + to_string(exp+(int)digit.size()-1);
             }
-            ret += "e" + to_string(exp+(int)digit.size()-1);
+        }
+        else {  // negative exponent
+            if (-exp < digit.size()) {  // radix point in middle
+                for (int i = digit.size()-2; i >= -exp; --i) ret += to_string(digit[i]);
+                ret += ".";
+                for (int i = -exp-1; ~i; --i) ret += to_string(digit[i]);
+            } else {  // use scientific notation
+                if (digit.size() > 1) {
+                    ret += ".";
+                    for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
+                }
+                ret += "e" + to_string(exp+(int)digit.size()-1);
+            }
         }
     }
     return ret;

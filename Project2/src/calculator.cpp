@@ -32,8 +32,8 @@ int calculator::compare(const number &a, const number &b) const {
     if (a.negative && !b.negative) return -1;
     if (!a.negative && b.negative) return 1;
     int coe = (a.negative ? -1 : 1);
-    if (a.exp+(int)a.digit.size() > b.exp+(int)b.digit.size()) return coe;
-    if (a.exp+(int)a.digit.size() < b.exp+(int)b.digit.size()) return -coe;
+    if (a.exp+(ll)a.digit.size() > b.exp+(ll)b.digit.size()) return coe;
+    if (a.exp+(ll)a.digit.size() < b.exp+(ll)b.digit.size()) return -coe;
     for (size_t ia = a.digit.size()-1, ib = b.digit.size()-1; ~ia && ~ib; --ia, --ib) {
         if (a.digit[ia] > b.digit[ib]) return coe;
         if (a.digit[ia] < b.digit[ib]) return -coe;
@@ -51,7 +51,7 @@ number calculator::add(const number &a, const number &b) const {
 
         // initialize the length of the result
         int low = min(a.exp, b.exp),
-            high = max(a.exp+(int)a.digit.size(), b.exp+(int)b.digit.size())-1;
+            high = max(a.exp+(ll)a.digit.size(), b.exp+(ll)b.digit.size())-1;
         ret.exp = low;
 
         // digit addition
@@ -59,8 +59,8 @@ number calculator::add(const number &a, const number &b) const {
         for (int i = low; i <= high; ++i) {
             idx = i-low;
             if (ret.digit.size() == idx) ret.digit.push_back(0);
-            ret.digit[idx] += ((i >= a.exp && i < a.exp+(int)a.digit.size()) ? a.digit[i-a.exp] : 0)+
-                              ((i >= b.exp && i < b.exp+(int)b.digit.size()) ? b.digit[i-b.exp] : 0);
+            ret.digit[idx] += ((i >= a.exp && i < a.exp+(ll)a.digit.size()) ? a.digit[i-a.exp] : 0)+
+                              ((i >= b.exp && i < b.exp+(ll)b.digit.size()) ? b.digit[i-b.exp] : 0);
             if (ret.digit[idx] >= 10) {  // carry
                 ret.digit[idx] -= 10;
                 ret.digit.push_back(1);
@@ -157,7 +157,7 @@ number calculator::divide(const number &a, const number &b) const {
 
     // calculate each bit of quotient
     for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
-        if ((int)x.digit.size()+x.exp < (int)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
+        if ((ll)x.digit.size()+x.exp < (ll)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
             ret.digit.push_back(0);
             if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
             else {
@@ -187,7 +187,7 @@ number calculator::divide(const number &a, const number &b) const {
     return ret;
 }
 
-// generate the absolute number of x
+// return the absolute number of x
 number calculator::abs(const number &x) const {
     number ret;
     ret.copy(x);
@@ -195,11 +195,34 @@ number calculator::abs(const number &x) const {
     return ret;
 }
 
-// generate the opposite number of x
+// return the opposite number of x
 number calculator::opp(const number &x) const {
     number ret;
     ret.copy(x);
     ret.negative = !x.negative;
+    return ret;
+}
+
+// calculate the sqrt of x
+number calculator::sqrt(const number &x) const {
+    number ret, temp, eps(1);
+    if (x.negative) {
+        ret.digit.push_back(-1);
+        return ret;
+    }
+    eps.exp = x.exp-precision;
+    temp.copy(x);
+    while (~compare(abs(add(ret, opp(temp))), eps)) {
+        ret.copy(temp);
+        temp = add(ret, opp(divide(add(multiply(ret, ret), opp(x)), multiply(ret, number(2)))));
+    }
+    reverse(ret.digit.begin(), ret.digit.end()); 
+    while (ret.digit.size() > precision) {
+        ret.digit.pop_back();
+        ++ret.exp;
+    }
+    reverse(ret.digit.begin(), ret.digit.end()); 
+    ret.simplify();
     return ret;
 }
 

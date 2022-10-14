@@ -11,8 +11,8 @@ int main() {
     size_t len;
     ll exp;
     while (true) {
-        cin >> len >> exp;
-        cout << cal.random(len, exp).to_s() << '\n';
+        cin >> s1;
+        cout << cal.sqrt(number(s1)).to_s() << '\n';
     }
     return 0;
 }
