@@ -29,11 +29,20 @@ void calculator::assign(string s) {
  *  1: a > b
  */
 int calculator::compare(const number &a, const number &b) const {
+    // compare by sign
     if (a.negative && !b.negative) return -1;
     if (!a.negative && b.negative) return 1;
+
+    // When a or b is 0
+    if (a.digit.empty()) return (b.negative ? 1 : -1);
+    if (b.digit.empty()) return (a.negative ? -1 : 1);
+
+    // compare by size
     int coe = (a.negative ? -1 : 1);
     if (a.exp+(ll)a.digit.size() > b.exp+(ll)b.digit.size()) return coe;
     if (a.exp+(ll)a.digit.size() < b.exp+(ll)b.digit.size()) return -coe;
+
+    // compare by each bit
     for (size_t ia = a.digit.size()-1, ib = b.digit.size()-1; ~ia && ~ib; --ia, --ib) {
         if (a.digit[ia] > b.digit[ib]) return coe;
         if (a.digit[ia] < b.digit[ib]) return -coe;
@@ -67,7 +76,6 @@ number calculator::add(const number &a, const number &b) const {
             }
         }
     } else {  // oposite sign, substraction actually
-
         // make sure it's big - small
         number x = abs(a), y = abs(b);
         int comp = compare(x, y);
@@ -111,7 +119,8 @@ number calculator::multiply(const number &a, const number &b) const {
     if (a.digit.empty() || b.digit.empty()) return ret;
     ret.negative = a.negative^b.negative;
     ret.exp = a.exp+b.exp;
-    for (size_t i = a.digit.size()+b.digit.size(); ~i; --i) ret.digit.push_back(0);  // initiallize possible length
+    for (size_t i = a.digit.size()+b.digit.size(); ~i; --i)
+        ret.digit.push_back(0);  // initiallize possible length
     for (size_t i = 0, idx; i < a.digit.size(); ++i) {
         if (!a.digit[i]) continue;
         for (size_t j = 0; j < b.digit.size(); ++j) {
@@ -154,9 +163,18 @@ number calculator::divide(const number &a, const number &b) const {
     }
     reverse(x.digit.begin(), x.digit.end());
     x.simplify();
+    if (!~compare(x, y)) {  // make sure x > y
+        ret.digit.push_back(0);
+        if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
+        else {
+            ++x.exp;
+            --ret.exp;
+        }
+        x.simplify();
+    }
 
     // calculate each bit of quotient
-    for (size_t i = 0, l, r, mid; i <= max(a.digit.size(), b.digit.size())+precision; ++i) {
+    for (size_t i = 0, l, r, mid; i < max(a.digit.size(), b.digit.size())+precision; ++i) {
         if ((ll)x.digit.size()+x.exp < (ll)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
             ret.digit.push_back(0);
             if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
@@ -210,18 +228,26 @@ number calculator::sqrt(const number &x) const {
         ret.digit.push_back(-1);
         return ret;
     }
-    eps.exp = x.exp-precision;
+    eps.exp = x.exp-(precision<<1);
     temp.copy(x);
-    while (~compare(abs(add(ret, opp(temp))), eps)) {
+    size_t limit = x.digit.size()+precision<<1;
+    while (compare(abs(add(ret, opp(temp))), eps) > 0) {  // use Newton's method
         ret.copy(temp);
         temp = add(ret, opp(divide(add(multiply(ret, ret), opp(x)), multiply(ret, number(2)))));
+        reverse(temp.digit.begin(), temp.digit.end());
+        while (temp.digit.size() > limit) {
+            temp.digit.pop_back();
+            ++temp.exp;
+        }
+        reverse(temp.digit.begin(), temp.digit.end());
+        temp.simplify();
     }
-    reverse(ret.digit.begin(), ret.digit.end()); 
-    while (ret.digit.size() > precision) {
+    reverse(ret.digit.begin(), ret.digit.end());
+    while (ret.digit.size() > x.digit.size()+precision) {
         ret.digit.pop_back();
         ++ret.exp;
     }
-    reverse(ret.digit.begin(), ret.digit.end()); 
+    reverse(ret.digit.begin(), ret.digit.end());
     ret.simplify();
     return ret;
 }
@@ -230,7 +256,7 @@ number calculator::sqrt(const number &x) const {
 number calculator::random(size_t len, ll exp) const {
     number ret;
     while (len--) ret.digit.push_back(rand()%10);
-    while (!ret.digit.back()) ret.digit.back() = rand()%10;  // make sure the most significant bit is not 0
+    while (!ret.digit.back()) ret.digit.back() = rand()%10;  // make sure the MSB is not 0
     ret.exp = exp;
     ret.simplify();
     return ret;
