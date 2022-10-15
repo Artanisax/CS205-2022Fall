@@ -10,7 +10,7 @@ int main() {
     string s1, s2;
     size_t len;
     ll exp;
-    // cal.precision = 10;
+    cal.precision = 10;
     while (true) {
         cin >> s1;
         number n1(s1);

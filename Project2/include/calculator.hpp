@@ -7,7 +7,7 @@
 using namespace std;
 
 struct calculator {
-    ll precision = 4;  // used in division & sqrt, 4 digit more by default
+    size_t precision = 4;  // used in division & sqrt, 4 digit more by default
     map<string, number> variable;
 
     calculator();

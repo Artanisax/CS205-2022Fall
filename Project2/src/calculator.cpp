@@ -222,22 +222,29 @@ number calculator::opp(const number &x) const {
 }
 
 // calculate the sqrt of x
-number calculator::sqrt(const number &x) const {
-    if (x.nan()) return number("NaN");
+number calculator::sqrt(const number &a) const {
+    if (a.nan()) return number("NaN");
     
-    number ret, temp, eps(1);
+    number x, ret, temp, eps(1);
+
+    //minimize abs(exp) of x, add it up later
+    ll exp = a.exp/2;
+    x.copy(a);
+    x.exp = a.exp%2;
     if (x.negative) {
         ret.digit.push_back(-1);
         return ret;
     }
-    eps.exp = x.exp-(precision<<1);
     temp.copy(x);
     size_t limit = x.digit.size()+precision<<1;
+    eps.exp = -precision<<1;
+    int i = 0;
     while (compare(abs(add(ret, opp(temp))), eps) > 0) {  // Newton's method
         ret.copy(temp);
         temp = add(ret, opp(divide(add(multiply(ret, ret), opp(x)), multiply(ret, number(2)))));
         temp.limit_percision(limit);
     }
+    ret.exp += exp;
     ret.limit_percision(x.digit.size()+precision);
     return ret;
 }
