@@ -163,7 +163,7 @@ number calculator::divide(const number &a, const number &b) const {
     }
     reverse(x.digit.begin(), x.digit.end());
     x.simplify();
-    if (!~compare(x, y)) {  // make sure x > y
+    if (!~compare(x, y)) {  // make sure x >= y
         ret.digit.push_back(0);
         if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
         else {
@@ -231,7 +231,7 @@ number calculator::sqrt(const number &x) const {
     eps.exp = x.exp-(precision<<1);
     temp.copy(x);
     size_t limit = x.digit.size()+precision<<1;
-    while (compare(abs(add(ret, opp(temp))), eps) > 0) {  // use Newton's method
+    while (compare(abs(add(ret, opp(temp))), eps) > 0) {  // Newton's method
         ret.copy(temp);
         temp = add(ret, opp(divide(add(multiply(ret, ret), opp(x)), multiply(ret, number(2)))));
         reverse(temp.digit.begin(), temp.digit.end());

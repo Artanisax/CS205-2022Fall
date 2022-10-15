@@ -5,7 +5,7 @@
 using namespace std;
 
 int main() {
-    cout << "Build successfully!" << endl;
+    cout << "Welcome to A Better Calculator by Artanisax(12110524)!\nUsed for CS205-2022Fall Project 2\n";
     calculator cal;
     string s1, s2;
     size_t len;
