@@ -287,8 +287,9 @@ string calculator::analyse(string s) {
         string temp;
         for (size_t i = 0; i < s.length(); ++i)
             if (s[i] != ' ') temp.push_back(s[i]);
+        swap(s, temp);
     }
-
+    cout << "s: " << s << '\n';
     // quit
     if (s == "quit") {
         cout << "\nThanks for using. Good bye!\n";
