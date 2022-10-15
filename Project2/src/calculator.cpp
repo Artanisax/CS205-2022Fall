@@ -289,6 +289,12 @@ string calculator::analyse(string s) {
             if (s[i] != ' ') temp.push_back(s[i]);
     }
 
+    // quit
+    if (s == "quit") {
+        cout << "\nThanks for using. Good bye!\n";
+        exit(0);
+    }
+
     // assignment
     size_t cnt = count(s.begin(), s.end(), '=');
     if (cnt)
@@ -300,7 +306,6 @@ string calculator::analyse(string s) {
             assign(name, value);
             return "";
         } else return "Syntax Error!\n";
-    s.find('=');
 
     // calculate
     number ans = calculate(s);
