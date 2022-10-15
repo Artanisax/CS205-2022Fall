@@ -36,6 +36,6 @@ struct calculator {
 
     void assign(const string &s, const number &x);
 
-    string analyse(string s);
+    string analyse(string &s);
 
 };

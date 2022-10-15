@@ -13,9 +13,8 @@ int main() {
     size_t len;
     ll exp;
     while (true) {
-        // getline(cin, s1);
-        cin >> s1;
-        cal.analyse(s1);
+        getline(cin, s1);
+        cout << cal.analyse(s1);
     }
     return 0;
 }

@@ -111,9 +111,10 @@ void number::limit_percision(const size_t &limit) {
 
 // convert number to string for output
 string number::to_s() const {
+    string ret;
+    if (op) return ret += op;
     if (digit.empty()) return "0";  // 0 alone
     if (!~digit[0]) return "NaN";  // not a number
-    string ret;
     if (negative) ret += "-";
     if (-exp == digit.size()) {  // 0.
         ret += "0.";

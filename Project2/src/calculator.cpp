@@ -343,9 +343,8 @@ number calculator::calculate(const string &s) const {
     number ret;
     stack<char> op;
     stack<number> data;
-    bool flag = false;
-    for (size_t i = 0, len; i < s.length(); i += len) {
-        cout << (flag ? "op" : "data") << ": " << i << '\n';
+    bool flag = true;
+    for (size_t i = 0, len; i < s.length(); i += len, flag = !flag) {
         if (flag) { // expect a data or '('s
             while (s[i] == '(') {
                 op.push('(');
@@ -354,7 +353,6 @@ number calculator::calculate(const string &s) const {
             pit temp = get_a_data(s, i);  // try to get a data
             int type = temp.first;
             len = temp.second;
-
             if (!~type) return number("Error");
 
             if (!type) {  // a simple number
@@ -363,7 +361,6 @@ number calculator::calculate(const string &s) const {
             }
             
             // functions
-
             switch (type) {
                 case 1:
                     break;
@@ -377,26 +374,38 @@ number calculator::calculate(const string &s) const {
                     break;
             }
         } else {  // expect a operator or a ')'
-            while (s[i] == ')') {
+            while (i < s.length() && s[i] == ')') {
                 while (!op.empty() && op.top() != '(') {
                     data.push(number(op.top()));
                     op.pop();
                 }
                 if (op.empty()) return number("Error");
                 else op.pop();
+                ++i;
             }
+            if (i == s.length()) break;
             if (!~order(s[i])) return number("Error");
             else {
-                if (!op.empty() && order(op.top())) {
+                if (!op.empty() && order(op.top()) >= order(s[i])) {
                     data.push(number(op.top()));
                     op.pop();
                 }
                 op.push(s[i]);
             }
+            len = 1;
         }
-        flag = -flag;
     }
-    if (!op.empty() || !data.empty()) return number("Error");
+    while (!op.empty()) {
+        if (op.top() == '(') return number("Error");
+        data.push(number(op.top()));
+        op.pop();
+    }
+    while (!data.empty()) {
+        cout << data.top().to_s();
+        data.pop();
+    }
+    cout << '\n';
+    if (!data.empty()) return number("Error");
     return ret;
 }
 
@@ -417,9 +426,9 @@ void calculator::assign(const string &s, const number &x) {
  * check the validity of the expression
  * classify expression to variable assignment or calculation
  */
-string calculator::analyse(string s) {
+string calculator::analyse(string &s) {
     // remove ' '
-    if (count(s.begin(), s.end(), '=')) {
+    if (count(s.begin(), s.end(), ' ')) {
         string temp;
         for (size_t i = 0; i < s.length(); ++i)
             if (s[i] != ' ') temp.push_back(s[i]);
