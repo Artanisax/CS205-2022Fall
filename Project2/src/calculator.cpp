@@ -332,6 +332,12 @@ pit get_a_data(const string &s, size_t begin) {
     return make_pair(-1, 0);
 }
 
+vector<string> split(string s, size_t begin, size_t len, char c) {
+    vector<string> ret;
+    
+    return ret;
+}
+
 // calculate an expression
 number calculator::calculate(const string &s) const {
     number ret;
@@ -339,19 +345,26 @@ number calculator::calculate(const string &s) const {
     stack<number> data;
     bool flag = false;
     for (size_t i = 0, len; i < s.length(); i += len) {
+        cout << (flag ? "op" : "data") << ": " << i << '\n';
         if (flag) { // expect a data or '('s
             while (s[i] == '(') {
                 op.push('(');
                 if (++i == s.length()) return number("Error");
             }
-            pit temp = get_a_data(s, i);
+            pit temp = get_a_data(s, i);  // try to get a data
             int type = temp.first;
             len = temp.second;
+
+            if (!~type) return number("Error");
+
+            if (!type) {  // a simple number
+                data.push(number(s.substr(i, len)));
+                continue;
+            }
+            
+            // functions
+
             switch (type) {
-                case -1: return number("Error");
-                case 0:
-                    data.push(number(s.substr(i, len)));
-                    break;
                 case 1:
                     break;
                 case 2:
@@ -365,8 +378,12 @@ number calculator::calculate(const string &s) const {
             }
         } else {  // expect a operator or a ')'
             while (s[i] == ')') {
-                
-                if (++i == s.length()) return number("Error");
+                while (!op.empty() && op.top() != '(') {
+                    data.push(number(op.top()));
+                    op.pop();
+                }
+                if (op.empty()) return number("Error");
+                else op.pop();
             }
             if (!~order(s[i])) return number("Error");
             else {

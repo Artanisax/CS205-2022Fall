@@ -14,9 +14,8 @@ int main() {
     ll exp;
     while (true) {
         // getline(cin, s1);
-        cin >> s1 >> s2;
-        number n1(s1), n2(s2);
-        cout << cal.divide(n1, n2).to_s() << '\n' << cal.sqrt(n1).to_s() << ' ' << cal.sqrt(n2).to_s() << '\n';
+        cin >> s1;
+        cal.analyse(s1);
     }
     return 0;
 }
