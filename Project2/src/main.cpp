@@ -12,10 +12,9 @@ int main() {
     ll exp;
     // cal.precision = 10;
     while (true) {
-        cin >> s1 >> s2;
-        number num(s2);
-        cal.assign(s1, num);
-        cout << cal.variable[s1].to_s() << '\n';
+        cin >> s1;
+        number n1(s1);
+        cout << cal.sqrt(s1).to_s() << '\n';
     }
     return 0;
 }
