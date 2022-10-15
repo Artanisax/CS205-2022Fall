@@ -14,7 +14,7 @@ struct calculator {
 
     void print(const number &number) const;
 
-    void assign(string s);
+    void assign(string &s, number &x);
 
     int compare(const number &a, const number &b) const;
 

@@ -16,10 +16,8 @@ void calculator::print(const number &x) const {
 }
 
 // define or modify variables
-void calculator::assign(string s) {
-    size_t eq = s.find('=');
-    variable.insert_or_assign(s.substr(0, eq),
-                              calculate(s.substr(eq+1, s.length()-(eq+1))));
+void calculator::assign(string &s, number &x) {
+    variable.insert_or_assign(s, x);
 }
 
 /*
@@ -234,21 +232,9 @@ number calculator::sqrt(const number &x) const {
     while (compare(abs(add(ret, opp(temp))), eps) > 0) {  // Newton's method
         ret.copy(temp);
         temp = add(ret, opp(divide(add(multiply(ret, ret), opp(x)), multiply(ret, number(2)))));
-        reverse(temp.digit.begin(), temp.digit.end());
-        while (temp.digit.size() > limit) {
-            temp.digit.pop_back();
-            ++temp.exp;
-        }
-        reverse(temp.digit.begin(), temp.digit.end());
-        temp.simplify();
+        temp.limit_percision(limit);
     }
-    reverse(ret.digit.begin(), ret.digit.end());
-    while (ret.digit.size() > x.digit.size()+precision) {
-        ret.digit.pop_back();
-        ++ret.exp;
-    }
-    reverse(ret.digit.begin(), ret.digit.end());
-    ret.simplify();
+    ret.limit_percision(x.digit.size()+precision);
     return ret;
 }
 

@@ -73,6 +73,17 @@ void number::simplify() {
     }
 }
 
+// limit the percision of the number
+void number::limit_percision(const size_t &limit) {
+    reverse(digit.begin(), digit.end());
+    while (digit.size() > limit) {  // limit percision
+        digit.pop_back();
+        ++exp;
+    }
+    reverse(digit.begin(), digit.end());
+    simplify();
+}
+
 // Make numbers look more friendly ~qwq~
 string number::to_s() const {
     if (digit.empty()) return "0";  // 0 alone
