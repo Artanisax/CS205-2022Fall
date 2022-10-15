@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <stack>
 
+typedef pair<int, size_t> pit;
+
 using namespace std;
 
 calculator::calculator() {
@@ -48,6 +50,8 @@ int calculator::compare(const number &a, const number &b) const {
 // addition and substraction
 number calculator::add(const number &a, const number &b) const {
     if (a.nan() || b.nan()) return number("NaN");
+    if (a.error() || b.error()) return number("Error");
+
     number ret;
     if (a.negative == b.negative) {  // same sign, true addition
         ret.negative = a.negative;
@@ -106,10 +110,11 @@ number calculator::add(const number &a, const number &b) const {
     return ret;
 }
 
-
 // multiplication
 number calculator::multiply(const number &a, const number &b) const {
     if (a.nan() || b.nan()) return number("NaN");
+    if (a.error() || b.error()) return number("Error");
+
     number ret;
     if (a.digit.empty() || b.digit.empty()) return ret;
     ret.negative = a.negative^b.negative;
@@ -134,6 +139,7 @@ number calculator::multiply(const number &a, const number &b) const {
 // division
 number calculator::divide(const number &a, const number &b) const {
     if (a.nan() || b.nan()) return number("NaN");
+    if (a.error() || b.error()) return number("Error");
     number ret;
 
     // speacial cases
@@ -204,6 +210,7 @@ number calculator::divide(const number &a, const number &b) const {
 // return the absolute number of x
 number calculator::abs(const number &x) const {
     if (x.nan()) return number("NaN");
+    if (x.error()) return number("Error");
 
     number ret;
     ret.copy(x);
@@ -214,6 +221,7 @@ number calculator::abs(const number &x) const {
 // return the opposite number of x
 number calculator::opp(const number &x) const {
     if (x.nan()) return number("NaN");
+    if (x.error()) return number("Error");
 
     number ret;
     ret.copy(x);
@@ -224,6 +232,7 @@ number calculator::opp(const number &x) const {
 // calculate the sqrt of x
 number calculator::sqrt(const number &a) const {
     if (a.nan()) return number("NaN");
+    if (a.error()) return number("Error");
     
     number x, ret, temp, eps(1);
 
@@ -253,22 +262,99 @@ number calculator::sqrt(const number &a) const {
 number calculator::random(size_t len, ll exp) const {
     number ret;
     while (len--) ret.digit.push_back(rand()%10);
-    while (!ret.digit.back()) ret.digit.back() = rand()%10;  // make sure the MSB is not 0
+    // make sure the MSB is not 0
+    while (!ret.digit.back()) ret.digit.back() = rand()%10;
     ret.exp = exp;
     ret.simplify();
     return ret;
 }
 
+// define the priority of signs
+int order(char c) {
+    switch (c) {
+    case '+':
+    case '-':
+        return 2;
+    case '*':
+    case '/':
+        return 1;
+    case '(':
+    case ')': 
+        return 0;
+    default: return -1;
+    }
+}
+
+/*
+ * return (data_type, length)
+ * data_type:
+ * -1: error
+ *  0: number
+ *  1: abs
+ *  2: opp
+ *  3: sqrt
+ *  4: pow
+ *  5: random
+ */
+pit get_a_number(const string &s, size_t begin) {
+    if (isdigit(s[begin])) {  // a number without a sign
+        size_t len = 1;
+        while (begin+len < s.length() && isdigit(s[begin+len])) ++len;
+        return make_pair(0, len);
+    }
+    switch (s[begin]) {  // signs or functions
+        case '+':  // a number with a sign
+        case '-':
+            if (begin == s.length()-1 || !isdigit(s[begin+1]))
+                return make_pair(-1, 0);
+            else {
+                size_t len = 2;
+                while (begin+len < s.length() && isdigit(s[begin+len])) ++len;
+                return make_pair(0, len);
+            }
+        case 'a':  // abs
+            if (begin+2 <= s.length() && s.substr(begin, 3) == "abs")
+                return make_pair(1, 3);
+        case 'o':  // opp
+            if (begin+2 <= s.length() && s.substr(begin, 3) == "opp")
+                return make_pair(2, 3);
+        case 's':  // sqrt
+            if (begin+3 <= s.length() && s.substr(begin, 4) == "sqrt")
+                return make_pair(3, 4);
+        case 'p':  // pow
+            if (begin+3 <= s.length() && s.substr(begin, 4) == "pow")
+                return make_pair(4, 4);
+        case 'r':  // random
+            if (begin+5 <= s.length() && s.substr(begin, 6) == "random")
+                return make_pair(5, 6);
+    }
+    return make_pair(-1, 0);
+}
+
 // calculate an expression
-number calculator::calculate(string s) const {
+number calculator::calculate(const string &s) const {
     number ret;
+    stack<char> op;
+    stack<number> data;
+    for (size_t i = 0, len; i < s.length(); i += len) {
+        if (s[i] == '(' || s[i] == ')') {
+           if (s[i] == '(') op.push('(');
+           else {
+
+           }
+        }
+        else {
+            
+        }
+    }
     return ret;
 }
 
 // define or modify variables
 void calculator::assign(const string &s, const number &x) {
     if (s == "precision") {  // modify precision setting
-        if (x.nan() || x.error() || x.negative || compare(x, number(SIZE_MAX)) > 0) {
+        if (x.nan() || x.error() || x.negative ||
+            compare(x, number(SIZE_MAX)) > 0) {
             cout << "Invalid precision\n";
             return;
         }

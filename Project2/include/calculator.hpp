@@ -14,8 +14,6 @@ struct calculator {
 
     void print(const number &number) const;
 
-    void assign(const string &s, const number &x);
-
     int compare(const number &a, const number &b) const;
 
     number add(const number &a, const number &b) const;
@@ -34,7 +32,9 @@ struct calculator {
 
     number random(size_t len, ll exp) const;
 
-    number calculate(string s) const;
+    number calculate(const string &s) const;
+
+    void assign(const string &s, const number &x);
 
     string analyse(string s);
 

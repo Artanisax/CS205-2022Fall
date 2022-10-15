@@ -17,9 +17,9 @@ number::number(const string &s) {
         return;
     }
     if (s[0] == '-') negative = true;
-    int dot = -1, e = -1, ms = -1;
+    size_t dot = -1, e = -1, ms = -1;
     ll temp = 0;
-    for (size_t i = (s[0] == '-'); i < s.length(); i++)
+    for (size_t i = (s[0] == '-' || s[0] == '+'); i < s.length(); i++)
         switch (s[i]) {
             case '.':
                 dot = i;
