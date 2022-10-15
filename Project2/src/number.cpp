@@ -12,6 +12,10 @@ number::number(const ll &x) {
 }
 
 number::number(const string &s) {
+    if (s == "NaN" || s == "Error") {
+        digit.push_back(s == "NaN" ? -1 : -2);
+        return;
+    }
     if (s[0] == '-') negative = true;
     int dot = -1, e = -1, ms = -1, temp = 0;
     for (size_t i = (s[0] == '-'); i < s.length(); i++)
@@ -38,6 +42,14 @@ number::number(const string &s) {
     exp += temp;
     reverse(digit.begin(), digit.end());
     simplify();
+}
+
+bool number::nan() const {
+    return !digit.empty() && digit[0] == -1;
+}
+
+bool number::error() const {
+    return !digit.empty() && digit[0] == -2;
 }
 
 void number::copy(const number &x) {

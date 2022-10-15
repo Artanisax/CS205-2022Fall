@@ -7,7 +7,9 @@
         "streambuf": "cpp",
         "string": "cpp",
         "string_view": "cpp",
-        "system_error": "cpp"
+        "system_error": "cpp",
+        "unordered_map": "cpp",
+        "functional": "cpp"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/Project2"
 }

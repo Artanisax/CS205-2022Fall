@@ -18,6 +18,10 @@ struct number {
 
 	number(const ll &x);
 
+	bool nan() const;
+
+	bool error() const;
+
 	void copy(const number &x);
 
 	void simplify();

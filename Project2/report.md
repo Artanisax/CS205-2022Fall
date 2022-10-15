@@ -6,28 +6,16 @@
 
 **SID:** 12110524
 
-## Part 1 - Analysis
-
-### 画饼:
-
-1. 计算记录，可以方便下次使用
-2. 
+## Part 1 - Analysis & Implementations
 
 To implement a much more complex calculator with the ability to calculate expressions with different operators, functions as well as symbols, this program should be able to analyse string as calculation formulas, store statistics. Also, for precision purpose, it need dynamic data structures.
 
-## Part 2 - Code
+## Part 2 - Results & Verification
+
+## Part 3 - Self-review
+
+## Part 4 - Codes & Comments
 
 ```cpp
 
 ```
-
-## Part 3 - Result & Verification
-
-### Invalid Cases
-
-### Valid Cases
-
-## Part 4 - Difficulties & Solutions
-
-1. Q
-    + A

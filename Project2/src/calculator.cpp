@@ -15,13 +15,8 @@ void calculator::print(const number &x) const {
     cout << x.to_s() << '\n';
 }
 
-// define or modify variables
-void calculator::assign(string &s, number &x) {
-    variable.insert_or_assign(s, x);
-}
-
 /*
- * Compare two numbers
+ * compare two numbers
  * -1: a < b
  *  0: a = b
  *  1: a > b
@@ -52,6 +47,7 @@ int calculator::compare(const number &a, const number &b) const {
 
 // addition and substraction
 number calculator::add(const number &a, const number &b) const {
+    if (a.nan() || b.nan()) return number("NaN");
     number ret;
     if (a.negative == b.negative) {  // same sign, true addition
         ret.negative = a.negative;
@@ -113,6 +109,7 @@ number calculator::add(const number &a, const number &b) const {
 
 // multiplication
 number calculator::multiply(const number &a, const number &b) const {
+    if (a.nan() || b.nan()) return number("NaN");
     number ret;
     if (a.digit.empty() || b.digit.empty()) return ret;
     ret.negative = a.negative^b.negative;
@@ -136,6 +133,7 @@ number calculator::multiply(const number &a, const number &b) const {
 
 // division
 number calculator::divide(const number &a, const number &b) const {
+    if (a.nan() || b.nan()) return number("NaN");
     number ret;
 
     // speacial cases
@@ -205,6 +203,8 @@ number calculator::divide(const number &a, const number &b) const {
 
 // return the absolute number of x
 number calculator::abs(const number &x) const {
+    if (x.nan()) return number("NaN");
+
     number ret;
     ret.copy(x);
     ret.negative = false;
@@ -213,6 +213,8 @@ number calculator::abs(const number &x) const {
 
 // return the opposite number of x
 number calculator::opp(const number &x) const {
+    if (x.nan()) return number("NaN");
+
     number ret;
     ret.copy(x);
     ret.negative = !x.negative;
@@ -221,6 +223,8 @@ number calculator::opp(const number &x) const {
 
 // calculate the sqrt of x
 number calculator::sqrt(const number &x) const {
+    if (x.nan()) return number("NaN");
+    
     number ret, temp, eps(1);
     if (x.negative) {
         ret.digit.push_back(-1);
@@ -248,11 +252,44 @@ number calculator::random(size_t len, ll exp) const {
     return ret;
 }
 
-void calculator::error() const {
-    cout << "Syntax Error!\n";
+// calculate an expression
+number calculator::calculate(string s) const {
+    number ret;
+    return ret;
 }
 
-number calculator::calculate(string s) const {
-    number ret("0");
-    return ret;
+// define or modify variables
+void calculator::assign(const string &s, const number &x) {
+    variable.insert_or_assign(s, x);
+}
+
+/*
+ * check the validity of the expression
+ * classify expression to variable assignment or calculation
+ */
+string calculator::analyse(string s) {
+    // remove ' '
+    if (count(s.begin(), s.end(), '=')) {
+        string temp;
+        for (size_t i = 0; i < s.length(); ++i)
+            if (s[i] != ' ') temp.push_back(s[i]);
+    }
+
+    // assignment
+    size_t cnt = count(s.begin(), s.end(), '=');
+    if (cnt)
+        if (cnt == 1) {
+            size_t idx = s.find("=");
+            string name = s.substr(0, idx);
+            number value = calculate(s.substr(idx+1, s.length()-idx-1));
+            if (value.error()) return "Syntax Error\n";
+            assign(name, value);
+            return "";
+        } else return "Syntax Error!\n";
+    s.find('=');
+
+    // calculate
+    number ans = calculate(s);
+    if (ans.error()) return "Syntax Error\n";
+    return ans.to_s()+'\n';
 }
