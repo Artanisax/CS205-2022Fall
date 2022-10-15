@@ -7,6 +7,16 @@ using namespace std;
 
 number::number() {}
 
+number::number(const char &c) {
+    op = c;
+}
+
+
+
+number::number(const int &x) {
+    new (this) number(to_string(x));
+}
+
 number::number(const ll &x) {
     new (this) number(to_string(x));
 }

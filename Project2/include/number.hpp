@@ -8,6 +8,7 @@
 using namespace std;
 
 struct number {
+	char op = 0;
 	bool negative = false;
 	ll exp = 0;
 	vector<short> digit;  // use short to save memory
@@ -15,6 +16,10 @@ struct number {
 	number(const string &s);
 	
 	number();
+
+	number(const char &c);
+
+	number(const int &x);
 
 	number(const ll &x);
 

@@ -176,7 +176,8 @@ number calculator::divide(const number &a, const number &b) const {
     }
 
     // calculate each bit of quotient
-    for (size_t i = 0, l, r, mid; i < max(a.digit.size(), b.digit.size())+precision; ++i) {
+    short l, r, mid;
+    for (size_t i = 0; i < max(a.digit.size(), b.digit.size())+precision; ++i) {
         if ((ll)x.digit.size()+x.exp < (ll)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
             ret.digit.push_back(0);
             if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
@@ -272,16 +273,16 @@ number calculator::random(size_t len, ll exp) const {
 // define the priority of signs
 int order(char c) {
     switch (c) {
-    case '+':
-    case '-':
-        return 2;
-    case '*':
-    case '/':
-        return 1;
-    case '(':
-    case ')': 
-        return 0;
-    default: return -1;
+        case '(':
+        case ')':
+            return 0;
+        case '+':
+        case '-':
+            return 1;
+        case '*':
+        case '/':
+            return 2;
+        default: return -1;
     }
 }
 
@@ -296,7 +297,7 @@ int order(char c) {
  *  4: pow
  *  5: random
  */
-pit get_a_number(const string &s, size_t begin) {
+pit get_a_data(const string &s, size_t begin) {
     if (isdigit(s[begin])) {  // a number without a sign
         size_t len = 1;
         while (begin+len < s.length() && isdigit(s[begin+len])) ++len;
@@ -336,17 +337,49 @@ number calculator::calculate(const string &s) const {
     number ret;
     stack<char> op;
     stack<number> data;
+    bool flag = false;
     for (size_t i = 0, len; i < s.length(); i += len) {
-        if (s[i] == '(' || s[i] == ')') {
-           if (s[i] == '(') op.push('(');
-           else {
-
-           }
+        if (flag) { // expect a data or '('s
+            while (s[i] == '(') {
+                op.push('(');
+                if (++i == s.length()) return number("Error");
+            }
+            pit temp = get_a_data(s, i);
+            int type = temp.first;
+            len = temp.second;
+            switch (type) {
+                case -1: return number("Error");
+                case 0:
+                    data.push(number(s.substr(i, len)));
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+            }
+        } else {  // expect a operator or a ')'
+            while (s[i] == ')') {
+                
+                if (++i == s.length()) return number("Error");
+            }
+            if (!~order(s[i])) return number("Error");
+            else {
+                if (!op.empty() && order(op.top())) {
+                    data.push(number(op.top()));
+                    op.pop();
+                }
+                op.push(s[i]);
+            }
         }
-        else {
-            
-        }
+        flag = -flag;
     }
+    if (!op.empty() || !data.empty()) return number("Error");
     return ret;
 }
 
@@ -354,7 +387,7 @@ number calculator::calculate(const string &s) const {
 void calculator::assign(const string &s, const number &x) {
     if (s == "precision") {  // modify precision setting
         if (x.nan() || x.error() || x.negative ||
-            compare(x, number(SIZE_MAX)) > 0) {
+            compare(x, number(__LONG_LONG_MAX__)) > 0) {
             cout << "Invalid precision\n";
             return;
         }
