@@ -267,6 +267,13 @@ number calculator::calculate(string s) const {
 
 // define or modify variables
 void calculator::assign(const string &s, const number &x) {
+    if (s == "precision") {  // modify precision setting
+        if (x.nan() || x.error() || x.negative || compare(x, number(SIZE_MAX)) > 0) {
+            cout << "Invalid precision\n";
+            return;
+        }
+        precision = x.to_t();
+    }
     variable.insert_or_assign(s, x);
 }
 

@@ -97,7 +97,7 @@ void number::limit_percision(const size_t &limit) {
     simplify();
 }
 
-// Make numbers look more friendly ~qwq~
+// convert number to string for output
 string number::to_s() const {
     if (digit.empty()) return "0";  // 0 alone
     if (!~digit[0]) return "NaN";  // not a number
@@ -134,5 +134,13 @@ string number::to_s() const {
             }
         }
     }
+    return ret;
+}
+
+// convert number to size_t for percision
+size_t number::to_t() const {
+    size_t ret = 0;
+    for (size_t i = digit.size(); ~i; --i) ret = ret*10+digit[i];
+    for (int i = 0; i < exp; ++i) ret *= 10;
     return ret;
 }

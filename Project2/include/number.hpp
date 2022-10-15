@@ -29,4 +29,6 @@ struct number {
 	void limit_percision(const size_t &limit);
 
 	string to_s() const;
+
+	size_t to_t() const;
 };
