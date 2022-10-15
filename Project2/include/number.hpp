@@ -19,6 +19,8 @@ struct number {
 
 	number(const char &c);
 
+	number(const short &x);
+
 	number(const int &x);
 
 	number(const ll &x);

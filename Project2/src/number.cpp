@@ -11,7 +11,9 @@ number::number(const char &c) {
     op = c;
 }
 
-
+number::number(const short &x) {
+    new (this) number(to_string(x));
+}
 
 number::number(const int &x) {
     new (this) number(to_string(x));
