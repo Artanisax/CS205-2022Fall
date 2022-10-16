@@ -263,15 +263,16 @@ number calculator::sqrt(const number &a) const {
 
 // calculate the N-th pow of x
 number calculator::pow(const number &x, const number &y) const {
+    // check the validity of y
     if (x.error() || y.error() || y.negative || y.exp < 0 ||
         compare(y, number(__LONG_LONG_MAX__)) > 0)
         return number("Error");
     if (x.nan() || y.nan()) return number("NaN");
     
-    size_t t = y.to_t();
+    size_t t = y.to_t();  // convert y into integer
     number ret = number(1), temp;
     temp.copy(x);
-    while (t) {
+    while (t) {  // binary accelerate
         if (t&1) ret = multiply(ret, temp);
         temp = multiply(temp, temp);
         t >>= 1;
@@ -457,7 +458,7 @@ number calculator::calculate(const string &s) const {
         data.pop();
     }
     number cur, a, b;
-    while (!temp.empty()) {
+    while (!temp.empty()) {  // calculate the postfix expression
         cur = temp.top();
         if (cur.op) {
             b = data.top();
