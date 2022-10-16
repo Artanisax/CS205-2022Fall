@@ -4,6 +4,9 @@
 
 #include <map>
 
+using std::map;
+using std::pair;
+
 typedef pair<int, size_t> pit;
 
 struct calculator {

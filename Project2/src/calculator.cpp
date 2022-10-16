@@ -5,6 +5,13 @@
 #include <algorithm>
 #include <stack>
 
+using std::min;
+using std::max;
+using std::swap;
+using std::cout;
+using std::make_pair;
+using std::stack;
+
 // initiallize random seed and functions' (name, parameters)
 calculator::calculator() {
     srand(time(NULL));
