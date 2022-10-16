@@ -1,63 +1,148 @@
-[toc]
+Please See [My GitHub Repository](https://github.com/Artanisax/CS205-2022Fall/tree/main/Project2)
 
-# CS205-2022Fall Project 2
-
-## A Better Calculator
-
-**Name:** 陈康睿
-
-**SID:** 12110524
-
-
-
-## Part 1 - Analysis & Implementation
-
-To implement a much more complex calculator than project 1 that is capable to calculate expressions with different operators, functions as well as symbols, this program should be able to analyse string as calculation expressions and store statistics. Also, for precision purpose, it needs dynamic data structures. 
-
-(Note: only core codes are elaborated in the report, the whole project is available in [My GitHub Repository](https://github.com/Artanisax/CS205-2022Fall/tree/main/Project2))
-
-
-
-### Typedef & Namespace
+(Note: just in case, all the codes are here but might not that readable because PDF's column limit)
 
 ```c++
+// typedef.hpp
+
+#pragma once
+
 typedef long long ll;
 typedef unsigned long long ull;
 ```
 
 ```c++
+// number.hpp
+
+#pragma once
+
+#include "typdef.hpp"
+
+#include <vector>
+#include <string>
+
 using std::vector;
 using std::string;
-using std::map;
-using std::pair;
-using std::to_string;
-using std::min;
-using std::max;
-using std::swap;
-using std::make_pair;
-using std::stack;
-using std::cin;
-using std::cout;
-using std::endl;
+
+struct number {
+	char op = 0;
+	bool negative = false;
+	ll exp = 0;
+	vector<short> digit;  // use short to save memory
+
+	number(const string &s);
+	
+	number();
+
+	number(const char &c);
+
+	number(const short &x);
+
+	number(const int &x);
+
+	number(const ll &x);
+
+	bool nan() const;
+
+	bool error() const;
+
+	void copy(const number &x);
+
+	void simplify();
+
+	void limit_precision(const size_t &limit);
+
+	string to_s() const;
+
+	size_t to_t() const;
+};
 ```
 
+```c++
+// calculator.hpp
 
+#pragma once
 
+#include "number.hpp"
 
-### Arbitrary precision
+#include <map>
 
-Instead of using primary limited floating data types, I used an  self-degined structure `number` to store data in the project, which used a `std::vector<short>` to store precise digits, a `bool` to record whether the number is negative,  a `long long` to maintain the exponent and a `char` for posible operators when analysing expressions. It can be initialized through different ways. The most important one is to parse a `string`.  It also use a function `simplify()` to standardize the storage of data. Another useful one is `limit_precision()`, which is used to limit the number numbers' precise digits to fit the global percision setting. Not the least, `to_s()` converts number to a string for output.
+using std::map;
+using std::pair;
+
+typedef pair<int, size_t> pit;
+
+struct calculator {
+    size_t precision = 4;  // used in division & sqrt, 4 digit more by default
+    const map<string, size_t> fun = {{"abs", 1}, {"opp", 1}, {"sqrt", 1},
+                                     {"pow", 2}, {"random", 0}};
+    map<string, number> var;
+
+    calculator();
+
+    int compare(const number &a, const number &b) const;
+
+    number add(const number &a, const number &b) const;
+
+    number multiply(const number &a, const number &b) const;
+
+    number divide(const number &a, const number &b) const;
+
+    number abs(const number &x) const;
+
+    number opp(const number &ax) const;
+
+    number sqrt(const number &x) const;
+    
+    number pow(const number &ax, const number &t) const;
+
+    number random() const;
+
+    pit get_a_data(const string &s, size_t begin) const;
+
+    number bin_calc(const number &a, const number &b, const char &c) const;
+
+    number fun_calc(const string &name, const vector<string> &parameter) const;
+
+    number calculate(const string &s) const;
+
+    void assign(const string &s, const number &x);
+
+    string analyse(string &s);
+
+};
+```
 
 ```c++
-struct number {
-  char op = 0;
-  bool negative = false;
-  ll exp = 0;
-  vector<short> digit;  // use short to save memory
+// number.cpp
+
+#include "number.hpp"
+
+#include <iostream>
+#include <algorithm>
+
+using std::to_string;
+
+number::number() {}
+
+number::number(const char &c) {
+    op = c;
+}
+
+number::number(const short &x) {
+    new (this) number(to_string(x));
+}
+
+number::number(const int &x) {
+    new (this) number(to_string(x));
+}
+
+number::number(const ll &x) {
+    new (this) number(to_string(x));
 }
 
 number::number(const string &s) {
-    if (s == "NaN" || s == "Error") {  // Not a number or syntax error
+    if (s == "NaN" || s == "Error") {
         digit.push_back(s == "NaN" ? -1 : -2);
         return;
     }
@@ -77,9 +162,9 @@ number::number(const string &s) {
                 ms = i;
                 break;
             default:
-                if (~e) temp = temp*10+(s[i]-'0');  // exponent
+                if (~e) temp = temp*10+(s[i]-'0');
                 else {
-                    digit.push_back(s[i]-'0');  // percise digits
+                    digit.push_back(s[i]-'0');
                     if (~dot) --exp;
                 }
                 break;
@@ -90,18 +175,31 @@ number::number(const string &s) {
     simplify();
 }
 
+bool number::nan() const {
+    return !digit.empty() && digit[0] == -1;
+}
+
+bool number::error() const {
+    return !digit.empty() && digit[0] == -2;
+}
+
+void number::copy(const number &x) {
+    negative = x.negative;
+    exp = x.exp;
+    digit.clear();
+    for (size_t i = 0; i < x.digit.size(); ++i) digit.push_back(x.digit[i]);
+}
+
 /*
  * Delete prefix & postfix zeros
  * For efficiency, reload the whole vector instead of erasing iterators
  */
 void number::simplify() {
-    if (digit.empty()) {  // clear to 0
+    if (digit.empty()) {
         negative = false;
         exp = 0;
         return;
     }
-    
-    // find intevals of pre/postfix 0
     int tail = 0, head = digit.size()-1;
     while (tail < digit.size() && !digit[tail]) ++tail;
     while (~head && !digit[head]) --head;
@@ -112,15 +210,14 @@ void number::simplify() {
         exp = 0;
     } else {
         vector<short> temp;
-        for (size_t i = tail; i <= head; ++i)
-            temp.push_back(digit[i]);
+        for (size_t i = tail; i <= head; ++i) temp.push_back(digit[i]);
         exp += tail;
         swap(digit, temp);
     }
 }
 
 // limit the percision of the number
-void number::limit_percision(const size_t &limit) {
+void number::limit_precision(const size_t &limit) {
     reverse(digit.begin(), digit.end());
     while (digit.size() > limit) {  // limit percision
         digit.pop_back();
@@ -130,11 +227,7 @@ void number::limit_percision(const size_t &limit) {
     simplify();
 }
 
-/* convert number to string for output
- * try to make the output more friendly
- * instead of just putting all the '0' out
- * or using scientific notation
- */
+// convert number to string for output
 string number::to_s() const {
     if (digit.empty()) return "0";  // 0 alone
     if (digit[0] == -2) return "Syntax Error!";
@@ -144,36 +237,30 @@ string number::to_s() const {
     if (negative) ret += "-";
     if (-exp == digit.size()) {  // 0.
         ret += "0.";
-        for (int i = digit.size()-1; ~i; --i)
-            ret += to_string(digit[i]);
+        for (int i = digit.size()-1; ~i; --i) ret += to_string(digit[i]);
     } else {
         ret += to_string(digit[digit.size()-1]);
         if (exp >= 0) {  // positive exponent
             if (exp <= digit.size()) {  // use postfix 0
-                for (int i = digit.size()-2; ~i; --i)
-                    ret += to_string(digit[i]);
+                for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
                 for (int i = 0; i < exp; ++i) ret += "0";
             } else {  // use scientific notation
                 if (digit.size() > 1) {
                     ret += ".";
-                    for (int i = digit.size()-2; ~i; --i)
-                        ret += to_string(digit[i]); 
+                    for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]); 
                 }
                 ret += "e" + to_string(exp+(int)digit.size()-1);
             }
         }
         else {  // negative exponent
             if (-exp < digit.size()) {  // radix point in middle
-                for (int i = digit.size()-2; i >= -exp; --i)
-                    ret += to_string(digit[i]);
+                for (int i = digit.size()-2; i >= -exp; --i) ret += to_string(digit[i]);
                 ret += ".";
-                for (int i = -exp-1; ~i; --i)
-                    ret += to_string(digit[i]);
+                for (int i = -exp-1; ~i; --i) ret += to_string(digit[i]);
             } else {  // use scientific notation
                 if (digit.size() > 1) {
                     ret += ".";
-                    for (int i = digit.size()-2; ~i; --i)
-                        ret += to_string(digit[i]);
+                    for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
                 }
                 ret += "e"+to_string(exp+(int)digit.size()-1);
             }
@@ -181,35 +268,39 @@ string number::to_s() const {
     }
     return ret;
 }
+
+// convert number to size_t for percision
+size_t number::to_t() const {
+    size_t ret = 0;
+    for (size_t i = digit.size()-1; ~i; --i) ret = ret*10+digit[i];
+    for (size_t i = 0; i < exp; ++i) ret *= 10;
+    return ret;
+}
 ```
 
-
-
-### Calculator Setting
-
-I used another structure `calculator` to represent the calculator it has a `size_t precision` to store precision setting, a `const map<string, size_t> fun` predetermined function informations `(string name, size_t number of parameters)`, and a `map<string, number> var` to store variables. I implemented most of the calculation in calculator's member functions.
-
 ```c++
-struct calculator {
-    size_t precision = 4;  // used in division & sqrt, 4 digit more by default
-    const map<string, size_t> fun = {{"abs", 1}, {"opp", 1}, {"sqrt", 1},
-                                     {"pow", 2}, {"random", 0}};
-    map<string, number> var;
-}
+// calculator.cpp
+
+#include "calculator.hpp"
+
+#include <iostream>
+#include <stdlib.h>
+#include <algorithm>
+#include <stack>
+
+using std::min;
+using std::max;
+using std::swap;
+using std::make_pair;
+using std::stack;
+using std::cout;
+using std::endl;
+
+// initiallize random seed and functions' (name, parameters)
 calculator::calculator() {
-    srand(time(NULL));  // used in random()
+    srand(time(NULL));
 }
-```
 
-
-
-### Arithmetic Operations
-
-#### Comparison
-
-Compare the value of two numbers, used a lot in other functions. First compare sign, then `0` as special case, then using exponent+size, and finally each bit.
-
-```c++
 /*
  * compare two numbers
  * -1: a < b
@@ -240,18 +331,7 @@ int calculator::compare(const number &a, const number &b) const {
     if (a.digit.size() < b.digit.size()) return -coe;
     return 0;
 }
-```
 
-
-
-
-
-
-#### Addition
-
-For I was using floating method to store number, the first step of addition is to align their percise digits (i.e. same exponent after complementing with `0` ), and then add up each digit and deal with the carriers.
-
-```c++
 // addition and substraction
 number calculator::add(const number &a, const number &b) const {
     if (a.error() || b.error()) return number("Error");
@@ -271,38 +351,13 @@ number calculator::add(const number &a, const number &b) const {
         for (int i = low; i <= high; ++i) {
             idx = i-low;
             if (ret.digit.size() == idx) ret.digit.push_back(0);
-            ret.digit[idx] += ((i>=a.exp && i < a.exp+(ll)a.digit.size()) ?
-                               a.digit[i-a.exp] : 0)+
-                              ((i>=b.exp && i < b.exp+(ll)b.digit.size()) ?
-                               b.digit[i-b.exp] : 0);
+            ret.digit[idx] += ((i >= a.exp && i < a.exp+(ll)a.digit.size()) ? a.digit[i-a.exp] : 0)+
+                              ((i >= b.exp && i < b.exp+(ll)b.digit.size()) ? b.digit[i-b.exp] : 0);
             if (ret.digit[idx] >= 10) {  // carry
                 ret.digit[idx] -= 10;
                 ret.digit.push_back(1);
             }
         }
-    } else {  // oposite sign, substraction actually
-        ...
-    }
-    ret.simplify();
-    return ret;
-}
-```
-
-
-
-#### Substraction
-
-I also implemented substraction in `add()` and consider it as two opposite number added up. To make the process of borrowing easy, I force the one whose absolute value is larger to be the minuend, and then special process the sign.
-
-```c++
-// addition and substraction
-number calculator::add(const number &a, const number &b) const {
-    if (a.error() || b.error()) return number("Error");
-    if (a.nan() || b.nan()) return number("NaN");
-
-    number ret;
-    if (a.negative == b.negative) {  // same sign, true addition
-        ...
     } else {  // oposite sign, substraction actually
         // make sure it's big - small
         number x = abs(a), y = abs(b);
@@ -320,18 +375,14 @@ number calculator::add(const number &a, const number &b) const {
                 temp.push_back(0);
                 --ret.exp;
             }
-            for (size_t i = 0; i < ret.digit.size(); ++i)
-                temp.push_back(ret.digit[i]);
+            for (size_t i = 0; i < ret.digit.size(); ++i) temp.push_back(ret.digit[i]);
             swap(ret.digit, temp);
         } else if (y.exp > x.exp) {
-            for (int i = y.exp-x.exp; i > 0; --i)
-                temp.push_back(0);
-            for (size_t i = 0; i < y.digit.size(); ++i)
-                temp.push_back(y.digit[i]);
+            for (int i = y.exp-x.exp; i > 0; --i) temp.push_back(0);
+            for (size_t i = 0; i < y.digit.size(); ++i) temp.push_back(y.digit[i]);
             swap(y.digit, temp);
         }
-        for (size_t i = 0; i < y.digit.size(); ++i)
-            ret.digit[i] -= y.digit[i];
+        for (size_t i = 0; i < y.digit.size(); ++i) ret.digit[i] -= y.digit[i];
 
         // borrow
         for (size_t i = 0; i < ret.digit.size(); ++i)
@@ -343,15 +394,8 @@ number calculator::add(const number &a, const number &b) const {
     ret.simplify();
     return ret;
 }
-```
 
-
-
-#### Multiplication
-
-This is the part implemented in the last projects. I first use `0` to fill answer's `vector<short> digit` to enough size for convenience, then iterating idx to add up and dealing with carryer is easier to handle, and finally add up their exponents.
-
-```c++
+// multiplication
 number calculator::multiply(const number &a, const number &b) const {
     if (a.error() || b.error()) return number("Error");
     if (a.nan() || b.nan()) return number("NaN");
@@ -376,15 +420,7 @@ number calculator::multiply(const number &a, const number &b) const {
     ret.simplify();
     return ret;
 }
-```
 
-
-
-#### Division
-
-Division is the hardest part of arithmetic operations because percision issues. I implemented the function much like we do as human: finding the differnece of their exponents, then trying out each bit of the quotient, which uses all other operations implemented before. I used binary answer to accelerate the process. Mention worthy that when the divisor is `0` , the answer is `NaN` (Not a Number).
-
-```c++
 // division
 number calculator::divide(const number &a, const number &b) const {
     if (a.error() || b.error()) return number("Error");
@@ -392,8 +428,7 @@ number calculator::divide(const number &a, const number &b) const {
     number ret;
 
     // speacial cases
-    if (b.digit.empty() || !~b.digit[0] ||
-        (!a.digit.empty() && !~a.digit[0])) {  // NaN
+    if (b.digit.empty() || !~b.digit[0] || (!a.digit.empty() && !~a.digit[0])) {  // NaN
         ret.digit.push_back(-1);
         return ret;
     }
@@ -417,8 +452,7 @@ number calculator::divide(const number &a, const number &b) const {
     x.simplify();
     if (!~compare(x, y)) {  // make sure x >= y
         ret.digit.push_back(0);
-        if (~ia)
-            x = add(multiply(x, number(10)), number(a.digit[ia--]));
+        if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
         else {
             ++x.exp;
             --ret.exp;
@@ -428,13 +462,10 @@ number calculator::divide(const number &a, const number &b) const {
 
     // calculate each bit of quotient
     short l, r, mid;
-    for (size_t i = 0;
-         i < max(a.digit.size(), b.digit.size())+precision; ++i) {
-        if ((ll)x.digit.size()+x.exp < (ll)y.digit.size()+y.exp ||
-            !~compare(x, y)) {  // skip 0s
+    for (size_t i = 0; i < max(a.digit.size(), b.digit.size())+precision; ++i) {
+        if ((ll)x.digit.size()+x.exp < (ll)y.digit.size()+y.exp || !~compare(x, y)) {  // skip 0
             ret.digit.push_back(0);
-            if (~ia)
-                x = add(multiply(x, number(10)), number(a.digit[ia--]));
+            if (~ia) x = add(multiply(x, number(10)), number(a.digit[ia--]));
             else {
                 ++x.exp;
                 --ret.exp;
@@ -445,8 +476,7 @@ number calculator::divide(const number &a, const number &b) const {
         l = 2, r = 9;
         while (l <= r) {  // try possible digits, with binary optimization
             mid = l+r>>1;
-            if (!~compare(add(x, multiply(y, number(-mid))), number()))
-                r = mid-1;
+            if (!~compare(add(x, multiply(y, number(-mid))), number())) r = mid-1;
             else l = mid+1;
         }
         ret.digit.push_back(r);
@@ -462,17 +492,7 @@ number calculator::divide(const number &a, const number &b) const {
     ret.simplify();
     return ret;
 }
-```
 
-
-
-### Functions
-
-#### Absolute
-
-Calculate the absolute value of a number, simply make `bool negative` to `false`.
-
-```c++
 // return the absolute number of x
 number calculator::abs(const number &x) const {
     if (x.error()) return number("Error");
@@ -483,15 +503,7 @@ number calculator::abs(const number &x) const {
     ret.negative = false;
     return ret;
 }
-```
 
-
-
-#### Opposite
-
-Calculate the opposite value of a number, simply invert `bool negastive`.
-
-```c++
 // return the opposite number of x
 number calculator::opp(const number &x) const {
     if (x.error()) return number("Error");
@@ -502,15 +514,7 @@ number calculator::opp(const number &x) const {
     ret.negative = !x.negative;
     return ret;
 }
-```
 
-
-
-#### Square Root Calculation
-
-Calculate the square root of a number, a function need some mathematics techniques. I chose Newton's Method $$(x_{n+1} = \frac{x_n^2+a}{2x_n})$$ to find the root, which converge very fast. Repeat the iteration until the error is lower than eps (a constant set according to global precision setting). I also limite the intermediate precision to accelerate.
-
-```c++
 // calculate the sqrt of x
 number calculator::sqrt(const number &a) const {
     if (a.error()) return number("Error");
@@ -530,25 +534,16 @@ number calculator::sqrt(const number &a) const {
     size_t limit = x.digit.size()+precision<<1;
     eps.exp = -precision<<1;
     int i = 0;
-    // Newton's method
-    while (compare(abs(add(ret, opp(temp))), eps) > 0) {
+    while (compare(abs(add(ret, opp(temp))), eps) > 0) {  // Newton's method
         ret.copy(temp);
         temp = divide(add(multiply(ret, ret), x), multiply(ret, number(2)));
-        temp.limit_precision(limit);  // limit temp's precise digits
+        temp.limit_precision(limit);
     }
     ret.exp += exp;
     ret.limit_precision(x.digit.size()+precision);
     return ret;
 }
-```
 
-
-
-#### Power
-
-This calculator can calculate a number's $$n^{th}$$ power $$(n\in\mathbb{N})$$ , using binary power to accelerate.
-
-```c++
 // calculate the N-th pow of x
 number calculator::pow(const number &x, const number &y) const {
     // check the validity of y
@@ -567,15 +562,8 @@ number calculator::pow(const number &x, const number &y) const {
     }
     return ret;
 }
-```
 
-
-
-#### Random 
-
-Generate a number with the global precision digits, random exponent and sign.
-
-```c++
+// generate a random number
 number calculator::random() const {
     number ret;
     for (int i = 0; i <= precision; ++i) ret.digit.push_back(rand()%10);
@@ -587,55 +575,27 @@ number calculator::random() const {
     ret.simplify();
     return ret;
 }
-```
 
-### Variable Definition
-
-Use `map<string, number> var` to store variables, but check the validity of names in advance. Globle precision setting is dealed here as well.
-
-```c++
-// define or modify variables
-void calculator::assign(const string &s, const number &x) {
-    if (s == "precision") {  // modify precision setting
-        if (x.nan() || x.error() || x.negative || x.exp < 0 ||
-            compare(x, number(__LONG_LONG_MAX__)) > 0) {
-            cout << "Invalid precision";
-            return;
-        }
-        precision = x.to_t();
-        cout << "Precision is set to " << x.to_t();
-        return;
-    }
-    if (fun.count(s)) {
-        cout << "Can not define names of functions as variables";
-        return;
-    }
-    if (isdigit(s[0])) {
-        cout << "Variable names can not start with a number";
-        return;
-    }
-    for (int i = 0; i < s.length(); ++i)
-        if (!validch(s[i])) {
-            cout << "Unsupported character(s) for variable names";
-            return;
-        }
-    var.insert_or_assign(s, x);
-    cout << "Assign " << x.to_s() <<" to " << s;
-}
-```
-
-
-
-### Expression Analysis
-
-My implementation is to classify the expression to assignment or calculation. If `'='` appears, I consider it as assignment, otherwise calculation. For assignment, I count `'='` for validity , then see the left as the name, the right side as a calculation expression , and at last check the name, calculate the value, then insert into or modify `map<string, number> var`.  For calculation,  my method is to get data and operators in turns, and use stack to convert the indix expression to postfix, and calculate each data element through recursion. There are too many stuff for string processing and validity checking, especially when choping up function's parameters and designing stack operators. See the code below for details. I put down many other functions to support this function.
-
-```c++
 // check whether c can be used in a variable name
-bool validch(char c);
+bool validch(char c) {
+    return isdigit(c) || isalpha(c) || c == '_';
+}
 
 // define the priority of signs
-int order(char c);
+int order(char c) {
+    switch (c) {
+        case '(':
+        case ')':
+            return 0;
+        case '+':
+        case '-':
+            return 1;
+        case '*':
+        case '/':
+            return 2;
+        default: return -1;
+    }
+}
 
 /*
  * return (data_type, length)
@@ -708,48 +668,37 @@ number calculator::calculate(const string &s) const {
     stack<char> op;
     stack<number> data;
     bool flag = true;
-    for (size_t i = 0, len; i < s.length();
-         i += len, flag = !flag) {
+    for (size_t i = 0, len; i < s.length(); i += len, flag = !flag) {
         if (flag) { // expect a data or '('s
             while (s[i] == '(') {
                 op.push('(');
                 if (++i == s.length()) return number("Error");
             }
-            //data may start with a sign
-            bool sign = (s[i] == '+' || s[i] == '-');
-            
-            // try to get a data (type, len)
-            pit temp = get_a_data(s, i+sign); 
+            bool sign = (s[i] == '+' || s[i] == '-');  // data start with a sign
+            pit temp = get_a_data(s, i+sign);  // try to get a data (type, len)
             int type = temp.first;
             len = temp.second;
-            
-            //deal with different type of data
             string sub;
             switch (type) {
                 case -1: return number("Error");
                 case 0:  // a number
                     len += sign;
                     sub = s.substr(i, len);
-                    if (isdigit(sub[0]) ||
-                        sub[0] == '+' ||sub[0] == '-')
+                    if (isdigit(sub[0]) || sub[0] == '+' || sub[0] == '-')
                         data.push(number(sub));
                     else data.push(var.find(sub)->second);
                     break;
                 case 1:  // a function
                     i += sign;
-                    if (i+len == s.length() || s[i+len] != '(')
-                        return number("Error");
+                    if (i+len == s.length() || s[i+len] != '(') return number("Error");
                     size_t cnt = 1, j;
-                    // find the paired ')'
-                    for (j = i+len+1; j < s.length() && cnt; ++j)
+                    for (j = i+len+1; j < s.length() && cnt; ++j)  // find the paired ')'
                         cnt += (s[j] == '(')-(s[j]==')');
                     if (cnt) return number("Error");
                     // split parameters and calculate the function
-                    number result = fun_calc(s.substr(i, len),
-                           		  	split(s.substr(i+len+1, j-i-len-2)));
+                    number result = fun_calc(s.substr(i, len), split(s.substr(i+len+1, j-i-len-2)));
                     if (result.error()) return number("Error");
-                    data.push((sign && s[i-1] == '-') ?
-                              opp(result) : result);
+                    data.push((sign && s[i-1] == '-') ? opp(result) : result);
                     len = j-i;
                     break;
             }
@@ -807,7 +756,33 @@ number calculator::calculate(const string &s) const {
 }
 
 // define or modify variables
-void calculator::assign(const string &s, const number &x);
+void calculator::assign(const string &s, const number &x) {
+    if (s == "precision") {  // modify precision setting
+        if (x.nan() || x.error() || x.negative || x.exp < 0 ||
+            compare(x, number(__LONG_LONG_MAX__)) > 0) {
+            cout << "Invalid precision";
+            return;
+        }
+        precision = x.to_t();
+        cout << "Precision is set to " << x.to_t();
+        return;
+    }
+    if (fun.count(s)) {
+        cout << "Can not define names of functions as variables";
+        return;
+    }
+    if (isdigit(s[0])) {
+        cout << "Variable names can not start with a number";
+        return;
+    }
+    for (int i = 0; i < s.length(); ++i)
+        if (!validch(s[i])) {
+            cout << "Unsupported character(s) for variable names";
+            return;
+        }
+    var.insert_or_assign(s, x);
+    cout << "Assign " << x.to_s() <<" to " << s;
+}
 
 /*
  * check the validity of the expression
@@ -847,97 +822,47 @@ string calculator::analyse(string &s) {
 }
 ```
 
+```c++
+// main.cpp
 
+#include "calculator.hpp"
 
+#include <iostream>
 
+using std::cin;
+using std::cout;
+using std::endl;
 
+int main() {
+    cout << "\nWelcome to A Better Calculator by Artanisax(12110524)!\n"
+            "Used for CS205-2022Fall Project 2\n"
+            "(Input \"quit\" to quit)\n" << endl;
+    calculator cal;
+    string s, expression;
+    while (true) {
+        getline(cin, s);
+        if (s.empty()) continue;
+        expression += s;
+        if (s.back() == '\\') expression.pop_back();  // new line
+        else {
+            cout <<cal.analyse(expression) << '\n' << endl;
+            expression.clear();
+        }
+    }
+    return 0;
+}
+```
 
-## Part 2 - Results & Verification
+```cmake
+# CMakeList.txt
 
-### Welcome
+cmake_minimum_required(VERSION 3.10)
 
-To show devs warmth, a welcome is indispensable.
+project(Calculator)
 
- ![60713G.png](https://t2.picb.cc/2022/10/16/60713G.png "Welcome")
+aux_source_directory(./src DIR_SRCS)
 
-#### Multiple Line Input
+include_directories(include)
 
-User can put a `'\'` at the end of the line, so the program will wait till the next line is input and append it to the original expression for analysis.
-
- ![6074sy.png](https://t2.picb.cc/2022/10/16/6074sy.png)
-
-### Invalid Cases
-
-Invalid cases include syntax error, not a number, invalid name, name conflict ...
-
- ![60hkrN.png](https://t2.picb.cc/2022/10/16/60hkrN.png)
-
-
-
-### Valid Cases
-
-#### Precision & Setting
-
- ![60hlxF.png](https://t2.picb.cc/2022/10/16/60hlxF.png)
-
- ![60hCtr.png](https://t2.picb.cc/2022/10/16/60hCtr.png)
-
- ![60hGcd.png](https://t2.picb.cc/2022/10/16/60hGcd.png)
-
-#### Variables
-
-The valid varible names only contain alphabet letters and numbers plus '_', and it can't start with numbers (see invalid cases above).
-
- ![60hc5J.png](https://t2.picb.cc/2022/10/16/60hc5J.png)
-
-#### Multiple Line Input
-
-User can put a `'\'` at the end of the line, so the program will wait till the next line is input and append it to the original expression for analysis.
-
- ![6074sy.png](https://t2.picb.cc/2022/10/16/6074sy.png)
-
-#### Combanition
-
- ![60h4y1.png](https://t2.picb.cc/2022/10/16/60h4y1.png)
-
-### Farewell
-
-Thank you for reading this boring report and (perhaps) testing my calculator.
-
- ![60hmS0.png](https://t2.picb.cc/2022/10/16/60hmS0.png)
-
-
-
-## Part 3 - Self-review
-
-Due to limited time and experience, there're some parts of this projects I didn't implement them in a simple and efficiency way, leading to poor code readability and program performance. But I've search for materials online and come up some ways to do better the next time.
-
-1. My program run significantly slow when multiplication and division are used. Here's some algorithm that can make them perform better.
-
-   + [FFT Polynomial Acceleration](https://www.luogu.com.cn/blog/attack/solution-p3803) (Using knowledge of convolution and complex number)
-   + [Variable-shifting SRT Division](https://zhuanlan.zhihu.com/p/463724259) (It seems more easy to implement if I use binary bits instead of decimal digits)
-
-2. In my project, I implement basic arithmetic operations in calculator.cpp, and didn't use overloaded operators, making function implements much more hard to read and fallible, especially when the expressions went complex.
-
-   For example, in my `sqrt()`, the Newton's Method is expressed by:
-
-   ```c++
-   temp = divide(add(multiply(ret, ret), x), multiply(ret, number(2)));
-   ```
-
-   But if I've overloaded the operation, it would be simply:
-
-   ```c++
-   temp = (ret*ret+x)/(ret*number(2))
-   ```
-
-   (Note: like changing from prefix expression to infix expression)
-
-3. One thing really confuse me is that when try to get the function names from the input string and call the correct ones in the program for I have to enumerate them in my program. But later I found pointers can point to functions in C++, so I wonder if I can use this feature to simplify coding. I'm willing to read more professional and mature source codes to figue it out.
-
-4. Some validity checking is annoying, maybe regex is helpful.
-
-## Part 4 - Codes & Comments
-
-**Please See [My GitHub Repository](https://github.com/Artanisax/CS205-2022Fall/tree/main/Project2)**
-
+add_executable(Calculator ${DIR_SRCS})
+```
