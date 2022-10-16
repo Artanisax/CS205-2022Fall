@@ -144,7 +144,7 @@ string number::to_s() const {
                     ret += ".";
                     for (int i = digit.size()-2; ~i; --i) ret += to_string(digit[i]);
                 }
-                ret += "e" + to_string(exp+(int)digit.size()-1);
+                ret += "e"+to_string(exp+(int)digit.size()-1);
             }
         }
     }
