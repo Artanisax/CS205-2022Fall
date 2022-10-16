@@ -17,8 +17,6 @@ struct calculator {
 
     calculator();
 
-    void print(const number &number) const;
-
     int compare(const number &a, const number &b) const;
 
     number add(const number &a, const number &b) const;

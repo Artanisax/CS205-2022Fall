@@ -18,10 +18,6 @@ calculator::calculator() {
     srand(time(NULL));
 }
 
-void calculator::print(const number &x) const {
-    cout << x.to_s() << '\n';
-}
-
 /*
  * compare two numbers
  * -1: a < b
