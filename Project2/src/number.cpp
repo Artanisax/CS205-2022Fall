@@ -109,10 +109,11 @@ void number::limit_percision(const size_t &limit) {
 
 // convert number to string for output
 string number::to_s() const {
+    if (digit.empty()) return "0";  // 0 alone
+    if (digit[0] == -2) return "Syntax Error!";
+    if (!~digit[0]) return "NaN";  // not a number
     string ret;
     if (op) return ret += op;
-    if (digit.empty()) return "0";  // 0 alone
-    if (!~digit[0]) return "NaN";  // not a number
     if (negative) ret += "-";
     if (-exp == digit.size()) {  // 0.
         ret += "0.";
@@ -151,7 +152,7 @@ string number::to_s() const {
 // convert number to size_t for percision
 size_t number::to_t() const {
     size_t ret = 0;
-    for (size_t i = digit.size(); ~i; --i) ret = ret*10+digit[i];
-    for (int i = 0; i < exp; ++i) ret *= 10;
+    for (size_t i = digit.size()-1; ~i; --i) ret = ret*10+digit[i];
+    for (size_t i = 0; i < exp; ++i) ret *= 10;
     return ret;
 }

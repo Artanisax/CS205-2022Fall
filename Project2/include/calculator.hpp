@@ -9,7 +9,7 @@ typedef pair<int, size_t> pit;
 struct calculator {
     size_t precision = 4;  // used in division & sqrt, 4 digit more by default
     const map<string, size_t> fun = {{"abs", 1}, {"opp", 1}, {"sqrt", 2},
-                                     {"pow", 2}, {"random", 5}};
+                                     {"pow", 2}, {"random", 0}};
     map<string, number> var;
 
     calculator();
@@ -30,7 +30,7 @@ struct calculator {
 
     number sqrt(const number &x) const;
     
-    number pow(const number &x, int t) const;
+    number pow(const number &ax, const number &t) const;
 
     number random(size_t len, ll exp) const;
 

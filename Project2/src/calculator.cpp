@@ -26,6 +26,7 @@ int calculator::compare(const number &a, const number &b) const {
     if (!a.negative && b.negative) return 1;
 
     // When a or b is 0
+    if (a.digit.empty() && b.digit.empty()) return 0;
     if (a.digit.empty()) return (b.negative ? 1 : -1);
     if (b.digit.empty()) return (a.negative ? -1 : 1);
 
@@ -46,8 +47,8 @@ int calculator::compare(const number &a, const number &b) const {
 
 // addition and substraction
 number calculator::add(const number &a, const number &b) const {
-    if (a.nan() || b.nan()) return number("NaN");
     if (a.error() || b.error()) return number("Error");
+    if (a.nan() || b.nan()) return number("NaN");
 
     number ret;
     if (a.negative == b.negative) {  // same sign, true addition
@@ -109,8 +110,8 @@ number calculator::add(const number &a, const number &b) const {
 
 // multiplication
 number calculator::multiply(const number &a, const number &b) const {
-    if (a.nan() || b.nan()) return number("NaN");
     if (a.error() || b.error()) return number("Error");
+    if (a.nan() || b.nan()) return number("NaN");
 
     number ret;
     if (a.digit.empty() || b.digit.empty()) return ret;
@@ -135,8 +136,8 @@ number calculator::multiply(const number &a, const number &b) const {
 
 // division
 number calculator::divide(const number &a, const number &b) const {
-    if (a.nan() || b.nan()) return number("NaN");
     if (a.error() || b.error()) return number("Error");
+    if (a.nan() || b.nan()) return number("NaN");
     number ret;
 
     // speacial cases
@@ -207,8 +208,8 @@ number calculator::divide(const number &a, const number &b) const {
 
 // return the absolute number of x
 number calculator::abs(const number &x) const {
-    if (x.nan()) return number("NaN");
     if (x.error()) return number("Error");
+    if (x.nan()) return number("NaN");
 
     number ret;
     ret.copy(x);
@@ -218,8 +219,8 @@ number calculator::abs(const number &x) const {
 
 // return the opposite number of x
 number calculator::opp(const number &x) const {
-    if (x.nan()) return number("NaN");
     if (x.error()) return number("Error");
+    if (x.nan()) return number("NaN");
 
     number ret;
     ret.copy(x);
@@ -229,8 +230,8 @@ number calculator::opp(const number &x) const {
 
 // calculate the sqrt of x
 number calculator::sqrt(const number &a) const {
-    if (a.nan()) return number("NaN");
     if (a.error()) return number("Error");
+    if (a.nan()) return number("NaN");
     
     number x, ret, temp, eps(1);
 
@@ -253,6 +254,24 @@ number calculator::sqrt(const number &a) const {
     }
     ret.exp += exp;
     ret.limit_percision(x.digit.size()+precision);
+    return ret;
+}
+
+// calculate the N-th pow of x
+number calculator::pow(const number &x, const number &y) const {
+    if (x.error() || y.error() || y.negative || y.exp < 0 ||
+        compare(y, number(__LONG_LONG_MAX__)) > 0)
+        return number("Error");
+    if (x.nan() || y.nan()) return number("NaN");
+    
+    size_t t = y.to_t();
+    number ret = number(1), temp;
+    temp.copy(x);
+    while (t) {
+        if (t&1) ret = multiply(ret, temp);
+        temp = multiply(temp, temp);
+        t >>= 1;
+    }
     return ret;
 }
 
@@ -296,19 +315,16 @@ int order(char c) {
  *  1: functions
  */
 pit calculator::get_a_data(const string &s, size_t begin) const {
-    cerr << s << '\n';
     if (isdigit(s[begin])) {  // a number without a sign
         size_t len = 1;
         bool dot = false;
         while (begin+len < s.length() &&
               (isdigit(s[begin+len]) || s[begin+len] == '.')){
-                cerr << s[begin+len] << ' ';
-                ++len;
-                if (s[begin+len] == '.'){
-                    // cerr << "'.' at " << begin + len << '\n';
-                    if (dot) return make_pair(-1, 0);
-                    else dot = true;
-                }
+            if (s[begin+len] == '.') {
+                if (dot) return make_pair(-1, 0);
+                else dot = true;
+            }
+            ++len;
         }
         return make_pair(0, len);
     }
@@ -317,10 +333,11 @@ pit calculator::get_a_data(const string &s, size_t begin) const {
         bool dot = false;
         while (begin+len < s.length() &&
               (isdigit(s[begin+len]) || s[begin+len] == '.')){
-                ++len;
-                if (s[begin+len] == '.')
-                    if (dot) return make_pair(-1, 0);
-                    else dot = true;
+            if (s[begin+len] == '.') {
+                if (dot) return make_pair(-1, 0);
+                else dot = true;
+            }
+            ++len;
         }
         if (len == 1) return make_pair(-1, 0);
         return make_pair(0, len);
@@ -367,7 +384,6 @@ number calculator::calculate(const string &s) const {
             pit temp = get_a_data(s, i);  // try to get a data (type, len)
             int type = temp.first;
             len = temp.second;
-            // cerr << "get: " << type << ' ' << len << '\n';
             string sub;
             switch (type) {
                 case -1: return number("Error");
@@ -408,11 +424,6 @@ number calculator::calculate(const string &s) const {
         data.push(number(op.top()));
         op.pop();
     }
-    // while (!data.empty()) {
-    //     cerr << data.top().to_s();
-    //     data.pop();
-    // }
-    // cerr << '\n';
 
     // calculate postfix expression
     stack<number> temp;
@@ -423,7 +434,6 @@ number calculator::calculate(const string &s) const {
     number cur, a, b;
     while (!temp.empty()) {
         cur = temp.top();
-        cerr << cur.to_s() << ' ';
         if (cur.op) {
             b = data.top();
             data.pop();
@@ -433,7 +443,6 @@ number calculator::calculate(const string &s) const {
         } else data.push(cur);
         temp.pop();
     }
-    cerr << '\n';
     return data.top();
 }
 
@@ -442,7 +451,7 @@ void calculator::assign(const string &s, const number &x) {
     if (s == "precision") {  // modify precision setting
         if (x.nan() || x.error() || x.negative || x.exp < 0 ||
             compare(x, number(__LONG_LONG_MAX__)) > 0) {
-            cout << "Invalid precision\n";
+            cout << "Invalid precision";
             return;
         }
         precision = x.to_t();
@@ -450,20 +459,20 @@ void calculator::assign(const string &s, const number &x) {
         return;
     }
     if (fun.count(s)) {
-        cout << "Can not define names of functions as variables\n";
+        cout << "Can not define names of functions as variables";
         return;
     }
     if (isdigit(s[0])) {
-        cout << "Variable names can not start with number\n";
+        cout << "Variable names can not start with a number";
         return;
     }
     for (int i = 0; i < s.length(); ++i)
         if (!validch(s[i])) {
-            cout << "Unsupported character(s) for variable names\n";
+            cout << "Unsupported character(s) for variable names";
             return;
         }
     var.insert_or_assign(s, x);
-    cout << "Assign " << x.to_s() <<" to " << s <<'\n';
+    cout << "Assign " << x.to_s() <<" to " << s;
 }
 
 /*
@@ -478,11 +487,10 @@ string calculator::analyse(string &s) {
             if (s[i] != ' ') temp.push_back(s[i]);
         swap(s, temp);
     }
-    cout << "s: " << s << '\n';
 
     // quit
     if (s == "quit") {
-        cout << "\nThanks for using. Good bye!\n";
+        cout << "Thanks for using. Good bye!\n\n";
         exit(0);
     }
 
@@ -493,13 +501,13 @@ string calculator::analyse(string &s) {
             size_t idx = s.find("=");
             string name = s.substr(0, idx);
             number value = calculate(s.substr(idx+1, s.length()-idx-1));
-            if (value.error()) return "Syntax Error\n";
+            if (value.error()) return "Syntax Error!";
             assign(name, value);
             return "";
-        } else return "Syntax Error!\n";
+        } else return "Syntax Error!";
 
     // calculate
     number ans = calculate(s);
-    if (ans.error()) return "Syntax Error\n";
-    return ans.to_s()+'\n';
+    if (ans.error()) return "Syntax Error!";
+    return ans.to_s();
 }
