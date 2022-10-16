@@ -365,9 +365,9 @@ vector<string> split(const string &s) {
         }
     }
     if(!s.empty()) ret.push_back(s.substr(begin, s.length()-begin));
-    cerr << "split: ";
-    for (size_t i = 0; i < ret.size(); ++i) cerr << ret[i] << ' ';
-    cerr <<'\n';
+    // cerr << "split: ";
+    // for (size_t i = 0; i < ret.size(); ++i) cerr << ret[i] << ' ';
+    // cerr <<'\n';
     return ret;
 }
 
@@ -384,21 +384,11 @@ number calculator::bin_calc(const number &a, const number &b, const char &c) con
 
 number calculator::fun_calc(const string &name, const vector<string> &parameter) const {
     if (parameter.size() != fun.find(name)->second) return number("Error");
-    if (name == "abs") {
-
-    }
-    if (name == "opp") {
-
-    }
-    if (name == "sqrt") {
-
-    }
-    if (name == "pow") {
-
-    }
-    if (name == "random") {
-        return random();
-    }
+    if (name == "abs") return abs(calculate(parameter[0]));
+    if (name == "opp") return opp(calculate(parameter[0]));
+    if (name == "sqrt") return sqrt(calculate(parameter[0]));
+    if (name == "pow") return pow(calculate(parameter[0]), calculate(parameter[1]));
+    if (name == "random") return random();
     return number("Error");
 }
 
