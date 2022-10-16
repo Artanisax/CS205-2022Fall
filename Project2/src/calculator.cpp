@@ -328,7 +328,7 @@ pit calculator::get_a_data(const string &s, size_t begin) const {
         size_t len = 1;
         bool dot = false;
         while (begin+len < s.length() &&
-              (isdigit(s[begin+len]) || s[begin+len] == '.')){
+              (isdigit(s[begin+len]) || s[begin+len] == '.')) {
             if (s[begin+len] == '.') {
                 if (dot) return make_pair(-1, 0);
                 else dot = true;
@@ -341,7 +341,7 @@ pit calculator::get_a_data(const string &s, size_t begin) const {
         size_t len = 1;
         bool dot = false;
         while (begin+len < s.length() &&
-              (isdigit(s[begin+len]) || s[begin+len] == '.')){
+              (isdigit(s[begin+len]) || s[begin+len] == '.')) {
             if (s[begin+len] == '.') {
                 if (dot) return make_pair(-1, 0);
                 else dot = true;
@@ -366,15 +366,13 @@ vector<string> split(const string &s) {
     size_t cnt = 0, begin = 0;
     for (size_t i = 0; i < s.length(); ++i) {
         cnt += (s[i] == '(')-(s[i]==')');
-        if (!cnt && s[i] == ',') {
+        if (!cnt && s[i] == ',') {  // split using ','
             ret.push_back(s.substr(begin, i-begin));
             begin = i+1;
         }
     }
+    // add the final substring or make it as 
     if(!s.empty()) ret.push_back(s.substr(begin, s.length()-begin));
-    // cerr << "split: ";
-    // for (size_t i = 0; i < ret.size(); ++i) cerr << ret[i] << ' ';
-    // cerr <<'\n';
     return ret;
 }
 
