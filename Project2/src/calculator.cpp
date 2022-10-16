@@ -326,7 +326,7 @@ int order(char c) {
  */
 pit calculator::get_a_data(const string &s, size_t begin) const {
     size_t len = 0;
-    if (isdigit(s[len])) {
+    if (isdigit(s[begin])) {
         bool dot = false;  // a flag for decimal
         while (begin+len < s.length() &&
                 (isdigit(s[begin+len]) || s[begin+len] == '.')) {
@@ -444,11 +444,15 @@ number calculator::calculate(const string &s) const {
             len = 1;
         }
     }
+
     while (!op.empty()) {  // convert into reversed postfix expression
         if (op.top() == '(') return number("Error");
         data.push(number(op.top()));
         op.pop();
     }
+
+    // cnt(operator) must be cnt(number)-1 in postfix expression
+    if (!(data.size()&1)) return number("Error");
 
     // calculate postfix expression
     stack<number> temp;
