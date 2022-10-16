@@ -5,10 +5,7 @@
 #include <algorithm>
 #include <stack>
 
-typedef pair<int, size_t> pit;
-
-using namespace std;
-
+// initiallize random seed and functions' (name, parameters)
 calculator::calculator() {
     srand(time(NULL));
 }
@@ -270,6 +267,11 @@ number calculator::random(size_t len, ll exp) const {
     return ret;
 }
 
+// check whether c can be used in a variable name
+bool validch(char c) {
+    return isdigit(c) || isalpha(c) || c == '_';
+}
+
 // define the priority of signs
 int order(char c) {
     switch (c) {
@@ -291,51 +293,63 @@ int order(char c) {
  * data_type:
  * -1: error
  *  0: number
- *  1: abs
- *  2: opp
- *  3: sqrt
- *  4: pow
- *  5: random
+ *  1: functions
  */
-pit get_a_data(const string &s, size_t begin) {
+pit calculator::get_a_data(const string &s, size_t begin) const {
+    cerr << s << '\n';
     if (isdigit(s[begin])) {  // a number without a sign
         size_t len = 1;
-        while (begin+len < s.length() && isdigit(s[begin+len])) ++len;
+        bool dot = false;
+        while (begin+len < s.length() &&
+              (isdigit(s[begin+len]) || s[begin+len] == '.')){
+                cerr << s[begin+len] << ' ';
+                ++len;
+                if (s[begin+len] == '.'){
+                    // cerr << "'.' at " << begin + len << '\n';
+                    if (dot) return make_pair(-1, 0);
+                    else dot = true;
+                }
+        }
         return make_pair(0, len);
     }
-    switch (s[begin]) {  // signs or functions
-        case '+':  // a number with a sign
-        case '-':
-            if (begin == s.length()-1 || !isdigit(s[begin+1]))
-                return make_pair(-1, 0);
-            else {
-                size_t len = 2;
-                while (begin+len < s.length() && isdigit(s[begin+len])) ++len;
-                return make_pair(0, len);
-            }
-        case 'a':  // abs
-            if (begin+2 <= s.length() && s.substr(begin, 3) == "abs")
-                return make_pair(1, 3);
-        case 'o':  // opp
-            if (begin+2 <= s.length() && s.substr(begin, 3) == "opp")
-                return make_pair(2, 3);
-        case 's':  // sqrt
-            if (begin+3 <= s.length() && s.substr(begin, 4) == "sqrt")
-                return make_pair(3, 4);
-        case 'p':  // pow
-            if (begin+3 <= s.length() && s.substr(begin, 4) == "pow")
-                return make_pair(4, 4);
-        case 'r':  // random
-            if (begin+5 <= s.length() && s.substr(begin, 6) == "random")
-                return make_pair(5, 6);
+    if (s[begin] == '+' || s[begin] == '-') {  // a number with a sign
+        size_t len = 1;
+        bool dot = false;
+        while (begin+len < s.length() &&
+              (isdigit(s[begin+len]) || s[begin+len] == '.')){
+                ++len;
+                if (s[begin+len] == '.')
+                    if (dot) return make_pair(-1, 0);
+                    else dot = true;
+        }
+        if (len == 1) return make_pair(-1, 0);
+        return make_pair(0, len);
+    } else {  // a variable or a function
+        size_t len = 1;
+        while (begin+len < s.length() && validch(s[begin+len])) ++len;
+        string name = s.substr(begin, len);
+        if (var.count(name)) return make_pair(0, len);
+        if (fun.count(name)) return make_pair(1, len);
     }
     return make_pair(-1, 0);
 }
 
+// for "fun(s)", split s into seperate parameters
 vector<string> split(string s, size_t begin, size_t len, char c) {
     vector<string> ret;
     
     return ret;
+}
+
+// calculate two numbers
+number calculator::bin_calc(const number &a, const number &b, const char &c) const {
+    switch (c) {
+        case '+': return add(a, b);
+        case '-': return add(a, opp(b));
+        case '*': return multiply(a, b);
+        case '/': return divide(a, b);
+        default: return number("Error");
+    }
 }
 
 // calculate an expression
@@ -350,27 +364,21 @@ number calculator::calculate(const string &s) const {
                 op.push('(');
                 if (++i == s.length()) return number("Error");
             }
-            pit temp = get_a_data(s, i);  // try to get a data
+            pit temp = get_a_data(s, i);  // try to get a data (type, len)
             int type = temp.first;
             len = temp.second;
-            if (!~type) return number("Error");
-
-            if (!type) {  // a simple number
-                data.push(number(s.substr(i, len)));
-                continue;
-            }
-            
-            // functions
+            // cerr << "get: " << type << ' ' << len << '\n';
+            string sub;
             switch (type) {
-                case 1:
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                case 4:
-                    break;
-                case 5:
+                case -1: return number("Error");
+                case 0:  // a number
+                    sub = s.substr(i, len);
+                    if (isdigit(sub[0]) || sub[0] == '+' || sub[0] == '-')
+                        data.push(number(sub));
+                    else data.push(var.find(sub)->second);
+                    continue;
+                case 1:  // a function
+
                     break;
             }
         } else {  // expect a operator or a ')'
@@ -395,31 +403,67 @@ number calculator::calculate(const string &s) const {
             len = 1;
         }
     }
-    while (!op.empty()) {
+    while (!op.empty()) {  // convert into reversed postfix expression
         if (op.top() == '(') return number("Error");
         data.push(number(op.top()));
         op.pop();
     }
-    while (!data.empty()) {
-        cout << data.top().to_s();
+    // while (!data.empty()) {
+    //     cerr << data.top().to_s();
+    //     data.pop();
+    // }
+    // cerr << '\n';
+
+    // calculate postfix expression
+    stack<number> temp;
+    while (!data.empty()) {  // generate a postfix expression
+        temp.push(data.top());
         data.pop();
     }
-    cout << '\n';
-    if (!data.empty()) return number("Error");
-    return ret;
+    number cur, a, b;
+    while (!temp.empty()) {
+        cur = temp.top();
+        cerr << cur.to_s() << ' ';
+        if (cur.op) {
+            b = data.top();
+            data.pop();
+            a = data.top();
+            data.pop();
+            data.push(bin_calc(a, b, cur.op));
+        } else data.push(cur);
+        temp.pop();
+    }
+    cerr << '\n';
+    return data.top();
 }
 
 // define or modify variables
 void calculator::assign(const string &s, const number &x) {
     if (s == "precision") {  // modify precision setting
-        if (x.nan() || x.error() || x.negative ||
+        if (x.nan() || x.error() || x.negative || x.exp < 0 ||
             compare(x, number(__LONG_LONG_MAX__)) > 0) {
             cout << "Invalid precision\n";
             return;
         }
         precision = x.to_t();
+        cout << "Precision is set to " << x.to_t();
+        return;
     }
-    variable.insert_or_assign(s, x);
+    if (fun.count(s)) {
+        cout << "Can not define names of functions as variables\n";
+        return;
+    }
+    if (isdigit(s[0])) {
+        cout << "Variable names can not start with number\n";
+        return;
+    }
+    for (int i = 0; i < s.length(); ++i)
+        if (!validch(s[i])) {
+            cout << "Unsupported character(s) for variable names\n";
+            return;
+        }
+    var.insert_or_assign(s, x);
+    cout << "Assign " << x.to_s() <<" to " << s <<'\n';
 }
 
 /*
@@ -435,6 +479,7 @@ string calculator::analyse(string &s) {
         swap(s, temp);
     }
     cout << "s: " << s << '\n';
+
     // quit
     if (s == "quit") {
         cout << "\nThanks for using. Good bye!\n";

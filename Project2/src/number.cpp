@@ -3,8 +3,6 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace std;
-
 number::number() {}
 
 number::number(const char &c) {
