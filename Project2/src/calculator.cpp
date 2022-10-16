@@ -253,7 +253,7 @@ number calculator::sqrt(const number &a) const {
     int i = 0;
     while (compare(abs(add(ret, opp(temp))), eps) > 0) {  // Newton's method
         ret.copy(temp);
-        temp = add(ret, opp(divide(add(multiply(ret, ret), opp(x)), multiply(ret, number(2)))));
+        temp = divide(add(multiply(ret, ret), x), multiply(ret, number(2)));
         temp.limit_precision(limit);
     }
     ret.exp += exp;
