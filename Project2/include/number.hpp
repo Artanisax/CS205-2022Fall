@@ -34,7 +34,7 @@ struct number {
 
 	void simplify();
 
-	void limit_percision(const size_t &limit);
+	void limit_precision(const size_t &limit);
 
 	string to_s() const;
 

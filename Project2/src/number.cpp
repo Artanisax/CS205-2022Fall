@@ -99,7 +99,7 @@ void number::simplify() {
 }
 
 // limit the percision of the number
-void number::limit_percision(const size_t &limit) {
+void number::limit_precision(const size_t &limit) {
     reverse(digit.begin(), digit.end());
     while (digit.size() > limit) {  // limit percision
         digit.pop_back();
