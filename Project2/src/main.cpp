@@ -14,7 +14,8 @@ int main() {
     ll exp;
     while (true) {
         getline(cin, s1);
-        cout << cal.analyse(s1) << "\n\n";
+        cout << cal.random().to_s() << '\n';
+        // cout << cal.analyse(s1) << "\n\n";
     }
     return 0;
 }

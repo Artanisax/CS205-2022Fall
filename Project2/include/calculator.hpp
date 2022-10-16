@@ -32,7 +32,7 @@ struct calculator {
     
     number pow(const number &ax, const number &t) const;
 
-    number random(size_t len, ll exp) const;
+    number random() const;
 
     pit get_a_data(const string &s, size_t begin) const;
 

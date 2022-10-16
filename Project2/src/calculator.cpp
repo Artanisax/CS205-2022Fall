@@ -276,12 +276,14 @@ number calculator::pow(const number &x, const number &y) const {
 }
 
 // generate a random number
-number calculator::random(size_t len, ll exp) const {
+number calculator::random() const {
     number ret;
-    while (len--) ret.digit.push_back(rand()%10);
+    for (int i = 0; i <= precision; ++i) ret.digit.push_back(rand()%10);
     // make sure the MSB is not 0
     while (!ret.digit.back()) ret.digit.back() = rand()%10;
-    ret.exp = exp;
+    ll exp = (rand()&1 ? rand() : -rand());
+    ret.exp = exp%precision-(exp < 0)*precision;
+    ret.negative = rand()&1;
     ret.simplify();
     return ret;
 }
@@ -395,9 +397,9 @@ number calculator::fun_calc(const string &name, const vector<string> &parameter)
 
     }
     if (name == "random") {
-
+        return random();
     }
-    return number();
+    return number("Error");
 }
 
 // calculate an expression
@@ -406,7 +408,6 @@ number calculator::calculate(const string &s) const {
     stack<number> data;
     bool flag = true;
     for (size_t i = 0, len; i < s.length(); i += len, flag = !flag) {
-        cerr << "i:" << i << '\n';
         if (flag) { // expect a data or '('s
             while (s[i] == '(') {
                 op.push('(');
