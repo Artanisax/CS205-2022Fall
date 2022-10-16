@@ -352,9 +352,20 @@ pit calculator::get_a_data(const string &s, size_t begin) const {
 }
 
 // for "fun(s)", split s into seperate parameters
-vector<string> split(string s, size_t begin, size_t len, char c) {
+vector<string> split(const string &s) {
     vector<string> ret;
-    
+    size_t cnt = 0, begin = 0;
+    for (size_t i = 0; i < s.length(); ++i) {
+        cnt += (s[i] == '(')-(s[i]==')');
+        if (!cnt && s[i] == ',') {
+            ret.push_back(s.substr(begin, i-begin));
+            begin = i+1;
+        }
+    }
+    if(!s.empty()) ret.push_back(s.substr(begin, s.length()-begin));
+    cerr << "split: ";
+    for (size_t i = 0; i < ret.size(); ++i) cerr << ret[i] << ' ';
+    cerr <<'\n';
     return ret;
 }
 
@@ -369,13 +380,33 @@ number calculator::bin_calc(const number &a, const number &b, const char &c) con
     }
 }
 
+number calculator::fun_calc(const string &name, const vector<string> &parameter) const {
+    if (parameter.size() != fun.find(name)->second) return number("Error");
+    if (name == "abs") {
+
+    }
+    if (name == "opp") {
+
+    }
+    if (name == "sqrt") {
+
+    }
+    if (name == "pow") {
+
+    }
+    if (name == "random") {
+
+    }
+    return number();
+}
+
 // calculate an expression
 number calculator::calculate(const string &s) const {
-    number ret;
     stack<char> op;
     stack<number> data;
     bool flag = true;
     for (size_t i = 0, len; i < s.length(); i += len, flag = !flag) {
+        cerr << "i:" << i << '\n';
         if (flag) { // expect a data or '('s
             while (s[i] == '(') {
                 op.push('(');
@@ -394,7 +425,16 @@ number calculator::calculate(const string &s) const {
                     else data.push(var.find(sub)->second);
                     continue;
                 case 1:  // a function
-
+                    if (i+len == s.length() || s[i+len] != '(') return number("Error");
+                    size_t cnt = 1, j;
+                    for (j = i+len+1; j < s.length() && cnt; ++j)  // find the paired ')'
+                        cnt += (s[j] == '(')-(s[j]==')');
+                    if (cnt) return number("Error");
+                    // split parameters and calculate the function
+                    number result = fun_calc(s.substr(i, len), split(s.substr(i+len+1, j-i-len-2)));
+                    if (result.error()) return number("Error");
+                    data.push(result);
+                    len = j-i;
                     break;
             }
         } else {  // expect a operator or a ')'

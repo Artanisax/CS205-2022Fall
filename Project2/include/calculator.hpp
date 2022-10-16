@@ -8,7 +8,7 @@ typedef pair<int, size_t> pit;
 
 struct calculator {
     size_t precision = 4;  // used in division & sqrt, 4 digit more by default
-    const map<string, size_t> fun = {{"abs", 1}, {"opp", 1}, {"sqrt", 2},
+    const map<string, size_t> fun = {{"abs", 1}, {"opp", 1}, {"sqrt", 1},
                                      {"pow", 2}, {"random", 0}};
     map<string, number> var;
 
@@ -36,7 +36,9 @@ struct calculator {
 
     pit get_a_data(const string &s, size_t begin) const;
 
-    number bin_calc(const number &a, const number &b, const char &c) const; 
+    number bin_calc(const number &a, const number &b, const char &c) const;
+
+    number fun_calc(const string &name, const vector<string> &parameter) const;
 
     number calculate(const string &s) const;
 
