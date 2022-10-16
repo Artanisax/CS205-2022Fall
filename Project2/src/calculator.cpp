@@ -8,9 +8,10 @@
 using std::min;
 using std::max;
 using std::swap;
-using std::cout;
 using std::make_pair;
 using std::stack;
+using std::cout;
+using std::endl;
 
 // initiallize random seed and functions' (name, parameters)
 calculator::calculator() {
@@ -324,34 +325,19 @@ int order(char c) {
  *  1: functions
  */
 pit calculator::get_a_data(const string &s, size_t begin) const {
-    if (isdigit(s[begin])) {  // a number without a sign
-        size_t len = 1;
-        bool dot = false;
+    size_t len = 0;
+    if (isdigit(s[len])) {
+        bool dot = false;  // a flag for decimal
         while (begin+len < s.length() &&
-              (isdigit(s[begin+len]) || s[begin+len] == '.')) {
+                (isdigit(s[begin+len]) || s[begin+len] == '.')) {
             if (s[begin+len] == '.') {
                 if (dot) return make_pair(-1, 0);
                 else dot = true;
             }
             ++len;
         }
-        return make_pair(0, len);
-    }
-    if (s[begin] == '+' || s[begin] == '-') {  // a number with a sign
-        size_t len = 1;
-        bool dot = false;
-        while (begin+len < s.length() &&
-              (isdigit(s[begin+len]) || s[begin+len] == '.')) {
-            if (s[begin+len] == '.') {
-                if (dot) return make_pair(-1, 0);
-                else dot = true;
-            }
-            ++len;
-        }
-        if (len == 1) return make_pair(-1, 0);
         return make_pair(0, len);
     } else {  // a variable or a function
-        size_t len = 1;
         while (begin+len < s.length() && validch(s[begin+len])) ++len;
         string name = s.substr(begin, len);
         if (var.count(name)) return make_pair(0, len);
@@ -408,19 +394,22 @@ number calculator::calculate(const string &s) const {
                 op.push('(');
                 if (++i == s.length()) return number("Error");
             }
-            pit temp = get_a_data(s, i);  // try to get a data (type, len)
+            bool sign = (s[i] == '+' || s[i] == '-');  // data start with a sign
+            pit temp = get_a_data(s, i+sign);  // try to get a data (type, len)
             int type = temp.first;
             len = temp.second;
             string sub;
             switch (type) {
                 case -1: return number("Error");
                 case 0:  // a number
+                    len += sign;
                     sub = s.substr(i, len);
                     if (isdigit(sub[0]) || sub[0] == '+' || sub[0] == '-')
                         data.push(number(sub));
                     else data.push(var.find(sub)->second);
-                    continue;
+                    break;
                 case 1:  // a function
+                    i += sign;
                     if (i+len == s.length() || s[i+len] != '(') return number("Error");
                     size_t cnt = 1, j;
                     for (j = i+len+1; j < s.length() && cnt; ++j)  // find the paired ')'
@@ -429,7 +418,7 @@ number calculator::calculate(const string &s) const {
                     // split parameters and calculate the function
                     number result = fun_calc(s.substr(i, len), split(s.substr(i+len+1, j-i-len-2)));
                     if (result.error()) return number("Error");
-                    data.push(result);
+                    data.push((sign && s[i-1] == '-') ? opp(result) : result);
                     len = j-i;
                     break;
             }
@@ -526,7 +515,7 @@ string calculator::analyse(string &s) {
 
     // quit
     if (s == "quit") {
-        cout << "Thanks for using. Good bye!\n\n";
+        cout << "\nThanks for using. Good bye!\n" << endl;
         exit(0);
     }
 

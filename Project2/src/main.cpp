@@ -14,10 +14,11 @@ int main() {
     string s, expression;
     while (true) {
         getline(cin, s);
+        if (s.empty()) continue;
         expression += s;
         if (s.back() == '\\') expression.pop_back();  // new line
         else {
-            cout << cal.analyse(expression);
+            cout <<cal.analyse(expression) << '\n' << endl;
             expression.clear();
         }
     }
