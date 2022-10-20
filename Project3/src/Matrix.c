@@ -5,24 +5,24 @@
 
 Matrix createMatrix(const size_t col, const size_t row);
 
-void deleteMatrix();
+inline void deleteMatrix();
 
-void copyMatrix();
+inline void copyMatrix();
 
-void addMatrix();
+inline void addMatrix();
 
-void substractMatrix();
+inline void substractMatrix();
 
-void multiplyMatrix();
+inline void multiplyMatrix();
 
-void addScalar();
+inline void addScalar();
 
-void substractScalar();
+inline void substractScalar();
 
-void multiplyScalar();
+inline void multiplyScalar();
 
-double minEntry();
+inline double minEntry();
 
-double maxEntry();
+inline double maxEntry();
 
 #endif // __MATRIX_C__
