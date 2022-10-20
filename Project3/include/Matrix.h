@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __MATRIX_H__
+#define __MATRIX_H__
 
 #include <stddef.h>
 #include <stdlib.h>
@@ -41,3 +42,5 @@ double minEntry();
 
 // Find the maximal value of a matrix
 double maxEntry();
+
+#endif // __MATRIX_H__
