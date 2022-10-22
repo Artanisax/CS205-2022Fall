@@ -22,7 +22,7 @@ void deleteMatrix(Matrix *const mat);
 void copyMatrix(Matrix *const a, const Matrix *const b);
 
 // Add two matrices
-void addMatrix(const Matrix *const a, const Matrix *const b);
+Matrix *addMatrix(const Matrix *const a, const Matrix *const b);
 
 // Substraction of to matrices
 void substractMatrix(const Matrix *const a, const Matrix *const b);
@@ -50,7 +50,7 @@ void print(const Matrix *const mat);
 inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
     if (!entry) {
         puts("Error in createMatrix(): Invalid entry array pointer!");
-        return;
+        return NULL;
     }
     Matrix *mat = (Matrix *)malloc(sizeof(Matrix)); // force convert the pointer type in support of C++
     mat->row = row;
@@ -82,12 +82,34 @@ inline void copyMatrix(Matrix *const a, const Matrix *const b) {
     for (size_t i = 0; i < size; ++i) a->entry[i] = b->entry[i];
 }
 
-inline void addMatrix(const Matrix *const a, const Matrix *const b) {
-    
+inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
+    if (!a || !b) {
+        puts("Error in addMatrix(): Invalid matrices' pointer!");
+        return;
+    }
+    if (a->row != b->row || a->col != b->col) {
+        puts("Error in addMatrix(): Inequal dementions!");
+        return NULL;
+    }
+    size_t size = a->row*a->col;
+    entry_t result[size];
+    for (size_t i = 0; i < size; ++i) result[i] = a->entry[i]+b->entry[i];
+    return createMatrix(a->row, a->col, result);
 }
 
 inline void substractMatrix(const Matrix *const a, const Matrix *const b) {
-
+    if (!a || !b) {
+        puts("Error in substractMatrix(): Invalid matrices' pointer!");
+        return;
+    }
+    if (a->row != b->row || a->col != b->col) {
+        puts("Error in substractMatrix(): Inequal dementions!");
+        return NULL;
+    }
+    size_t size = a->row*a->col;
+    entry_t result[size];
+    for (size_t i = 0; i < size; ++i) result[i] = a->entry[i]-b->entry[i];
+    return createMatrix(a->row, a->col, result);
 }
 
 inline void multiplyMatrix(const Matrix *const a, const Matrix *const b) {
