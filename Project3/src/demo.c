@@ -8,9 +8,9 @@ int main () {
                     0, 1, 0,
                     0, 0, 1,
                     0, 0, 0};
-    Matrix *a = createMatrix(3, 4, ea), *b = createMatrix(4, 3, eb);
-    multiplyScalar(a, 1.3);
-    print(a);
-    
+    Matrix *a = createMatrix(3, 4, ea), *b = createMatrix(3, 4, eb);
+    multiplyScalar(a, 1.4);
+    Matrix *result = substractMatrix(a, b);
+    print(result);
     return 0;
 }
