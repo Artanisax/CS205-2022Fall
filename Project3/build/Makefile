@@ -129,53 +129,29 @@ Matrix/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/build
 .PHONY : Matrix/fast
 
-src/Matrix.o: src/Matrix.c.o
-.PHONY : src/Matrix.o
+src/demo.o: src/demo.c.o
+.PHONY : src/demo.o
 
 # target to build an object file
-src/Matrix.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.c.o
-.PHONY : src/Matrix.c.o
+src/demo.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.o
+.PHONY : src/demo.c.o
 
-src/Matrix.i: src/Matrix.c.i
-.PHONY : src/Matrix.i
-
-# target to preprocess a source file
-src/Matrix.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.c.i
-.PHONY : src/Matrix.c.i
-
-src/Matrix.s: src/Matrix.c.s
-.PHONY : src/Matrix.s
-
-# target to generate assembly for a file
-src/Matrix.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.c.s
-.PHONY : src/Matrix.c.s
-
-src/main.o: src/main.c.o
-.PHONY : src/main.o
-
-# target to build an object file
-src/main.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/main.c.o
-.PHONY : src/main.c.o
-
-src/main.i: src/main.c.i
-.PHONY : src/main.i
+src/demo.i: src/demo.c.i
+.PHONY : src/demo.i
 
 # target to preprocess a source file
-src/main.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/main.c.i
-.PHONY : src/main.c.i
+src/demo.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.i
+.PHONY : src/demo.c.i
 
-src/main.s: src/main.c.s
-.PHONY : src/main.s
+src/demo.s: src/demo.c.s
+.PHONY : src/demo.s
 
 # target to generate assembly for a file
-src/main.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/main.c.s
-.PHONY : src/main.c.s
+src/demo.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.s
+.PHONY : src/demo.c.s
 
 # Help Target
 help:
@@ -186,12 +162,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Matrix"
-	@echo "... src/Matrix.o"
-	@echo "... src/Matrix.i"
-	@echo "... src/Matrix.s"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
+	@echo "... src/demo.o"
+	@echo "... src/demo.i"
+	@echo "... src/demo.s"
 .PHONY : help
 
 
