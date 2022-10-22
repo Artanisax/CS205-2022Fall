@@ -10,7 +10,6 @@ typedef float entry_t;
 typedef struct {
     size_t row, col;
     entry_t *entry;
-    float rank, addent, multiplier;
 } Matrix;
 
 // Create an empty matrix
@@ -19,17 +18,17 @@ Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const en
 // Delete a matrix
 void deleteMatrix(Matrix *const mat);
 
-// copy a matrix
+// copy data from b to a
 void copyMatrix(Matrix *const a, const Matrix *const b);
 
 // Add two matrices
-void addMatrix();
+void addMatrix(const Matrix *const a, const Matrix *const b);
 
 // Substraction of to matrices
-void substractMatrix();
+void substractMatrix(const Matrix *const a, const Matrix *const b);
 
 // Multiply two matrices
-void multiplyMatrix();
+void multiplyMatrix(const Matrix *const a, const Matrix *const b);
 
 // Add a scalar to a matrix
 void addScalar();
@@ -49,37 +48,49 @@ entry_t maxEntry();
 void print(const Matrix *const mat);
 
 inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
+    if (!entry) {
+        puts("Error in createMatrix(): Invalid entry array pointer!");
+        return;
+    }
     Matrix *mat = (Matrix *)malloc(sizeof(Matrix)); // force convert the pointer type in support of C++
     mat->row = row;
     mat->col = col;
     size_t size = row*col;
     mat->entry = (entry_t *)malloc(sizeof(entry_t)*size);
     for (size_t i = 0; i < size; ++i) mat->entry[i] = entry[i];
-    mat->addent = 0;
-    mat->multiplier = 1;
     return mat;
 }
 
 inline void deleteMatrix(Matrix *const mat) {
+    if (!mat) {
+        puts("Error in deleteMatrix(): Invalid matrix pointer!");
+        return;
+    }
     free(mat->entry);
     free(mat);
 }
 
 inline void copyMatrix(Matrix *const a, const Matrix *const b) {
+    if (!a || !b) {
+        puts("Error in copyMatrix(): Invalid matrices' pointer!");
+        return;
+    }
+    a->row = b->row;
+    a->col = b->col;
     size_t size = b->row*b->col;
     realloc(a->entry, size);
     for (size_t i = 0; i < size; ++i) a->entry[i] = b->entry[i];
 }
 
-inline void addMatrix() {
+inline void addMatrix(const Matrix *const a, const Matrix *const b) {
+    
+}
+
+inline void substractMatrix(const Matrix *const a, const Matrix *const b) {
 
 }
 
-inline void substractMatrix() {
-
-}
-
-inline void multiplyMatrix() {
+inline void multiplyMatrix(const Matrix *const a, const Matrix *const b) {
 
 }
 
