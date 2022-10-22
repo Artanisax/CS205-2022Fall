@@ -5,8 +5,8 @@
 
 // Global settings
 typedef float entry_t;
-#define entry_place_holder "%.2f\t"
-// If needed, change these to other types (e.g. double "%.4lf")
+#define entry_place_holder "%.-2f\t"
+// If needed, change these to other types (e.g. double "%.4lf\t")
 
 // Matrix structure
 typedef struct {
@@ -40,9 +40,14 @@ entry_t max(entry_t a, entry_t b);
 
 entry_t minEntry(const Matrix *const mat);
 
-// Find the maximal value of a matrix
 entry_t maxEntry(const Matrix *const mat);
 
+entry_t trace(const Matrix *const mat);
+
+entry_t rank(const Matrix *const mat)
+
 void print(const Matrix *const mat);
+
+// void print(const Matrix *const mat, int precision);
 
 #endif // __MATRIX_H__

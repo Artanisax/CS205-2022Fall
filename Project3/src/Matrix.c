@@ -4,7 +4,13 @@
 #include <math.h>
 #include <stdio.h>
 
-// Create an empty matrix with given row, col and entry[]
+/**
+ * @brief Create a matrix with initialization
+ * 
+ * @param row The number of rows
+ * @param col The number of columns
+ * @param entry A pointer points to the array of entries
+*/
 inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
     if (!entry) {
         puts("Error in createMatrix(): Invalid entry array pointer!");
@@ -20,7 +26,11 @@ inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *c
     return mat;
 }
 
-// Delete a matrix(*mat)
+/**
+ * @brief Delete a matrix
+ * 
+ * @param mat The pointer points the matrix to be deleted
+*/
 inline void deleteMatrix(Matrix *const mat) {
     if (!mat) {
         puts("Error in deleteMatrix(): Invalid matrix pointer!");
@@ -30,7 +40,12 @@ inline void deleteMatrix(Matrix *const mat) {
     free(mat);
 }
 
-// Copy data from *b to *a
+/**
+ * @brief Copy data from a matrix to another
+ * 
+ * @param a A pointer point to the DIR matrix
+ * @param b A pointer point to the SRC matrix
+*/
 inline void copyMatrix(Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in copyMatrix(): Invalid matrix pointers!");
@@ -39,11 +54,16 @@ inline void copyMatrix(Matrix *const a, const Matrix *const b) {
     a->row = b->row;
     a->col = b->col;
     size_t size = b->row*b->col;
-    a->entry = realloc(a->entry, size);
+    a->entry = realloc(a->entry, size); // equivalent to free() first and then malloc()
     memcpy(a->entry, b->entry, sizeof(entry_t)*size);
 }
 
-// Add up a *and *b
+/**
+ * @brief Matrix addition
+ * 
+ * @param a A pointer point to the augend matrix
+ * @param b A pointer point to the addend matrix
+*/
 inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in addMatrix(): Invalid matrix pointers!");
@@ -60,7 +80,12 @@ inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     return createMatrix(a->row, a->col, entry);
 }
 
-// Substract *b from *a
+/**
+ * @brief Matrix substraction 
+ * 
+ * @param a A pointer point to the subtrahend matrix
+ * @param b A pointer point to the subtractor matrix
+*/
 inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in substractMatrix(): Invalid matrix pointers!");
@@ -77,7 +102,12 @@ inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
     return createMatrix(a->row, a->col, entry);
 }
 
-// Multiply *a and *b
+/**
+ * @brief Matrix multiplication 
+ * 
+ * @param a A pointer point to the multiplicand matrix
+ * @param b A pointer point to the multiplier matrix
+*/
 inline Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in multiplyMatrix(): Invalid matrix pointers!");
@@ -98,7 +128,12 @@ inline Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
     return createMatrix(a->row, b->col, entry);
 }
 
-// Add a scalar(x) to a matrix(*mat)
+/**
+ * @brief Add a scalar to a matrix 
+ * 
+ * @param mat A pointer point to the augend matrix
+ * @param x The addend scalar
+*/
 inline void addScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in addScalar(): Invalid matrix pointer!");
@@ -108,7 +143,12 @@ inline void addScalar(const Matrix *mat, const entry_t x) {
         mat->entry[i] += x;
 }
 
-// Subtract a scalar(x) from a matrix(*mat)
+/**
+ * @brief Substract a scalar from a matrix 
+ * 
+ * @param mat A pointer point to the subtrahend matrix
+ * @param x The substractor scalar
+*/
 inline void substractScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in substractScalar(): Invalid matrix pointer!");
@@ -118,7 +158,12 @@ inline void substractScalar(const Matrix *mat, const entry_t x) {
         mat->entry[i] -= x;
 }
 
-// Multiply a matrix(*mat) with a scalar(x)
+/**
+ * @brief Multiply a matrix and a scalar
+ * 
+ * @param mat A pointer point to the multiplicand matrix
+ * @param x The multiplier scalar
+*/
 inline void multiplyScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in multiplyScalar(): Invalid matrix pointer!");
@@ -128,7 +173,12 @@ inline void multiplyScalar(const Matrix *mat, const entry_t x) {
         mat->entry[i] *= x;
 }
 
-// Divide a matrix(*mat) with a scalar(x)
+/**
+ * @brief Divide a matrix by a scalar
+ * 
+ * @param mat A pointer point to the dividend matrix
+ * @param x The divisor scalar
+*/
 inline void divideScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in multiplyScalar(): Invalid matrix pointer!");
@@ -138,17 +188,21 @@ inline void divideScalar(const Matrix *mat, const entry_t x) {
         mat->entry[i] /= x;
 }
 
-// Find the minimum of two entry elements a and b
+// A help function to find the minimum of two entry elements
 inline entry_t min(entry_t a, entry_t b) {
     return a < b ? a : b;
 }
 
-// Find the maximum of two entry elements a and b
+// A help function to find the maximum of two entry elements
 inline entry_t max(entry_t a, entry_t b) {
     return a > b ? a : b;
 }
 
-// Find the minimum entry of a matrix(*mat)
+/**
+ * @brief Find the minimal entry of a matrix
+ * 
+ * @param mat The target matrix
+*/
 inline entry_t minEntry(const Matrix *const mat) {
     if (!mat) {
         puts("Error in minEntry(): Invalid matrix pointer!");
@@ -160,7 +214,11 @@ inline entry_t minEntry(const Matrix *const mat) {
     return result;
 }
 
-// Find the maximum entry of a matrix(*mat)
+/**
+ * @brief Find the maximum entry of a matrix
+ * 
+ * @param mat The target matrix
+*/
 inline entry_t maxEntry(const Matrix *const mat) {
     if (!mat) {
         puts("Error in maxEntry(): Invalid matrix pointer!");
@@ -172,7 +230,40 @@ inline entry_t maxEntry(const Matrix *const mat) {
     return result;
 }
 
-// Print a matrix(*mat)
+/**
+ * @brief Calculate the trace of a matrix
+ * 
+ * @param mat The target matrix
+*/
+inline entry_t trace(const Matrix *const mat) {
+    if (!mat) {
+        puts("Error in trace(): Invalid matrix pointer!");
+        return NAN;
+    }
+    if (mat->row != mat->col) {
+        puts("Error in trace(): Invalid matrix dementions!");
+        return NAN;
+    }
+    entry_t result = 0.0;
+    for (size_t i = 0; i < mat->row; ++i)
+        result += mat->entry[i*mat->col+i];
+    return result;
+}
+
+/**
+ * @brief Calculate the rank of a matrix
+ * 
+ * @param mat The target matrix
+*/
+inline entry_t rank(const Matrix *const mat) {
+
+}
+
+/**
+ * @brief Print a matrix by default percision
+ * 
+ * @param mat The target matrix
+*/
 inline void print(const Matrix *const mat) {
     if (!mat) {
         puts("Error in print(): Invalid matrix pointer!");
@@ -185,3 +276,16 @@ inline void print(const Matrix *const mat) {
         putchar('\n');
     }
 }
+
+// inline void print(const Matrix *const mat, int precision) {
+//     if (!mat) {
+//         puts("Error in print(): Invalid matrix pointer!");
+//         return;
+//     }
+//     printf("row = %ld, col = %ld\n", mat->row, mat->col);
+//     for (size_t i = 0; i < mat->row; ++i) {
+//         for (size_t j = 0; j < mat->col; ++j)
+//             printf(entry_place_holder, mat->entry[i*mat->col+j]);
+//         putchar('\n');
+//     }
+// }
