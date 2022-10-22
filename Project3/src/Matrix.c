@@ -10,6 +10,8 @@
  * @param row The number of rows
  * @param col The number of columns
  * @param entry A pointer points to the array of entries
+ * 
+ * @return A pointer point to the created matrix
 */
 inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
     if (!entry) {
@@ -63,6 +65,8 @@ inline void copyMatrix(Matrix *const a, const Matrix *const b) {
  * 
  * @param a A pointer point to the augend matrix
  * @param b A pointer point to the addend matrix
+ * 
+ * @returns A pointer point to the result of the addition
 */
 inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
@@ -85,6 +89,8 @@ inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
  * 
  * @param a A pointer point to the subtrahend matrix
  * @param b A pointer point to the subtractor matrix
+ * 
+ * @returns A pointer point to the result of the substraction
 */
 inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
@@ -107,6 +113,8 @@ inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
  * 
  * @param a A pointer point to the multiplicand matrix
  * @param b A pointer point to the multiplier matrix
+ * 
+ * @returns A pointer point to the result of the multiplication
 */
 inline Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
@@ -202,6 +210,8 @@ inline entry_t max_entry(entry_t a, entry_t b) {
  * @brief Find the minimal entry of a matrix
  * 
  * @param mat The target matrix
+ * 
+ * @returns The minimal entry of the matrix
 */
 inline entry_t minEntry(const Matrix *const mat) {
     if (!mat) {
@@ -218,6 +228,8 @@ inline entry_t minEntry(const Matrix *const mat) {
  * @brief Find the maximum entry of a matrix
  * 
  * @param mat The target matrix
+ * 
+ * @returns The maximum entry of the matrix
 */
 inline entry_t maxEntry(const Matrix *const mat) {
     if (!mat) {
@@ -234,6 +246,8 @@ inline entry_t maxEntry(const Matrix *const mat) {
  * @brief Calculate the trace of a matrix
  * 
  * @param mat The target matrix
+ * 
+ * @return Trace of the matrix
 */
 inline entry_t trace(const Matrix *const mat) {
     if (!mat) {
@@ -254,6 +268,8 @@ inline entry_t trace(const Matrix *const mat) {
  * @brief Calculate the rank of a matrix
  * 
  * @param mat The target matrix
+ * 
+ * @return Rank of the matrix
 */
 inline entry_t rank(const Matrix *const mat) {
 
