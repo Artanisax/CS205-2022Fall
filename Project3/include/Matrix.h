@@ -3,10 +3,12 @@
 
 #include <stddef.h>
 
-// Global settings
-typedef float entry_t;
-#define entry_place_holder "%.-2f\t"
-// If needed, change these to other types (e.g. double "%.4lf\t")
+/**
+ * Global settings
+ * If needed, change them to others (e.g. double "%.4lf\t")
+*/
+typedef float entry_t; // The data type of matrix entries
+#define entry_place_holder "%.2f\t" // The precision used for output
 
 // Matrix structure
 typedef struct {
@@ -34,9 +36,9 @@ void multiplyScalar(const Matrix *mat, const entry_t x);
 
 void divideScalar(const Matrix *mat, const entry_t x);
 
-entry_t min(entry_t a, entry_t b);
+entry_t min_entry(entry_t a, entry_t b);
 
-entry_t max(entry_t a, entry_t b);
+entry_t max_entry(entry_t a, entry_t b);
 
 entry_t minEntry(const Matrix *const mat);
 
@@ -44,10 +46,8 @@ entry_t maxEntry(const Matrix *const mat);
 
 entry_t trace(const Matrix *const mat);
 
-entry_t rank(const Matrix *const mat)
+entry_t rank(const Matrix *const mat);
 
 void print(const Matrix *const mat);
-
-// void print(const Matrix *const mat, int precision);
 
 #endif // __MATRIX_H__

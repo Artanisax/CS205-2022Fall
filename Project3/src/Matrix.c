@@ -189,12 +189,12 @@ inline void divideScalar(const Matrix *mat, const entry_t x) {
 }
 
 // A help function to find the minimum of two entry elements
-inline entry_t min(entry_t a, entry_t b) {
+inline entry_t min_entry(entry_t a, entry_t b) {
     return a < b ? a : b;
 }
 
 // A help function to find the maximum of two entry elements
-inline entry_t max(entry_t a, entry_t b) {
+inline entry_t max_entry(entry_t a, entry_t b) {
     return a > b ? a : b;
 }
 
@@ -210,7 +210,7 @@ inline entry_t minEntry(const Matrix *const mat) {
     }
     entry_t result = mat->entry[0];
     for (size_t i = 1; i < mat->row*mat->col; ++i)
-        result = min(result, mat->entry[i]);
+        result = min_entry(result, mat->entry[i]);
     return result;
 }
 
@@ -226,7 +226,7 @@ inline entry_t maxEntry(const Matrix *const mat) {
     }
     entry_t result = mat->entry[0];
     for (size_t i = 1; i < mat->row*mat->col; ++i)
-        result = max(result, mat->entry[i]);
+        result = max_entry(result, mat->entry[i]);
     return result;
 }
 
@@ -260,7 +260,7 @@ inline entry_t rank(const Matrix *const mat) {
 }
 
 /**
- * @brief Print a matrix by default percision
+ * @brief Print a matrix by set percision
  * 
  * @param mat The target matrix
 */
@@ -276,16 +276,3 @@ inline void print(const Matrix *const mat) {
         putchar('\n');
     }
 }
-
-// inline void print(const Matrix *const mat, int precision) {
-//     if (!mat) {
-//         puts("Error in print(): Invalid matrix pointer!");
-//         return;
-//     }
-//     printf("row = %ld, col = %ld\n", mat->row, mat->col);
-//     for (size_t i = 0; i < mat->row; ++i) {
-//         for (size_t j = 0; j < mat->col; ++j)
-//             printf(entry_place_holder, mat->entry[i*mat->col+j]);
-//         putchar('\n');
-//     }
-// }
