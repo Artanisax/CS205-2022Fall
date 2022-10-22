@@ -11,5 +11,6 @@ int main () {
     Matrix *a = createMatrix(3, 4, ea), *b = createMatrix(4, 3, eb);
     multiplyScalar(a, 1.3);
     print(a);
+    
     return 0;
 }
