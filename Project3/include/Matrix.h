@@ -25,7 +25,7 @@ void copyMatrix(Matrix *const a, const Matrix *const b);
 Matrix *addMatrix(const Matrix *const a, const Matrix *const b);
 
 // Substraction of to matrices
-void substractMatrix(const Matrix *const a, const Matrix *const b);
+Matrix *substractMatrix(const Matrix *const a, const Matrix *const b);
 
 // Multiply two matrices
 void multiplyMatrix(const Matrix *const a, const Matrix *const b);
@@ -97,7 +97,7 @@ inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     return createMatrix(a->row, a->col, result);
 }
 
-inline void substractMatrix(const Matrix *const a, const Matrix *const b) {
+inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in substractMatrix(): Invalid matrices' pointer!");
         return;
