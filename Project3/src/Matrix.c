@@ -1,6 +1,7 @@
 #include "Matrix.h"
-#include <stddef.h>
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include <stdio.h>
 
 inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
@@ -8,12 +9,13 @@ inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *c
         puts("Error in createMatrix(): Invalid entry array pointer!");
         return NULL;
     }
-    Matrix *mat = (Matrix *)malloc(sizeof(Matrix)); // force convert the pointer type in support of C++
+    Matrix *mat = (Matrix *)malloc(sizeof(Matrix)); // convert the pointer type ny force in support of C++
     mat->row = row;
     mat->col = col;
     size_t size = row*col;
     mat->entry = (entry_t *)malloc(sizeof(entry_t)*size);
-    for (size_t i = 0; i < size; ++i) mat->entry[i] = entry[i];
+    for (size_t i = 0; i < size; ++i)
+        mat->entry[i] = entry[i];
     return mat;
 }
 
@@ -28,70 +30,143 @@ inline void deleteMatrix(Matrix *const mat) {
 
 inline void copyMatrix(Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
-        puts("Error in copyMatrix(): Invalid matrices' pointer!");
+        puts("Error in copyMatrix(): Invalid matrix pointers!");
         return;
     }
     a->row = b->row;
     a->col = b->col;
     size_t size = b->row*b->col;
-    realloc(a->entry, size);
-    for (size_t i = 0; i < size; ++i) a->entry[i] = b->entry[i];
+    a->entry = realloc(a->entry, size);
+    memcpy(a->entry, b->entry, sizeof(entry_t)*size);
 }
 
 inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
-        puts("Error in addMatrix(): Invalid matrices' pointer!");
-        return;
+        puts("Error in addMatrix(): Invalid matrix pointers!");
+        return NULL;
     }
     if (a->row != b->row || a->col != b->col) {
         puts("Error in addMatrix(): Inequal dementions!");
         return NULL;
     }
     size_t size = a->row*a->col;
-    entry_t result[size];
-    for (size_t i = 0; i < size; ++i) result[i] = a->entry[i]+b->entry[i];
-    return createMatrix(a->row, a->col, result);
+    entry_t entry[size];
+    for (size_t i = 0; i < size; ++i)
+        entry[i] = a->entry[i]+b->entry[i];
+    return createMatrix(a->row, a->col, entry);
 }
 
 inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
-        puts("Error in substractMatrix(): Invalid matrices' pointer!");
-        return;
+        puts("Error in substractMatrix(): Invalid matrix pointers!");
+        return NULL;
     }
     if (a->row != b->row || a->col != b->col) {
         puts("Error in substractMatrix(): Inequal dementions!");
         return NULL;
     }
     size_t size = a->row*a->col;
-    entry_t result[size];
-    for (size_t i = 0; i < size; ++i) result[i] = a->entry[i]-b->entry[i];
-    return createMatrix(a->row, a->col, result);
+    entry_t entry[size];
+    for (size_t i = 0; i < size; ++i)
+        entry[i] = a->entry[i]-b->entry[i];
+    return createMatrix(a->row, a->col, entry);
 }
 
-inline void multiplyMatrix(const Matrix *const a, const Matrix *const b) {
-
+inline Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
+    if (!a || !b) {
+        puts("Error in multiplyMatrix(): Invalid matrix pointers!");
+        return NULL;
+    }
+    if (a->row != b->col || a->col != b->row) {
+        puts("Error in multiplyMatrix(): Unpaired dementions!");
+        return NULL;
+    }
+    size_t size = a->row*b->col;
+    entry_t entry[size];
+    for (size_t i = 0; i < a->row; ++i)
+        for (size_t j = 0; j < b->col; ++j) {
+            entry[i*b->col+j] = 0.0;
+            for (size_t k = 0; k < a->col; ++k)
+                entry[i*b->col+j] += a->entry[i*a->col+k]*b->entry[k*b->col+j];
+        }
+    return createMatrix(a->row, b->col, entry);
 }
 
-inline void addScalar() {
-
+inline void addScalar(const Matrix *mat, const entry_t x) {
+    if (!mat) {
+        puts("Error in addScalar(): Invalid matrix pointer!");
+        return;
+    }
+    for (size_t i = 0; i < mat->row*mat->col; ++i)
+        mat->entry[i] += x;
 }
 
-inline void substractScalar() {
-
+inline void substractScalar(const Matrix *mat, const entry_t x) {
+    if (!mat) {
+        puts("Error in substractScalar(): Invalid matrix pointer!");
+        return;
+    }
+    for (size_t i = 0; i < mat->row*mat->col; ++i)
+        mat->entry[i] -= x;
 }
 
-inline void multiplyScalar() {
-
+inline void multiplyScalar(const Matrix *mat, const entry_t x) {
+    if (!mat) {
+        puts("Error in multiplyScalar(): Invalid matrix pointer!");
+        return;
+    }
+    for (size_t i = 0; i < mat->row*mat->col; ++i)
+        mat->entry[i] *= x;
 }
 
-inline entry_t minEntry() {
-    return 0.0;
+inline void divideScalar(const Matrix *mat, const entry_t x) {
+    if (!mat) {
+        puts("Error in multiplyScalar(): Invalid matrix pointer!");
+        return;
+    }
+    for (size_t i = 0; i < mat->row*mat->col; ++i)
+        mat->entry[i] /= x;
 }
 
-inline entry_t maxEntry() {
-    return 0.0;
+inline entry_t min(entry_t a, entry_t b) {
+    return a < b ? a : b;
+}
+
+inline entry_t max(entry_t a, entry_t b) {
+    return a > b ? a : b;
+}
+
+inline entry_t minEntry(const Matrix *const mat) {
+    if (!mat) {
+        puts("Error in minEntry(): Invalid matrix pointer!");
+        return NAN;
+    }
+    entry_t result = mat->entry[0];
+    for (size_t i = 1; i < mat->row*mat->col; ++i)
+        result = min(result, mat->entry[i]);
+    return result;
+}
+
+inline entry_t maxEntry(const Matrix *const mat) {
+    if (!mat) {
+        puts("Error in maxEntry(): Invalid matrix pointer!");
+        return NAN;
+    }
+    entry_t result = mat->entry[0];
+    for (size_t i = 1; i < mat->row*mat->col; ++i)
+        result = max(result, mat->entry[i]);
+    return result;
 }
 
 inline void print(const Matrix *const mat) {
-
+    if (!mat) {
+        puts("Error in print(): Invalid matrix pointer!");
+        return;
+    }
+    printf("row = %ld, col = %ld\n", mat->row, mat->col);
+    for (size_t i = 0; i < mat->row; ++i) {
+        for (size_t j = 0; j < mat->col; ++j)
+            printf(entry_place_holder, mat->entry[i*mat->col+j]);
+        putchar('\n');
+    }
 }

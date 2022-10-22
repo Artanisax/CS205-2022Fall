@@ -1,7 +1,12 @@
 #ifndef __MATRIX_H__
 #define __MATRIX_H__
 
+#include <stddef.h>
+
+// Global settings
 typedef float entry_t;
+#define entry_place_holder "%.2f\t"
+// If needed, change these to other types (e.g. double "%.4lf")
 
 typedef struct {
     size_t row, col;
@@ -24,22 +29,30 @@ Matrix *addMatrix(const Matrix *const a, const Matrix *const b);
 Matrix *substractMatrix(const Matrix *const a, const Matrix *const b);
 
 // Multiply two matrices
-void multiplyMatrix(const Matrix *const a, const Matrix *const b);
+Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b);
 
 // Add a scalar to a matrix
-void addScalar();
+void addScalar(const Matrix *mat, const entry_t x);
 
 // Subtract a scalar from a matrix
-void substractScalar();
+void substractScalar(const Matrix *mat, const entry_t x);
 
 // Multiply a matrix with a scalar
-void multiplyScalar();
+void multiplyScalar(const Matrix *mat, const entry_t x);
+
+// Divide a matrix with a scalar
+void divideScalar(const Matrix *mat, const entry_t x);
+
+// Compare two entry elements
+entry_t min(entry_t a, entry_t b);
+
+entry_t max(entry_t a, entry_t b);
 
 // Find the minimal value of a matrix
-entry_t minEntry();
+entry_t minEntry(const Matrix *const mat);
 
 // Find the maximal value of a matrix
-entry_t maxEntry();
+entry_t maxEntry(const Matrix *const mat);
 
 void print(const Matrix *const mat);
 
