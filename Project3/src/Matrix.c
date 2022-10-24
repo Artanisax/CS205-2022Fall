@@ -14,6 +14,10 @@
  * @return A pointer point to the created matrix
 */
 inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
+    if (!row || !col) {
+        puts("Error in createMatrix(): Invalid dimentions!");
+        return NULL;
+    }
     if (!entry) {
         puts("Error in createMatrix(): Invalid entry array pointer!");
         return NULL;
