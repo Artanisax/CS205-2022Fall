@@ -13,7 +13,7 @@
  * 
  * @return A pointer point to the created matrix
 */
-inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
+Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
     if (!row || !col) {
         puts("Error in createMatrix(): Invalid dimentions!");
         return NULL;
@@ -37,7 +37,7 @@ inline Matrix *createMatrix(const size_t row, const size_t col, const entry_t *c
  * 
  * @param mat The pointer points the matrix to be deleted
 */
-inline void deleteMatrix(Matrix *const mat) {
+void deleteMatrix(Matrix *const mat) {
     if (!mat) {
         puts("Error in deleteMatrix(): Invalid matrix pointer!");
         return;
@@ -52,7 +52,7 @@ inline void deleteMatrix(Matrix *const mat) {
  * @param a A pointer point to the DIR matrix
  * @param b A pointer point to the SRC matrix
 */
-inline void copyMatrix(Matrix *const a, const Matrix *const b) {
+void copyMatrix(Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in copyMatrix(): Invalid matrix pointers!");
         return;
@@ -72,7 +72,7 @@ inline void copyMatrix(Matrix *const a, const Matrix *const b) {
  * 
  * @returns A pointer point to the result of the addition
 */
-inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
+Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in addMatrix(): Invalid matrix pointers!");
         return NULL;
@@ -96,7 +96,7 @@ inline Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
  * 
  * @returns A pointer point to the result of the substraction
 */
-inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
+Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in substractMatrix(): Invalid matrix pointers!");
         return NULL;
@@ -120,7 +120,7 @@ inline Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
  * 
  * @returns A pointer point to the result of the multiplication
 */
-inline Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
+Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
     if (!a || !b) {
         puts("Error in multiplyMatrix(): Invalid matrix pointers!");
         return NULL;
@@ -146,7 +146,7 @@ inline Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
  * @param mat A pointer point to the augend matrix
  * @param x The addend scalar
 */
-inline void addScalar(const Matrix *mat, const entry_t x) {
+void addScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in addScalar(): Invalid matrix pointer!");
         return;
@@ -161,7 +161,7 @@ inline void addScalar(const Matrix *mat, const entry_t x) {
  * @param mat A pointer point to the subtrahend matrix
  * @param x The substractor scalar
 */
-inline void substractScalar(const Matrix *mat, const entry_t x) {
+void substractScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in substractScalar(): Invalid matrix pointer!");
         return;
@@ -176,7 +176,7 @@ inline void substractScalar(const Matrix *mat, const entry_t x) {
  * @param mat A pointer point to the multiplicand matrix
  * @param x The multiplier scalar
 */
-inline void multiplyScalar(const Matrix *mat, const entry_t x) {
+void multiplyScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in multiplyScalar(): Invalid matrix pointer!");
         return;
@@ -191,23 +191,13 @@ inline void multiplyScalar(const Matrix *mat, const entry_t x) {
  * @param mat A pointer point to the dividend matrix
  * @param x The divisor scalar
 */
-inline void divideScalar(const Matrix *mat, const entry_t x) {
+void divideScalar(const Matrix *mat, const entry_t x) {
     if (!mat) {
         puts("Error in multiplyScalar(): Invalid matrix pointer!");
         return;
     }
     for (size_t i = 0; i < mat->row*mat->col; ++i)
         mat->entry[i] /= x;
-}
-
-// A help function to find the minimum of two entry elements
-inline entry_t min_entry(entry_t a, entry_t b) {
-    return a < b ? a : b;
-}
-
-// A help function to find the maximum of two entry elements
-inline entry_t max_entry(entry_t a, entry_t b) {
-    return a > b ? a : b;
 }
 
 /**
@@ -217,14 +207,14 @@ inline entry_t max_entry(entry_t a, entry_t b) {
  * 
  * @returns The minimal entry of the matrix
 */
-inline entry_t minEntry(const Matrix *const mat) {
+entry_t minEntry(const Matrix *const mat) {
     if (!mat) {
         puts("Error in minEntry(): Invalid matrix pointer!");
         return NAN;
     }
     entry_t result = mat->entry[0];
     for (size_t i = 1; i < mat->row*mat->col; ++i)
-        result = min_entry(result, mat->entry[i]);
+        result = (result <= mat->entry[i] ? result : mat->entry[i]);
     return result;
 }
 
@@ -235,14 +225,14 @@ inline entry_t minEntry(const Matrix *const mat) {
  * 
  * @returns The maximum entry of the matrix
 */
-inline entry_t maxEntry(const Matrix *const mat) {
+entry_t maxEntry(const Matrix *const mat) {
     if (!mat) {
         puts("Error in maxEntry(): Invalid matrix pointer!");
         return NAN;
     }
     entry_t result = mat->entry[0];
     for (size_t i = 1; i < mat->row*mat->col; ++i)
-        result = max_entry(result, mat->entry[i]);
+        result = (result >= mat->entry[i] ? result : mat->entry[i]);
     return result;
 }
 
@@ -253,7 +243,7 @@ inline entry_t maxEntry(const Matrix *const mat) {
  * 
  * @return Trace of the matrix
 */
-inline entry_t trace(const Matrix *const mat) {
+entry_t trace(const Matrix *const mat) {
     if (!mat) {
         puts("Error in trace(): Invalid matrix pointer!");
         return NAN;
@@ -275,7 +265,7 @@ inline entry_t trace(const Matrix *const mat) {
  * 
  * @return Rank of the matrix
 */
-inline entry_t rank(const Matrix *const mat) {
+entry_t rank(const Matrix *const mat) {
 
 }
 
@@ -284,7 +274,7 @@ inline entry_t rank(const Matrix *const mat) {
  * 
  * @param mat The target matrix
 */
-inline void print(const Matrix *const mat) {
+void print(const Matrix *const mat) {
     if (!mat) {
         puts("Error in print(): Invalid matrix pointer!");
         return;

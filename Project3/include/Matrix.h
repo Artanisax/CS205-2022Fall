@@ -36,10 +36,6 @@ void multiplyScalar(const Matrix *mat, const entry_t x);
 
 void divideScalar(const Matrix *mat, const entry_t x);
 
-entry_t min_entry(entry_t a, entry_t b);
-
-entry_t max_entry(entry_t a, entry_t b);
-
 entry_t minEntry(const Matrix *const mat);
 
 entry_t maxEntry(const Matrix *const mat);
