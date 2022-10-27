@@ -3,10 +3,8 @@
 
 #include <stddef.h>
 
-/**
- * Global settings
- * If needed, change them to others (e.g. double "%.4lf\t")
-*/
+// Global settings
+// If needed, change them to others (e.g. double "%.4lf\t")
 typedef float entry_t; // The data type of matrix entries
 #define entry_place_holder "%.2f\t" // The precision used for output
 
