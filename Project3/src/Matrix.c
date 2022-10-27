@@ -6,11 +6,9 @@
 
 /**
  * @brief Create a matrix with initialization
- * 
  * @param row The number of rows
  * @param col The number of columns
  * @param entry A pointer points to the array of entries
- * 
  * @return A pointer point to the created matrix
 */
 Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry) {
@@ -34,7 +32,6 @@ Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const en
 
 /**
  * @brief Delete a matrix
- * 
  * @param mat The pointer points the matrix to be deleted
 */
 void deleteMatrix(Matrix *const mat) {
@@ -48,7 +45,6 @@ void deleteMatrix(Matrix *const mat) {
 
 /**
  * @brief Copy data from a matrix to another
- * 
  * @param a A pointer point to the DIR matrix
  * @param b A pointer point to the SRC matrix
 */
@@ -66,10 +62,8 @@ void copyMatrix(Matrix *const a, const Matrix *const b) {
 
 /**
  * @brief Matrix addition
- * 
  * @param a A pointer point to the augend matrix
  * @param b A pointer point to the addend matrix
- * 
  * @returns A pointer point to the result of the addition
 */
 Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
@@ -90,10 +84,8 @@ Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
 
 /**
  * @brief Matrix substraction 
- * 
  * @param a A pointer point to the subtrahend matrix
  * @param b A pointer point to the subtractor matrix
- * 
  * @returns A pointer point to the result of the substraction
 */
 Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
@@ -113,11 +105,9 @@ Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
 }
 
 /**
- * @brief Matrix multiplication 
- * 
+ * @brief Matrix multiplication
  * @param a A pointer point to the multiplicand matrix
  * @param b A pointer point to the multiplier matrix
- * 
  * @returns A pointer point to the result of the multiplication
 */
 Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
@@ -141,8 +131,7 @@ Matrix *multiplyMatrix(const Matrix *const a, const Matrix *const b) {
 }
 
 /**
- * @brief Add a scalar to a matrix 
- * 
+ * @brief Add a scalar to a matrix
  * @param mat A pointer point to the augend matrix
  * @param x The addend scalar
 */
@@ -156,8 +145,7 @@ void addScalar(const Matrix *mat, const entry_t x) {
 }
 
 /**
- * @brief Substract a scalar from a matrix 
- * 
+ * @brief Substract a scalar from a matrix
  * @param mat A pointer point to the subtrahend matrix
  * @param x The substractor scalar
 */
@@ -172,7 +160,6 @@ void substractScalar(const Matrix *mat, const entry_t x) {
 
 /**
  * @brief Multiply a matrix and a scalar
- * 
  * @param mat A pointer point to the multiplicand matrix
  * @param x The multiplier scalar
 */
@@ -187,7 +174,6 @@ void multiplyScalar(const Matrix *mat, const entry_t x) {
 
 /**
  * @brief Divide a matrix by a scalar
- * 
  * @param mat A pointer point to the dividend matrix
  * @param x The divisor scalar
 */
@@ -202,9 +188,7 @@ void divideScalar(const Matrix *mat, const entry_t x) {
 
 /**
  * @brief Find the minimal entry of a matrix
- * 
  * @param mat The target matrix
- * 
  * @returns The minimal entry of the matrix
 */
 entry_t minEntry(const Matrix *const mat) {
@@ -220,9 +204,7 @@ entry_t minEntry(const Matrix *const mat) {
 
 /**
  * @brief Find the maximum entry of a matrix
- * 
  * @param mat The target matrix
- * 
  * @returns The maximum entry of the matrix
 */
 entry_t maxEntry(const Matrix *const mat) {
@@ -238,9 +220,7 @@ entry_t maxEntry(const Matrix *const mat) {
 
 /**
  * @brief Calculate the trace of a matrix
- * 
  * @param mat The target matrix
- * 
  * @return Trace of the matrix
 */
 entry_t trace(const Matrix *const mat) {
@@ -260,9 +240,7 @@ entry_t trace(const Matrix *const mat) {
 
 /**
  * @brief Calculate the rank of a matrix
- * 
  * @param mat The target matrix
- * 
  * @return Rank of the matrix
 */
 entry_t rank(const Matrix *const mat) {
@@ -271,7 +249,6 @@ entry_t rank(const Matrix *const mat) {
 
 /**
  * @brief Print a matrix by set percision
- * 
  * @param mat The target matrix
 */
 void print(const Matrix *const mat) {
