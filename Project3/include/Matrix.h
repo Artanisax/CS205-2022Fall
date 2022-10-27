@@ -2,6 +2,7 @@
 #define __MATRIX_H__
 
 #include <stddef.h>
+#include <stdbool.h>
 
 // Global settings
 // If needed, change them to others (e.g. double "%.4lf\t")
@@ -9,10 +10,22 @@ typedef float entry_t; // The data type of matrix entries
 #define entry_place_holder "%.2f\t" // The precision used for output
 
 // Matrix structure
-typedef struct {
+typedef struct Matrix{
     size_t row, col;
     entry_t *entry;
 } Matrix;
+
+// List node of valid matrix pointers
+typedef struct MatrixPointer{
+    Matrix *mat;
+    struct MatrixPointer *next;
+} MatrixPointer;
+
+void MPL_push_front(const Matrix *const mat);
+
+void MPL_erase(const Matrix *const mat);
+
+bool check_matrix_pointer(const Matrix *const mat);
 
 Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry);
 

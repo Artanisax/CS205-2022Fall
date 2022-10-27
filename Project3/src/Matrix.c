@@ -4,6 +4,39 @@
 #include <math.h>
 #include <stdio.h>
 
+// Build a matrix pointer list globally
+MatrixPointer MPL_head; // The head of the matrix pointers list
+
+// push a matrix into MPL
+void MPL_push_front(const Matrix *const mat) {
+    MatrixPointer *mp = (MatrixPointer *)malloc(sizeof(MatrixPointer));
+    mp->mat = mat;
+    mp->next = MPL_head.next;
+    MPL_head.next = mp;
+}
+
+// delete a matrix from MPL
+void MPL_erase(const Matrix *const mat) {
+    MatrixPointer *prev = &MPL_head, *mp;
+    while (prev->next->mat != mat)
+        prev = prev->next; // find the previous pointer in the list
+    mp = prev->next;
+    prev->next = mp->next;
+    free(mp);
+}
+
+/**
+ * @brief Check the validity of a Matrix pointer
+ * @param mat The pointer needed to be checked
+ * @return True for valid, false for invalid
+*/
+bool check_matrix_pointer(const Matrix *const mat) {
+    if (!mat) return false; // empty pointer
+    for (MatrixPointer *cur = &MPL_head; cur; cur = cur->next)
+        if (cur->mat == mat) return true;
+    return false; 
+}
+
 /**
  * @brief Create a matrix with initialization
  * @param row The number of rows
@@ -20,13 +53,14 @@ Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const en
         puts("Error in createMatrix(): Invalid entry array pointer!");
         return NULL;
     }
-    Matrix *mat = (Matrix *)malloc(sizeof(Matrix)); // convert the pointer type ny force in support of C++
+    Matrix *mat = (Matrix *)malloc(sizeof(Matrix));
     mat->row = row;
     mat->col = col;
     size_t size = row*col;
     mat->entry = (entry_t *)malloc(sizeof(entry_t)*size);
     for (size_t i = 0; i < size; ++i)
         mat->entry[i] = entry[i];
+    MPL_push_front(mat);
     return mat;
 }
 
@@ -39,6 +73,7 @@ void deleteMatrix(Matrix *const mat) {
         puts("Error in deleteMatrix(): Invalid matrix pointer!");
         return;
     }
+    MPL_erase(mat);
     free(mat->entry);
     free(mat);
 }

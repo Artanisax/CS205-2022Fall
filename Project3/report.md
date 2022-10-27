@@ -1,0 +1,1 @@
+noted that we need to convert (void *) into (Matrix *) by force after malloc() to support C++'s downward compability
