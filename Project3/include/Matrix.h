@@ -17,7 +17,7 @@ typedef struct Matrix{
 
 // List node of valid matrix pointers
 typedef struct MatrixPointer{
-    Matrix *mat;
+    const Matrix *mat;
     struct MatrixPointer *next;
 } MatrixPointer;
 
