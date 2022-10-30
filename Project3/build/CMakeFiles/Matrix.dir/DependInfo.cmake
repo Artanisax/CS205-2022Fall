@@ -9,7 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/root/GitHub/CS205-2022Fall/Project3/src/Matrix.c" "CMakeFiles/Matrix.dir/src/Matrix.c.o" "gcc" "CMakeFiles/Matrix.dir/src/Matrix.c.o.d"
-  "/root/GitHub/CS205-2022Fall/Project3/src/demo.cpp" "CMakeFiles/Matrix.dir/src/demo.cpp.o" "gcc" "CMakeFiles/Matrix.dir/src/demo.cpp.o.d"
+  "/root/GitHub/CS205-2022Fall/Project3/src/demo.c" "CMakeFiles/Matrix.dir/src/demo.c.o" "gcc" "CMakeFiles/Matrix.dir/src/demo.c.o.d"
   )
 
 # Targets to which this target links.

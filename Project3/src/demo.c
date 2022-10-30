@@ -6,7 +6,7 @@ int main () {
                        0, 1, 0,
                        1, 0, 1};
     Matrix *mat = createIMatrix(3);
-    printMatrix(mat);
-    printf(entry_place_holder"\n", det(mat));
+    // printMatrix(mat);
+    // printf(entry_place_holder"\n", det(mat));
     return 0;
 }
