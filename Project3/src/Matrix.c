@@ -34,11 +34,7 @@ void MPL_clear() {
     }
 }
 
-/**
- * @brief Check the validity of a Matrix pointer
- * @param mat The pointer needed to be checked
- * @return True for valid, false for invalid
-*/
+// Check the validity of a Matrix pointer
 bool check_matrix_pointer(const Matrix *const mat) {
     if (!mat) return false; // empty pointer
     for (MatrixPointer *cur = &MPL_head; cur; cur = cur->next)
