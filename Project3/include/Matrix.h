@@ -17,13 +17,15 @@ typedef struct Matrix{
 
 // List node of valid matrix pointers
 typedef struct MatrixPointer{
-    const Matrix *mat;
+    Matrix *mat;
     struct MatrixPointer *next;
 } MatrixPointer;
 
-void MPL_push_front(const Matrix *const mat);
+void MPL_push_front(Matrix *const mat);
 
 void MPL_erase(const Matrix *const mat);
+
+void MPL_clear();
 
 bool check_matrix_pointer(const Matrix *const mat);
 

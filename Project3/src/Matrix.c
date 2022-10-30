@@ -7,15 +7,15 @@
 // Build a matrix pointer list globally
 MatrixPointer MPL_head; // The head of the matrix pointers list
 
-// push a matrix into MPL
-void MPL_push_front(const Matrix *const mat) {
+// Push a matrix into MPL
+void MPL_push_front(Matrix *const mat) {
     MatrixPointer *mp = (MatrixPointer *)malloc(sizeof(MatrixPointer));
     mp->mat = mat;
     mp->next = MPL_head.next;
     MPL_head.next = mp;
 }
 
-// delete a matrix from MPL
+// Delete a matrix from MPL
 void MPL_erase(const Matrix *const mat) {
     MatrixPointer *prev = &MPL_head, *mp;
     while (prev->next->mat != mat)
@@ -25,7 +25,7 @@ void MPL_erase(const Matrix *const mat) {
     free(mp);
 }
 
-// clear MPL, release the memory of all matrices
+// Clear MPL, release the memory of all matrices
 void MPL_clear() {
     for (MatrixPointer *cur = MPL_head.next, *next; cur; cur = next) {
         next = cur->next;
