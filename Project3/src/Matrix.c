@@ -25,6 +25,15 @@ void MPL_erase(const Matrix *const mat) {
     free(mp);
 }
 
+// clear MPL, release the memory of all matrices
+void MPL_clear() {
+    for (MatrixPointer *cur = MPL_head.next, *next; cur; cur = next) {
+        next = cur->next;
+        deleteMatrix(cur->mat);
+        free(cur);
+    }
+}
+
 /**
  * @brief Check the validity of a Matrix pointer
  * @param mat The pointer needed to be checked
