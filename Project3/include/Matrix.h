@@ -7,7 +7,7 @@
 // Global settings
 // If needed, change them to more precise floating type (e.g. double "%.4lf\t")
 typedef float entry_t; // The data type of matrix entries
-#define entry_place_holder "%.2f\t" // The precision used for output
+#define entry_place_holder "%.2f\t" // The precision and format used for output
 
 // Matrix structure
 typedef struct Matrix{
