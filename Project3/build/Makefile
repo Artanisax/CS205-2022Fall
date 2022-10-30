@@ -153,29 +153,29 @@ src/Matrix.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.c.s
 .PHONY : src/Matrix.c.s
 
-src/demo.o: src/demo.c.o
+src/demo.o: src/demo.cpp.o
 .PHONY : src/demo.o
 
 # target to build an object file
-src/demo.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.o
-.PHONY : src/demo.c.o
+src/demo.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.cpp.o
+.PHONY : src/demo.cpp.o
 
-src/demo.i: src/demo.c.i
+src/demo.i: src/demo.cpp.i
 .PHONY : src/demo.i
 
 # target to preprocess a source file
-src/demo.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.i
-.PHONY : src/demo.c.i
+src/demo.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.cpp.i
+.PHONY : src/demo.cpp.i
 
-src/demo.s: src/demo.c.s
+src/demo.s: src/demo.cpp.s
 .PHONY : src/demo.s
 
 # target to generate assembly for a file
-src/demo.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.s
-.PHONY : src/demo.c.s
+src/demo.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.cpp.s
+.PHONY : src/demo.cpp.s
 
 # Help Target
 help:

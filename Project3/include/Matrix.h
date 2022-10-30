@@ -29,6 +29,8 @@ bool check_matrix_pointer(const Matrix *const mat);
 
 Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const entry);
 
+Matrix *createIMatrix(const size_t n);
+
 void deleteMatrix(Matrix *const mat);
 
 void copyMatrix(Matrix *const a, const Matrix *const b);
@@ -53,8 +55,8 @@ entry_t maxEntry(const Matrix *const mat);
 
 entry_t trace(const Matrix *const mat);
 
-entry_t rank(const Matrix *const mat);
+entry_t det(const Matrix *const mat);
 
-void print(const Matrix *const mat);
+void printMatrix(const Matrix *const mat);
 
 #endif // __MATRIX_H__
