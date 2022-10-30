@@ -110,7 +110,7 @@ void copyMatrix(Matrix *const a, const Matrix *const b) {
     a->row = b->row;
     a->col = b->col;
     size_t siz = b->row*b->col;
-    a->entry = (entry_t *)realloc(a->entry, siz); // equivalent to free() first and then malloc()
+    a->entry = (entry_t *)realloc(a->entry, sizeof(entry_t)*siz); // equivalent to free() first and then malloc()
     memcpy(a->entry, b->entry, sizeof(entry_t)*siz);
 }
 
@@ -277,7 +277,7 @@ entry_t maxEntry(const Matrix *const mat) {
  * @brief Process a matrix with Gaussian elimination
  * @param mat The target matrix
 */
-void GaussianElimination(Matrix *const mat) {
+void GaussianEliminate(Matrix *const mat) {
     if (!check_matrix_pointer(mat)) {
         puts("Error in GaussianElimination(): Invalid matrix pointer!");
         return;
@@ -373,7 +373,7 @@ size_t rank(const Matrix *const mat) {
     }
     Matrix *temp = createIMatrix(1);
     copyMatrix(temp, mat);
-    GaussianElimination(temp);
+    GaussianEliminate(temp);
     size_t row = mat->row, col = mat->col, ret = 0;
     for (size_t i = 0; i < row; ++i) {
         bool flag = false; 

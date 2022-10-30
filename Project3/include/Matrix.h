@@ -53,7 +53,7 @@ entry_t minEntry(const Matrix *const mat);
 
 entry_t maxEntry(const Matrix *const mat);
 
-void GaussianElimination(Matrix *const mat);
+void GaussianEliminate(Matrix *const mat);
 
 entry_t trace(const Matrix *const mat);
 

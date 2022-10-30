@@ -2,11 +2,12 @@
 #include <stdio.h>
 
 int main () {
-    entry_t entry[] = {1, 0, 2,
-                       0, 1, 0,
-                       1, 0, 1};
-    Matrix *mat = createIMatrix(3);
+    entry_t entry[] = {1, 0,
+                       0, 1,
+                       1, 1};
+    Matrix *mat = createMatrix(3, 2, entry);
+    GaussianEliminate(mat);
     printMatrix(mat);
-    printf(entry_place_holder"\n", det(mat));
+    printf("%zu\n", rank(mat));
     return 0;
 }
