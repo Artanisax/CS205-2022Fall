@@ -29,7 +29,8 @@ void MPL_erase(const Matrix *const mat) {
 void MPL_clear() {
     for (MatrixPointer *cur = MPL_head.next, *next; cur; cur = next) {
         next = cur->next;
-        deleteMatrix(cur->mat);
+        free(cur->mat->entry);
+        free(cur->mat);
         free(cur);
     }
 }
