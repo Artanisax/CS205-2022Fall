@@ -75,7 +75,7 @@ Matrix *createIMatrix(const size_t n) {
     entry_t entry[siz];
     memset(entry, 0, sizeof(entry));
     for (size_t i = 0; i < n; ++i)
-        entry[i*i] = 1;
+        entry[i*n+i] = 1;
     return createMatrix(n, n, entry);
 }
 
