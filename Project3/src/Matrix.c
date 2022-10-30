@@ -116,7 +116,7 @@ void copyMatrix(Matrix *const a, const Matrix *const b) {
     a->row = b->row;
     a->col = b->col;
     size_t siz = b->row*b->col;
-    a->entry = (entry_t *)realloc(a->entry, sizeof(entry_t)*siz); // equivalent to free() first and then malloc()
+    a->entry = (entry_t *)realloc(a->entry, sizeof(entry_t)*siz);
     memcpy(a->entry, b->entry, sizeof(entry_t)*siz);
 }
 
