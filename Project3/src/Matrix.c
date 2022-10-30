@@ -71,6 +71,10 @@ Matrix *createMatrix(const size_t row, const size_t col, const entry_t *const en
  * @return A pointer point to the created matrix
 */
 Matrix *createIMatrix(const size_t n) {
+    if (!n) {
+        puts("Error in deleteMatrix(): Invalid matrix demensions!");
+        return NULL;
+    }
     size_t siz = n*n;
     entry_t entry[siz];
     memset(entry, 0, sizeof(entry));
@@ -268,6 +272,39 @@ entry_t maxEntry(const Matrix *const mat) {
     return result;
 }
 
+
+/**
+ * @brief Process a matrix with Gaussian elimination
+ * @param mat The target matrix
+*/
+void GaussianElimination(Matrix *const mat) {
+    if (!check_matrix_pointer(mat)) {
+        puts("Error in GaussianElimination(): Invalid matrix pointer!");
+        return;
+    }
+    size_t row = mat->row, col = mat->col;
+    entry_t *entry = mat->entry;
+    for (size_t i = 0, j = 0, k; i < col, j < row; ++i) {
+        for (k = j; k < row; ++k) // find a row whose entry is not 0
+            if (entry[j*col+i] != 0) break;
+        if (k == row) continue; // all are 0
+        if (k != j) // swap row
+            for (size_t t = i; t < col; ++t) {
+                entry_t temp = entry[j*col+t];
+                entry[j*col+t] = entry[k*col+t];
+                entry[k*col+t] = temp;
+            }
+        for (k = j+1; k < row; ++k)
+            if (entry[k*col+i] != 0) {
+                entry_t coe = entry[k*col+i]/entry[j*col+i];
+                entry[k*col+i] = 0;
+                for (size_t t = i+1; t < col; ++t)
+                    entry[k*col+t] -= coe*entry[j*col+t];
+            }
+        ++j;
+    }
+}
+
 /**
  * @brief Calculate the trace of a matrix
  * @param mat The target matrix
@@ -322,6 +359,30 @@ entry_t det(const Matrix*const mat) {
             }
             return ret;
     }
+}
+
+/**
+ * @brief Calculate the rank of a matrix
+ * @param mat the target matrix
+ * @return Rank of the matrix
+*/
+size_t rank(const Matrix *const mat) {
+    if (!check_matrix_pointer(mat)) {
+        puts("Error in rank(): Invalid matrix pointer!");
+        return 0;
+    }
+    Matrix *temp = createIMatrix(1);
+    copyMatrix(temp, mat);
+    GaussianElimination(temp);
+    size_t row = mat->row, col = mat->col, ret = 0;
+    for (size_t i = 0; i < row; ++i) {
+        bool flag = false; 
+        for (size_t j = 0; j < col; ++j)
+            flag |= (temp->entry[i*col+j] != 0);
+        ret += flag;
+    }
+    deleteMatrix(temp);
+    return ret;
 }
 
 /**

@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 // Global settings
-// If needed, change them to others (e.g. double "%.4lf\t")
+// If needed, change them to more precise floating type (e.g. double "%.4lf\t")
 typedef float entry_t; // The data type of matrix entries
 #define entry_place_holder "%.2f\t" // The precision used for output
 
@@ -53,9 +53,13 @@ entry_t minEntry(const Matrix *const mat);
 
 entry_t maxEntry(const Matrix *const mat);
 
+void GaussianElimination(Matrix *const mat);
+
 entry_t trace(const Matrix *const mat);
 
 entry_t det(const Matrix *const mat);
+
+size_t rank(const Matrix *const mat);
 
 void printMatrix(const Matrix *const mat);
 
