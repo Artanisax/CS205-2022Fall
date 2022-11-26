@@ -48,7 +48,6 @@ Matrix *originalMultiplyMatrix(const Matrix *const a, const Matrix *const b) {
     bzero(entry, sizeof(entry));
     for (size_t i = 0; i < a->row; ++i)
         for (size_t j = 0; j < b->col; ++j) {
-            printf("%zu\n", i*b->col+j);
             for (size_t k = 0; k < a->col; ++k)
                 entry[i*b->col+j] += a->entry[i*a->col+k]*b->entry[k*b->col+j];
         }
