@@ -10,7 +10,8 @@ Matrix *createMatrix(const size_t row, const size_t col, const float *const entr
     mat->col = col;
     size_t siz = row*col;
     mat->entry = (float *)malloc(sizeof(float)*siz);
-    memcpy(mat->entry, entry, sizeof(float)*siz);
+    if (entry)
+        memcpy(mat->entry, entry, sizeof(float)*siz);
     return mat;
 }
 
@@ -28,43 +29,40 @@ void copyMatrix(Matrix *const a, const Matrix *const b) {
 }
 
 Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
+    Matrix *ret = createMatrix(a->row, a->col, NULL);
     size_t siz = a->row*a->col;
-    float entry[siz];
     for (size_t i = 0; i < siz; ++i)
-        entry[i] = a->entry[i]+b->entry[i];
-    return createMatrix(a->row, a->col, entry);
+        ret->entry[i] = a->entry[i]+b->entry[i];
+    return ret;
 }
 
-Matrix *substractMatrix(const Matrix *const a, const Matrix *const b) {
-    size_t siz = a->row*a->col;
-    float entry[siz];
-    for (size_t i = 0; i < siz; ++i)
-        entry[i] = a->entry[i]-b->entry[i];
-    return createMatrix(a->row, a->col, entry);
-}
-
-Matrix *originalMultiplyMatrix(const Matrix *const a, const Matrix *const b) {
-    float entry[a->row*b->col];
-    bzero(entry, sizeof(entry));
-    for (size_t i = 0; i < a->row; ++i)
-        for (size_t j = 0; j < b->col; ++j) {
+Matrix *mul_plain(const Matrix *const a, const Matrix *const b) {
+    Matrix *ret = createMatrix(a->row, b->col, NULL);
+    bzero(ret->entry, sizeof(float)*(a->row*b->col));
+    for (size_t i = 0; i < a->row; ++i) {
+        for (size_t j = 0; j < b->col; ++j)
             for (size_t k = 0; k < a->col; ++k)
-                entry[i*b->col+j] += a->entry[i*a->col+k]*b->entry[k*b->col+j];
-        }
-    return createMatrix(a->row, b->col, entry);
+                ret->entry[i*b->col+j] += a->entry[i*a->col+k]*b->entry[k*b->col+j];
+    }
+    return ret;
 }
 
-Matrix *improvedMultiplyMatrix(const Matrix *const a, const Matrix *const b) {
-    float entry[a->row*b->col];
-    bzero(entry, sizeof(entry));
+Matrix *mul_loop_order_omp(const Matrix *const a, const Matrix *const b) {
+    Matrix *ret = createMatrix(a->row, b->col, NULL);
+    bzero(ret->entry, sizeof(float)*(a->row*b->col));
+    #pragma omp parallel for
     for (size_t i = 0; i < a->row; ++i)
         for (size_t k = 0; k < a->col; ++k) {
             float a_ik = a->entry[i*a->col+k];
             size_t ic = i*b->col, kc = k*b->col;
             for (size_t j = 0; j < b->col; ++j)
-                entry[ic+j] += a_ik*b->entry[kc+j];
+                ret->entry[ic+j] += a_ik*b->entry[kc+j];
         }
-    return createMatrix(a->row, b->col, entry);
+    return ret;
+}
+
+Matrix *mul_avx_omp(const Matrix *const a, const Matrix *const b) {
+
 }
 
 void printMatrix(const Matrix *const mat) {

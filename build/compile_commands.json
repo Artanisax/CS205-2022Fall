@@ -1,0 +1,17 @@
+[
+{
+  "directory": "/root/GitHub/CS205-2022Fall/build",
+  "command": "/usr/bin/g++  -I/root/GitHub/CS205-2022Fall/Project2/include -g -o CMakeFiles/Calculator.dir/src/calculator.cpp.o -c /root/GitHub/CS205-2022Fall/Project2/src/calculator.cpp",
+  "file": "/root/GitHub/CS205-2022Fall/Project2/src/calculator.cpp"
+},
+{
+  "directory": "/root/GitHub/CS205-2022Fall/build",
+  "command": "/usr/bin/g++  -I/root/GitHub/CS205-2022Fall/Project2/include -g -o CMakeFiles/Calculator.dir/src/main.cpp.o -c /root/GitHub/CS205-2022Fall/Project2/src/main.cpp",
+  "file": "/root/GitHub/CS205-2022Fall/Project2/src/main.cpp"
+},
+{
+  "directory": "/root/GitHub/CS205-2022Fall/build",
+  "command": "/usr/bin/g++  -I/root/GitHub/CS205-2022Fall/Project2/include -g -o CMakeFiles/Calculator.dir/src/number.cpp.o -c /root/GitHub/CS205-2022Fall/Project2/src/number.cpp",
+  "file": "/root/GitHub/CS205-2022Fall/Project2/src/number.cpp"
+}
+]

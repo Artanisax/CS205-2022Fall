@@ -63,7 +63,7 @@ CMAKE_BINARY_DIR = /root/GitHub/CS205-2022Fall/Project4/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/Matrix.dir/all
+all: CMakeFiles/Mul.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -71,34 +71,34 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/Matrix.dir/clean
+clean: CMakeFiles/Mul.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/Matrix.dir
+# Target rules for target CMakeFiles/Mul.dir
 
 # All Build rule for target.
-CMakeFiles/Matrix.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/GitHub/CS205-2022Fall/Project4/build/CMakeFiles --progress-num=1,2,3 "Built target Matrix"
-.PHONY : CMakeFiles/Matrix.dir/all
+CMakeFiles/Mul.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/root/GitHub/CS205-2022Fall/Project4/build/CMakeFiles --progress-num=1,2,3 "Built target Mul"
+.PHONY : CMakeFiles/Mul.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/Matrix.dir/rule: cmake_check_build_system
+CMakeFiles/Mul.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /root/GitHub/CS205-2022Fall/Project4/build/CMakeFiles 3
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/Matrix.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/Mul.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /root/GitHub/CS205-2022Fall/Project4/build/CMakeFiles 0
-.PHONY : CMakeFiles/Matrix.dir/rule
+.PHONY : CMakeFiles/Mul.dir/rule
 
 # Convenience name for target.
-Matrix: CMakeFiles/Matrix.dir/rule
-.PHONY : Matrix
+Mul: CMakeFiles/Mul.dir/rule
+.PHONY : Mul
 
 # clean rule for target.
-CMakeFiles/Matrix.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/clean
-.PHONY : CMakeFiles/Matrix.dir/clean
+CMakeFiles/Mul.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/clean
+.PHONY : CMakeFiles/Mul.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

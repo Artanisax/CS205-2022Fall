@@ -117,24 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Matrix
+# Target rules for targets named Mul
 
 # Build rule for target.
-Matrix: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Matrix
-.PHONY : Matrix
+Mul: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Mul
+.PHONY : Mul
 
 # fast build rule for target.
-Matrix/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/build
-.PHONY : Matrix/fast
+Mul/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/build
+.PHONY : Mul/fast
 
 src/Matrix.o: src/Matrix.c.o
 .PHONY : src/Matrix.o
 
 # target to build an object file
 src/Matrix.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/src/Matrix.c.o
 .PHONY : src/Matrix.c.o
 
 src/Matrix.i: src/Matrix.c.i
@@ -142,7 +142,7 @@ src/Matrix.i: src/Matrix.c.i
 
 # target to preprocess a source file
 src/Matrix.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/src/Matrix.c.i
 .PHONY : src/Matrix.c.i
 
 src/Matrix.s: src/Matrix.c.s
@@ -150,7 +150,7 @@ src/Matrix.s: src/Matrix.c.s
 
 # target to generate assembly for a file
 src/Matrix.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/src/Matrix.c.s
 .PHONY : src/Matrix.c.s
 
 src/demo.o: src/demo.c.o
@@ -158,7 +158,7 @@ src/demo.o: src/demo.c.o
 
 # target to build an object file
 src/demo.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/src/demo.c.o
 .PHONY : src/demo.c.o
 
 src/demo.i: src/demo.c.i
@@ -166,7 +166,7 @@ src/demo.i: src/demo.c.i
 
 # target to preprocess a source file
 src/demo.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/src/demo.c.i
 .PHONY : src/demo.c.i
 
 src/demo.s: src/demo.c.s
@@ -174,7 +174,7 @@ src/demo.s: src/demo.c.s
 
 # target to generate assembly for a file
 src/demo.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/demo.c.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Mul.dir/build.make CMakeFiles/Mul.dir/src/demo.c.s
 .PHONY : src/demo.c.s
 
 # Help Target
@@ -185,7 +185,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... Matrix"
+	@echo "... Mul"
 	@echo "... src/Matrix.o"
 	@echo "... src/Matrix.i"
 	@echo "... src/Matrix.s"

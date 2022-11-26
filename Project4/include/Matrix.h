@@ -19,11 +19,11 @@ void copyMatrix(Matrix *const a, const Matrix *const b);
 
 Matrix *addMatrix(const Matrix *const a, const Matrix *const b);
 
-Matrix *substractMatrix(const Matrix *const a, const Matrix *const b);
+Matrix *mul_plain(const Matrix *const a, const Matrix *const b);
 
-Matrix *originalMultiplyMatrix(const Matrix *const a, const Matrix *const b);
+Matrix *mul_loop_order_omp(const Matrix *const a, const Matrix *const b);
 
-Matrix *improvedMultiplyMatrix(const Matrix *const a, const Matrix *const b);
+Matrix *mul_avx_omp(const Matrix *const a, const Matrix *const b);
 
 void printMatrix(const Matrix *const mat);
 
