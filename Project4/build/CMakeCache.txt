@@ -210,15 +210,6 @@ CMAKE_STRIP:FILEPATH=/usr/bin/strip
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Value Computed by CMake
-Matrix_BINARY_DIR:STATIC=/root/GitHub/CS205-2022Fall/Project4/build
-
-//Value Computed by CMake
-Matrix_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-Matrix_SOURCE_DIR:STATIC=/root/GitHub/CS205-2022Fall/Project4
-
-//Value Computed by CMake
 Mul_BINARY_DIR:STATIC=/root/GitHub/CS205-2022Fall/Project4/build
 
 //Value Computed by CMake

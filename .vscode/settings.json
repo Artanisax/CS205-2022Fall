@@ -2,7 +2,9 @@
     "files.associations": {
         "matrix.h": "c",
         "time.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "cblas.h": "c",
+        "stddef.h": "c"
     },
     "cmake.sourceDirectory": "${workspaceFolder}/Project2"
 }

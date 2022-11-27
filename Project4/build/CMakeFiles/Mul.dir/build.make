@@ -108,6 +108,7 @@ Mul_EXTERNAL_OBJECTS =
 Mul: CMakeFiles/Mul.dir/src/Matrix.c.o
 Mul: CMakeFiles/Mul.dir/src/demo.c.o
 Mul: CMakeFiles/Mul.dir/build.make
+Mul: /usr/local/OpenBLAS.OpenMP/lib/libopenblas.a
 Mul: /usr/lib/gcc/x86_64-linux-gnu/11/libgomp.so
 Mul: /usr/lib/x86_64-linux-gnu/libpthread.a
 Mul: CMakeFiles/Mul.dir/link.txt

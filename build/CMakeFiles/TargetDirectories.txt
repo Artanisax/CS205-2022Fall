@@ -1,3 +1,0 @@
-/root/GitHub/CS205-2022Fall/build/CMakeFiles/Calculator.dir
-/root/GitHub/CS205-2022Fall/build/CMakeFiles/edit_cache.dir
-/root/GitHub/CS205-2022Fall/build/CMakeFiles/rebuild_cache.dir

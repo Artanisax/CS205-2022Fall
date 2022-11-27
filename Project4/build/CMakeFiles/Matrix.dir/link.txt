@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/Matrix.dir/src/Matrix.c.o CMakeFiles/Matrix.dir/src/demo.c.o -o Matrix 
