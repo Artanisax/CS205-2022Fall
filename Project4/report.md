@@ -168,19 +168,294 @@ Matrix *mul_order_avx_omp(const Matrix *const a, const Matrix *const b) {
 
 ### An Unsuccessful Attempt on Stressen Algorithm
 
+This algorithm recusively divide the matrix and merge up with about $$\Theta(n^{2.7})$$. I try to implements this algorithm but it still doesn't work properly and with recursion I don't no whether OpenMP really works. Despite the accuracy, though I try my best to used SIMD and multithreading to optimize it and it's supporting functions, it still can't beat others when compile with -O3.
 
+ ![image](pic/Stressen.jpg)
+
+```c
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
+Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
+    size_t n = a->n;
+    Matrix *ret = createMatrix(n, NULL);
+    size_t siz = n*n;
+    #pragma omp parallel for
+    for (size_t i = 0; i < siz; i += 8)
+        _mm256_store_ps(ret->entry+i, _mm256_add_ps(_mm256_load_ps(a->entry+i),
+                                                    _mm256_load_ps(b->entry+i)));
+    return ret;
+}
+
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
+Matrix *subMatrix(const Matrix *const a, const Matrix *const b) {
+    size_t n = a->n;
+    Matrix *ret = createMatrix(n, NULL);
+    size_t siz = n*n;
+    #pragma omp parallel for
+    for (size_t i = 0; i < siz; i += 8)
+        _mm256_store_ps(ret->entry+i, _mm256_sub_ps(_mm256_load_ps(a->entry+i),
+                                                    _mm256_load_ps(b->entry+i)));
+    return ret;
+}
+
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
+Matrix **divide_matrix(const Matrix *const mat) {
+    size_t N = mat->n, n = mat->n>>1;
+    Matrix **ret = malloc(sizeof(Matrix *)*4);
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < 4; ++i) ret[i] = createMatrix(n, NULL);
+    
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret[0]->entry+i*n, mat->entry+i*N, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret[1]->entry+i*n, mat->entry+i*N+n, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret[2]->entry+i*n, mat->entry+(n+i)*N, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret[3]->entry+i*n, mat->entry+(n+i)*N+n, sizeof(float)*n);
+    
+    return ret;
+}
+
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
+Matrix *merge_matrix(Matrix **mat) {
+    size_t n = mat[0]->n, N = mat[0]->n<<1;
+    Matrix *ret = createMatrix(N, NULL);
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+i*N, mat[0]->entry+i*n, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+i*N+n, mat[1]->entry+i*n, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+(n+i)*N, mat[2]->entry+i*n, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+(n+i)*N+n, mat[3]->entry+i*n, sizeof(float)*n);
+
+    return ret;
+}
+
+/**
+ * Reccursively divide and solve the multiplication
+ * Use OpenMP
+*/
+Matrix *stressen(const Matrix *const a, const Matrix *const b) {
+    size_t n = a->n;
+    if (n <= 64)
+        return mul_order_avx_omp(a, b);
+    
+    Matrix *ret, *mat[7], *c[4],
+           **sub_a = divide_matrix(a),
+           **sub_b = divide_matrix(b);
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = subMatrix(sub_a[1], sub_a[3]);
+            t[1] = addMatrix(sub_b[2], sub_b[3]);
+            mat[0] = stressen(t[0], t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
+        }
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = addMatrix(sub_a[0], sub_a[3]);
+            t[1] = addMatrix(sub_b[0], sub_b[3]);
+            mat[1] = stressen(t[0], t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
+        }
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = subMatrix(sub_a[2], sub_a[0]);
+            t[1] = addMatrix(sub_b[0], sub_b[1]);
+            mat[2] = stressen(t[0], t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = addMatrix(sub_a[0], sub_a[1]);
+            mat[3] = stressen(temp, sub_b[3]);
+            deleteMatrix(temp);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = subMatrix(sub_b[1], sub_b[3]);
+            mat[4] = stressen(temp, sub_a[0]);
+            deleteMatrix(temp);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = subMatrix(sub_b[2], sub_b[0]);
+            mat[5] = stressen(temp, sub_a[3]);
+            deleteMatrix(temp);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = addMatrix(sub_a[2], sub_a[3]);
+            mat[6] = stressen(temp, sub_b[0]);
+            deleteMatrix(temp);
+        }
+    }
+
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = addMatrix(mat[0], mat[1]);
+            t[1] = subMatrix(mat[5], mat[3]);
+            c[0] = addMatrix(t[0], t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
+        }
+        #pragma omp section
+        {
+            c[1] = addMatrix(mat[3], mat[4]);
+        }
+        #pragma omp section
+        {
+            c[2] = addMatrix(mat[5], mat[6]);
+        }
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = addMatrix(mat[1], mat[2]);
+            t[1] = subMatrix(mat[4], mat[6]);
+            c[3] = addMatrix(t[0], t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
+        }
+    }
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < 4; ++i) {
+        deleteMatrix(sub_a[i]);
+        deleteMatrix(sub_b[i]);
+    }
+    free(sub_a);
+    free(sub_b);
+
+    ret = merge_matrix(c);
+    #pragma omp parallel for
+    for(size_t i = 0; i < 4; ++i)
+        deleteMatrix(c[i]);
+    
+    return ret;
+}
+```
 
 
 
 ## Part 2 - Results & Verification
 
+### 16*16
+
+ ![image](pic/16.png)
+
+### 128*128
+
+ ![image](pic/128.png)
+
+### 1024*1024
+
+ ![image](pic/1024.png)
+
+### 2048*2048
+
+ ![image](pic/2048.png)
+
+### 4096*4096
+
+ ![image](pic/4096 Stressen.png)
+
+### 4096*4096 O3
+
+ ![image](pic/4096 O3 Stressen.png)
+
+### 8192*8192 O3
+
+ ![image](pic/8192 O3.png)
+
+### 16384*16384 O3
+
+ ![image](pic/16384 O3.png)
+
+With `-O3`, avx2 seems useless. And OpenBLAS  run much faster than my implementations. 
+
+### A Fun Discovery
+
+AVX2 is more precise than normal arithmetic operation with `float`.
+
+```c
+size_t t = 1000000, 10000000, 100000000;
+    float ans = 0;
+    float *temp = (float *)aligned_alloc(256, sizeof(float)*8);
+    for (int i = 0; i < 8; ++i) temp[i] = i;
+    gettimeofday(&st, NULL);
+    for (int i = 0; i < t; ++i)
+        for (int j = 0; j < 8; j++)
+            ans += temp[j];
+    gettimeofday(&ed, NULL);
+    printf(" %.1f %.0fms\n", ans, 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    gettimeofday(&st, NULL);
+    float sum[8];
+    __m256 a = _mm256_setzero_ps(), b;
+    for (int i = 0; i < t; ++i) {
+        b = _mm256_load_ps(temp);
+        a = _mm256_add_ps(a, b);
+    }
+    a = _mm256_hadd_ps(a, a);
+    a = _mm256_hadd_ps(a, a);
+    _mm256_store_ps(sum, a);
+    putchar('\n');
+    ans = sum[0]+sum[4];
+    gettimeofday(&ed, NULL);
+    printf(" %.1f %.0fms\n", ans, 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+```
+
+ ![image](pic/100000.png)
+
+ ![image](pic/1000000.png)
+
+ ![image](pic/10000000.png)
+
+
+
 ## Part 3 - Self-review
+
+Though my result is far far away from OpenBLAS, and even $$\Theta(n^3)$$ with optimizing can beat algorithm with $$\Theta(n^{2.7})$$ . This project tells me our computer (both software and hardware) has much more potential to be squeezed and some times simple optimization can win better algorithm with bigger constants in reality, which only need limited data size. The depressing results dose encourage me to learn more about principles of computer composition and compilation of software.
+
+
 
 ## Part 4 - Codes & Comments
 
 Please see [My GitHub Repository](https://github.com/Artanisax/CS205-2022Fall/tree/main/Project4)
-
-aligned_alloc
-
-fun discovery: avx2 is more precise than normal arithmetic operation on `float`
 
