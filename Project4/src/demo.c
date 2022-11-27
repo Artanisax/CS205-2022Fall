@@ -23,10 +23,10 @@ int main () {
     Matrix *m1 = createMatrix(N, e1), *m2 = createMatrix(N, e2);
     puts(" Initiallized");
 
-    gettimeofday(&st, NULL);
-    Matrix *mp = mul_plain(m1, m2);
-    gettimeofday(&ed, NULL);
-    printf(" Plain: %.1f %.1lf  %.0fms\n", mp->entry[114], mp->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    // gettimeofday(&st, NULL);
+    // Matrix *mp = mul_plain(m1, m2);
+    // gettimeofday(&ed, NULL);
+    // printf(" Plain: %.1f %.1lf  %.0fms\n", mp->entry[114], mp->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
 
     gettimeofday(&st, NULL);
     Matrix *mi = mul_order_omp(m1, m2);
@@ -79,7 +79,7 @@ int main () {
     free(cblas_ans);
     deleteMatrix(m1);
     deleteMatrix(m2);
-    deleteMatrix(mp);
+    // deleteMatrix(mp);
     deleteMatrix(mi);
     deleteMatrix(mii);
     // deleteMatrix(ms);

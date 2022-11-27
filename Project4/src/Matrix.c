@@ -149,8 +149,8 @@ Matrix *stressen(const Matrix *const a, const Matrix *const b) {
             t[0] = subMatrix(sub_a[1], sub_a[3]);
             t[1] = addMatrix(sub_b[2], sub_b[3]);
             mat[0] = stressen(t[0], t[1]);
-            free(t[0]);
-            free(t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
         }
         #pragma omp section
         {
@@ -158,8 +158,8 @@ Matrix *stressen(const Matrix *const a, const Matrix *const b) {
             t[0] = addMatrix(sub_a[0], sub_a[3]);
             t[1] = addMatrix(sub_b[0], sub_b[3]);
             mat[1] = stressen(t[0], t[1]);
-            free(t[0]);
-            free(t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
         }
         #pragma omp section
         {
@@ -167,36 +167,36 @@ Matrix *stressen(const Matrix *const a, const Matrix *const b) {
             t[0] = subMatrix(sub_a[2], sub_a[0]);
             t[1] = addMatrix(sub_b[0], sub_b[1]);
             mat[2] = stressen(t[0], t[1]);
-            free(t[0]);
-            free(t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
         }
         #pragma omp section
         {
             Matrix *temp;
             temp = addMatrix(sub_a[0], sub_a[1]);
             mat[3] = stressen(temp, sub_b[3]);
-            free(temp);
+            deleteMatrix(temp);
         }
         #pragma omp section
         {
             Matrix *temp;
             temp = subMatrix(sub_b[1], sub_b[3]);
             mat[4] = stressen(temp, sub_a[0]);
-            free(temp);
+            deleteMatrix(temp);
         }
         #pragma omp section
         {
             Matrix *temp;
             temp = subMatrix(sub_b[2], sub_b[0]);
             mat[5] = stressen(temp, sub_a[3]);
-            free(temp);
+            deleteMatrix(temp);
         }
         #pragma omp section
         {
             Matrix *temp;
             temp = addMatrix(sub_a[2], sub_a[3]);
             mat[6] = stressen(temp, sub_b[0]);
-            free(temp);
+            deleteMatrix(temp);
         }
     }
 
@@ -208,8 +208,8 @@ Matrix *stressen(const Matrix *const a, const Matrix *const b) {
             t[0] = addMatrix(mat[0], mat[1]);
             t[1] = subMatrix(mat[5], mat[3]);
             c[0] = addMatrix(t[0], t[1]);
-            free(t[0]);
-            free(t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
         }
         #pragma omp section
         {
@@ -225,8 +225,8 @@ Matrix *stressen(const Matrix *const a, const Matrix *const b) {
             t[0] = addMatrix(mat[1], mat[2]);
             t[1] = subMatrix(mat[4], mat[6]);
             c[3] = addMatrix(t[0], t[1]);
-            free(t[0]);
-            free(t[1]);
+            deleteMatrix(t[0]);
+            deleteMatrix(t[1]);
         }
     }
 
