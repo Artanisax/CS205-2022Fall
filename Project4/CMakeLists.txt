@@ -9,7 +9,7 @@ include_directories(/usr/local/OpenBLAS.OpenMP/include)
 
 link_directories(/usr/local/OpenBLAS.OpenMP/lib)
 
-add_compile_options(-Wall -fopenmp -mavx2 -O3)
+add_compile_options(-Wall -fopenmp -mavx2)
 
 add_executable(Mul ${DIR_SRCS})
 

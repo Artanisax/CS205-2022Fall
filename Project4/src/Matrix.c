@@ -19,6 +19,7 @@ void deleteMatrix(Matrix *const mat) {
     free(mat);
 }
 
+//Plain multiplication, basic 3 layer loops
 Matrix *mul_plain(const Matrix *const a, const Matrix *const b) {
     size_t n = a->n;
     Matrix *ret = createMatrix(n, NULL);
@@ -31,6 +32,10 @@ Matrix *mul_plain(const Matrix *const a, const Matrix *const b) {
     return ret;
 }
 
+/**
+ * Exchange the order of loops(swap j and k) for continues memory access
+ * With OpenMP
+*/
 Matrix *mul_order_omp(const Matrix *const a, const Matrix *const b) {
     size_t n = a->n;
     Matrix *ret = createMatrix(n, NULL);
@@ -48,6 +53,10 @@ Matrix *mul_order_omp(const Matrix *const a, const Matrix *const b) {
     return ret;
 }
 
+/**
+ * Use SIMD(avx) to accelerate vector multiplication
+ * With OpenMP
+*/
 Matrix *mul_order_avx_omp(const Matrix *const a, const Matrix *const b) {
     size_t n = a->n;
     Matrix *ret = createMatrix(a->n, NULL);
@@ -68,6 +77,10 @@ Matrix *mul_order_avx_omp(const Matrix *const a, const Matrix *const b) {
     return ret;
 }
 
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
 Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     size_t n = a->n;
     Matrix *ret = createMatrix(n, NULL);
@@ -79,6 +92,10 @@ Matrix *addMatrix(const Matrix *const a, const Matrix *const b) {
     return ret;
 }
 
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
 Matrix *subMatrix(const Matrix *const a, const Matrix *const b) {
     size_t n = a->n;
     Matrix *ret = createMatrix(n, NULL);
@@ -90,6 +107,10 @@ Matrix *subMatrix(const Matrix *const a, const Matrix *const b) {
     return ret;
 }
 
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
 Matrix **divide_matrix(const Matrix *const mat) {
     size_t N = mat->n, n = mat->n>>1;
     Matrix **ret = malloc(sizeof(Matrix *)*4);
@@ -113,6 +134,10 @@ Matrix **divide_matrix(const Matrix *const mat) {
     return ret;
 }
 
+/**
+ * For stressen
+ * Use SIMD and OpenMP
+*/
 Matrix *merge_matrix(Matrix **mat) {
     size_t n = mat[0]->n, N = mat[0]->n<<1;
     Matrix *ret = createMatrix(N, NULL);
@@ -133,6 +158,10 @@ Matrix *merge_matrix(Matrix **mat) {
     return ret;
 }
 
+/**
+ * Reccursively divide and solve the multiplication
+ * Use OpenMP
+*/
 Matrix *stressen(const Matrix *const a, const Matrix *const b) {
     size_t n = a->n;
     if (n <= 64)

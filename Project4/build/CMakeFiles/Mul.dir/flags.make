@@ -6,5 +6,5 @@ C_DEFINES =
 
 C_INCLUDES = -I/root/GitHub/CS205-2022Fall/Project4/include -I/usr/local/OpenBLAS.OpenMP/include
 
-C_FLAGS = -Wall -fopenmp -mavx2 -O3
+C_FLAGS = -Wall -fopenmp -mavx2
 

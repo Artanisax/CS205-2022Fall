@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 
-// Matrix structure
 typedef struct Matrix{
     size_t n;
     float *entry;
