@@ -67,8 +67,12 @@ Matrix *mul_order_avx_omp(const Matrix *const a, const Matrix *const b) {
         for (size_t k = 0; k < n; ++k) {
             float aik = a->entry[in+k];
             size_t kn = k*n;
+            // all b[k][j] needs to be multiplied by a[i][k] for c[i][j]
             __m256 a_ik = _mm256_set_ps(aik, aik, aik, aik, aik, aik, aik, aik);
             for (size_t j = 0; j < n; j += 8)
+                // ret->entry[in+j] += a_ik*b->entry[kn+j]
+                // directly call functions to calculate to save more time
+                // though do not read elegant... 
                 _mm256_store_ps(ret->entry+in+j, 
                                 _mm256_add_ps(_mm256_load_ps(ret->entry+in+j),
                                               _mm256_mul_ps(a_ik, _mm256_load_ps(b->entry+kn+j))));
