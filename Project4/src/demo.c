@@ -26,28 +26,28 @@ int main () {
     gettimeofday(&st, NULL);
     Matrix *mp = mul_plain(m1, m2);
     gettimeofday(&ed, NULL);
-    printf(" %.1f %.1lf  %.0fms\n", mp->entry[114], mp->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    printf(" Plain: %.1f %.1lf  %.0fms\n", mp->entry[114], mp->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
 
     gettimeofday(&st, NULL);
     Matrix *mi = mul_order_omp(m1, m2);
     gettimeofday(&ed, NULL);
-    printf(" %.1f %.1lf  %.0fms\n", mi->entry[114], mi->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    printf(" Order+OpenMP: %.1f %.1lf  %.0fms\n", mi->entry[114], mi->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
     gettimeofday(&st, NULL);
 
     Matrix *mii = mul_order_avx_omp(m1, m2);
     gettimeofday(&ed, NULL);
-    printf(" %.1f %.1lf  %.0fms\n", mii->entry[114], mii->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    printf(" Order+OpenMP+avx2: %.1f %.1lf  %.0fms\n", mii->entry[114], mii->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
     gettimeofday(&st, NULL);
     
     // gettimeofday(&st, NULL);
     // Matrix *ms = stressen(m1, m2);
     // gettimeofday(&ed, NULL);
-    // printf(" stressen: %.1f %.1lf  %.0fms\n", ms->entry[114], ms->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    // printf(" Stressen: %.1f %.1lf  %.0fms\n", ms->entry[114], ms->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
 
     gettimeofday(&st, NULL);
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, e1, N, e2, N, 0.0, cblas_ans, N);
     gettimeofday(&ed, NULL);
-    printf(" %.1f %.1lf  %.0fms\n", cblas_ans[114], cblas_ans[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    printf(" OpenBLAS: %.1f %.1lf  %.0fms\n", cblas_ans[114], cblas_ans[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
 
     // size_t t = 10000000;
     // float ans = 0;
