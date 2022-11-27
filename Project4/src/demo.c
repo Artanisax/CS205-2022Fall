@@ -7,7 +7,7 @@
 
 #include <immintrin.h>
 
-const size_t N = 1024;
+const size_t N = 128;
 
 int main () {
     srand(time(NULL));
@@ -39,10 +39,10 @@ int main () {
     printf(" Order+OpenMP+avx2: %.1f %.1lf  %.0fms\n", mii->entry[114], mii->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
     gettimeofday(&st, NULL);
     
-    // gettimeofday(&st, NULL);
-    // Matrix *ms = stressen(m1, m2);
-    // gettimeofday(&ed, NULL);
-    // printf(" Stressen: %.1f %.1lf  %.0fms\n", ms->entry[114], ms->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    gettimeofday(&st, NULL);
+    Matrix *ms = stressen(m1, m2);
+    gettimeofday(&ed, NULL);
+    printf(" Stressen: %.1f %.1lf  %.0fms\n", ms->entry[114], ms->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
 
     gettimeofday(&st, NULL);
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, e1, N, e2, N, 0.0, cblas_ans, N);
@@ -69,7 +69,6 @@ int main () {
     // a = _mm256_hadd_ps(a, a);
     // a = _mm256_hadd_ps(a, a);
     // _mm256_store_ps(sum, a);
-    // putchar('\n');
     // ans = sum[0]+sum[4];
     // gettimeofday(&ed, NULL);
     // printf(" %.1f %.0fms\n", ans, 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
