@@ -92,9 +92,11 @@ Matrix *subMatrix(const Matrix *const a, const Matrix *const b) {
 
 Matrix **divide_matrix(const Matrix *const mat) {
     size_t N = mat->n, n = mat->n>>1;
-    Matrix **ret = malloc(sizeof(Matrix)*4);
+    Matrix **ret = malloc(sizeof(Matrix *)*4);
+
     #pragma omp parallel for
     for (size_t i = 0; i < 4; ++i) ret[i] = createMatrix(n, NULL);
+    
     #pragma omp parallel for
     for (size_t i = 0; i < n; ++i)
         memcpy(ret[0]->entry+i*n, mat->entry+i*N, sizeof(float)*n);
@@ -107,12 +109,141 @@ Matrix **divide_matrix(const Matrix *const mat) {
     #pragma omp parallel for
     for (size_t i = 0; i < n; ++i)
         memcpy(ret[3]->entry+i*n, mat->entry+(n+i)*N+n, sizeof(float)*n);
+    
     return ret;
 }
 
-Matrix *stressen(const Matrix *const mat) {
-    size_t n = mat->n;
+Matrix *merge_matrix(Matrix **mat) {
+    size_t n = mat[0]->n, N = mat[0]->n<<1;
+    Matrix *ret = createMatrix(N, NULL);
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+i*N, mat[0]->entry+i*n, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+i*N+n, mat[1]->entry+i*n, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+(n+i)*N, mat[2]->entry+i*n, sizeof(float)*n);
+    #pragma omp parallel for
+    for (size_t i = 0; i < n; ++i)
+        memcpy(ret->entry+(n+i)*N+n, mat[3]->entry+i*n, sizeof(float)*n);
+
+    return ret;
+}
+
+Matrix *stressen(const Matrix *const a, const Matrix *const b) {
+    size_t n = a->n;
+    if (n <= 64)
+        return mul_order_avx_omp(a, b);
     
+    Matrix *ret, *mat[7], *c[4],
+           **sub_a = divide_matrix(a),
+           **sub_b = divide_matrix(b);
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = subMatrix(sub_a[1], sub_a[3]);
+            t[1] = addMatrix(sub_b[2], sub_b[3]);
+            mat[0] = stressen(t[0], t[1]);
+            free(t[0]);
+            free(t[1]);
+        }
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = addMatrix(sub_a[0], sub_a[3]);
+            t[1] = addMatrix(sub_b[0], sub_b[3]);
+            mat[1] = stressen(t[0], t[1]);
+            free(t[0]);
+            free(t[1]);
+        }
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = subMatrix(sub_a[2], sub_a[0]);
+            t[1] = addMatrix(sub_b[0], sub_b[1]);
+            mat[2] = stressen(t[0], t[1]);
+            free(t[0]);
+            free(t[1]);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = addMatrix(sub_a[0], sub_a[1]);
+            mat[3] = stressen(temp, sub_b[3]);
+            free(temp);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = subMatrix(sub_b[1], sub_b[3]);
+            mat[4] = stressen(temp, sub_a[0]);
+            free(temp);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = subMatrix(sub_b[2], sub_b[0]);
+            mat[5] = stressen(temp, sub_a[3]);
+            free(temp);
+        }
+        #pragma omp section
+        {
+            Matrix *temp;
+            temp = addMatrix(sub_a[2], sub_a[3]);
+            mat[6] = stressen(temp, sub_b[0]);
+            free(temp);
+        }
+    }
+
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = addMatrix(mat[0], mat[1]);
+            t[1] = subMatrix(mat[5], mat[3]);
+            c[0] = addMatrix(t[0], t[1]);
+            free(t[0]);
+            free(t[1]);
+        }
+        #pragma omp section
+        {
+            c[1] = addMatrix(mat[3], mat[4]);
+        }
+        #pragma omp section
+        {
+            c[2] = addMatrix(mat[5], mat[6]);
+        }
+        #pragma omp section
+        {
+            Matrix *t[2];
+            t[0] = addMatrix(mat[1], mat[2]);
+            t[1] = subMatrix(mat[4], mat[6]);
+            c[3] = addMatrix(t[0], t[1]);
+            free(t[0]);
+            free(t[1]);
+        }
+    }
+
+    #pragma omp parallel for
+    for (size_t i = 0; i < 4; ++i) {
+        deleteMatrix(sub_a[i]);
+        deleteMatrix(sub_b[i]);
+    }
+    free(sub_a);
+    free(sub_b);
+
+    ret = merge_matrix(c);
+    #pragma omp parallel for
+    for(size_t i = 0; i < 4; ++i)
+        deleteMatrix(c[i]);
+    
+    return ret;
 }
 
 void printMatrix(const Matrix *const mat) {

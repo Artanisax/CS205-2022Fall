@@ -7,7 +7,7 @@
 
 #include <immintrin.h>
 
-const size_t N = 2048;
+const size_t N = 8192;
 
 int main () {
     srand(time(NULL));
@@ -22,18 +22,28 @@ int main () {
     }
     Matrix *m1 = createMatrix(N, e1), *m2 = createMatrix(N, e2);
     puts(" Initiallized");
-    // gettimeofday(&st, NULL);
-    // Matrix *mp = mul_plain(m1, m2);
-    // gettimeofday(&ed, NULL);
-    // printf(" %.1f %.1lf  %.0fms\n", mp->entry[114], mp->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+
+    gettimeofday(&st, NULL);
+    Matrix *mp = mul_plain(m1, m2);
+    gettimeofday(&ed, NULL);
+    printf(" %.1f %.1lf  %.0fms\n", mp->entry[114], mp->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+
     gettimeofday(&st, NULL);
     Matrix *mi = mul_order_omp(m1, m2);
     gettimeofday(&ed, NULL);
     printf(" %.1f %.1lf  %.0fms\n", mi->entry[114], mi->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
     gettimeofday(&st, NULL);
+
     Matrix *mii = mul_order_avx_omp(m1, m2);
     gettimeofday(&ed, NULL);
     printf(" %.1f %.1lf  %.0fms\n", mii->entry[114], mii->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+    gettimeofday(&st, NULL);
+    
+    // gettimeofday(&st, NULL);
+    // Matrix *ms = stressen(m1, m2);
+    // gettimeofday(&ed, NULL);
+    // printf(" stressen: %.1f %.1lf  %.0fms\n", ms->entry[114], ms->entry[514], 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+
     gettimeofday(&st, NULL);
     cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, N, N, N, 1.0, e1, N, e2, N, 0.0, cblas_ans, N);
     gettimeofday(&ed, NULL);
@@ -63,5 +73,16 @@ int main () {
     // ans = sum[0]+sum[4];
     // gettimeofday(&ed, NULL);
     // printf(" %.1f %.0fms\n", ans, 1.0*((ed.tv_sec-st.tv_sec)*1e6+(ed.tv_usec-st.tv_usec))/1e3);
+
+    free(e1);
+    free(e2);
+    free(cblas_ans);
+    deleteMatrix(m1);
+    deleteMatrix(m2);
+    deleteMatrix(mp);
+    deleteMatrix(mi);
+    deleteMatrix(mii);
+    // deleteMatrix(ms);
+
     return 0;
 }

@@ -27,6 +27,10 @@ Matrix *subMatrix(const Matrix *const a, const Matrix *const b);
 
 Matrix **divide_matrix(const Matrix *const mat);
 
+Matrix *merge_matrix(Matrix **mat);
+
+Matrix *stressen(const Matrix *const a, const Matrix *const b);
+
 void printMatrix(const Matrix *const mat);
 
 #endif // __MATRIX_H__
