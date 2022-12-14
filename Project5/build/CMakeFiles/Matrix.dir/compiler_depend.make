@@ -188,6 +188,9 @@ CMakeFiles/Matrix.dir/src/Matrix.cpp.o: ../src/Matrix.cpp \
   /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
   /usr/include/c++/11/bits/charconv.h \
   /usr/include/c++/11/bits/basic_string.tcc \
+  /usr/include/c++/11/cstring \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/c++/11/iostream \
   /usr/include/c++/11/ostream \
   /usr/include/c++/11/ios \
@@ -400,6 +403,9 @@ CMakeFiles/Matrix.dir/src/demo.cpp.o: ../src/demo.cpp \
   /usr/include/x86_64-linux-gnu/bits/types/error_t.h \
   /usr/include/c++/11/bits/charconv.h \
   /usr/include/c++/11/bits/basic_string.tcc \
+  /usr/include/c++/11/cstring \
+  /usr/include/string.h \
+  /usr/include/strings.h \
   /usr/include/c++/11/iostream \
   /usr/include/c++/11/ostream \
   /usr/include/c++/11/ios \
@@ -455,6 +461,10 @@ CMakeFiles/Matrix.dir/src/demo.cpp.o: ../src/demo.cpp \
 /usr/include/c++/11/bits/locale_classes.h:
 
 /usr/include/c++/11/bits/ios_base.h:
+
+/usr/include/string.h:
+
+/usr/include/c++/11/cstring:
 
 /usr/include/c++/11/bits/basic_string.tcc:
 
@@ -791,6 +801,8 @@ CMakeFiles/Matrix.dir/src/demo.cpp.o: ../src/demo.cpp \
 /usr/include/c++/11/bits/allocated_ptr.h:
 
 /usr/include/c++/11/bits/refwrap.h:
+
+/usr/include/strings.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
 

@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <cstring>
 #include <iostream>
 
 using std::shared_ptr;
@@ -20,15 +21,12 @@ private:
 	size_t channel, row, col;
 	shared_ptr<T> entry;
 
-	static void copy(T *dst, const T *src, const size_t siz)
-	{
-		for (size_t i = 0; i < siz; ++i) dst[i] = src[i];
-	}
+	static void hard_copy(T *dest, const T *src, const size_t siz);
 
 public:
 	Matrix(const size_t channel, const size_t row, const size_t col, const T *entry):
 		channel(channel), row(row), col(col), entry(new T[row*col*channel], default_delete<T[]>())
-	{ copy(this->entry.get(), entry, row*col*channel); }
+	{ hard_copy(this->entry.get(), entry, row*col*channel); }
 
 	Matrix(const Matrix &mat): row(mat.row), col(mat.col), entry(mat.entry) {}
 
