@@ -6,7 +6,7 @@ aux_source_directory(./src DIR_SRCS)
 
 include_directories(include)
 
-add_compile_options(-Wall -fopenmp -mavx2)
+add_compile_options(-fopenmp)
 
 add_executable(Matrix ${DIR_SRCS})
 

@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/root/GitHub/CS205-2022Fall/Project5/include
 
-CXX_FLAGS = -Wall -fopenmp -mavx2
+CXX_FLAGS = -fopenmp
 

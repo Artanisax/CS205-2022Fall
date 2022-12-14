@@ -2,11 +2,10 @@
 
 using std::cout;
 
-const size_t N = 128;
-
 int main () {
-    double entry[4] = {0.0, 1.0, 2.0, 3.0};
-    Matrix mat(2, 2, &entry);
-    cout << mat.to_string();
+    double *entry = new double[4];
+    entry[1] = 1.1, entry[2] = 2.2, entry[3] = 3.3;
+    Matrix mat(1, 2, 2, entry);
+    
     return 0;
 }
