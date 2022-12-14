@@ -10,7 +10,6 @@
 using std::shared_ptr;
 using std::make_shared;
 using std::default_delete;
-using std::to_string;
 using std::string;
 using std::ostream;
 
@@ -32,9 +31,9 @@ public:
 
 	string to_string() const;
 
-	Matrix operator=(const Matrix &mat);
-
 	bool operator==(const Matrix &mat) const;
+
+	Matrix operator=(const Matrix &mat);
 
 	Matrix operator+(const Matrix &mat) const;
 

@@ -38,3 +38,17 @@ string Matrix<T>::to_string() const
     }
     return s;
 }
+
+template <typename T>
+bool Matrix<T>::operator==(const Matrix &mat) const
+{
+    if (channel != mat.channel || row != mat.row || col != mat.col)
+        return false;
+    if (entry.get() == mat.entry.get())
+        return true;
+    size_t siz = channel*row*col;
+    T *p[2] = {entry.get(), mat.entry.get()};
+    for (size_t i = 0; i < siz; ++i)
+        if (p[0][i] != p[1][i])  return false;
+    return true;
+}
