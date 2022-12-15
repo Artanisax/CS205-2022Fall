@@ -25,15 +25,17 @@ private:
 public:
 	Matrix(const size_t channel, const size_t row, const size_t col, const T *entry):
 		channel(channel), row(row), col(col), entry(new T[row*col*channel], default_delete<T[]>())
-	{ hard_copy(this->entry.get(), entry, row*col*channel); }
+	{ if (entry)  hard_copy(this->entry.get(), entry, row*col*channel); }
 
 	Matrix(const Matrix &mat): row(mat.row), col(mat.col), entry(mat.entry) {}
 
 	string to_string() const;
 
+	void uniquify();
+
 	bool operator==(const Matrix &mat) const;
 
-	Matrix operator=(const Matrix &mat);
+	Matrix &operator=(const Matrix &mat);
 
 	Matrix operator+(const Matrix &mat) const;
 
@@ -49,13 +51,13 @@ public:
 
 	Matrix operator/(const T &x) const;
 
-	Matrix operator+=(const T &x);
+	Matrix &operator+=(const T &x);
 
-	Matrix operator-=(const T &x);
+	Matrix &operator-=(const T &x);
 
-	Matrix operator*=(const T &x);
+	Matrix &operator*=(const T &x);
 
-	Matrix operator/=(const T &x);
+	Matrix &operator/=(const T &x);
 
 	friend Matrix operator+(const T &x, const Matrix &mat);
 
