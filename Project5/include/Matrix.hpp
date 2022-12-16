@@ -22,6 +22,8 @@ private:
 
 	static void hard_copy(T *dest, const T *src, const size_t siz);
 
+	static void set_zero(T *p, size_t siz);
+
 public:
 	Matrix(const size_t channel, const size_t row, const size_t col, const T *entry):
 		channel(channel), row(row), col(col), entry(new T[row*col*channel], default_delete<T[]>())
@@ -50,6 +52,12 @@ public:
 	Matrix operator*(const T &x) const;
 
 	Matrix operator/(const T &x) const;
+
+	Matrix &operator+=(const Matrix &mat);
+
+	Matrix &operator-=(const Matrix &mat);
+
+	Matrix &operator*=(const Matrix &mat);
 
 	Matrix &operator+=(const T &x);
 

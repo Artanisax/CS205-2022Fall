@@ -20,6 +20,25 @@ void Matrix<T>::hard_copy(T *dest, const T *src, const size_t siz)
 }
 
 template <typename T>
+void Matrix<T>::set_zero(T *p, const size_t siz)
+{
+    switch (typeid(T).name())
+    {
+        case typeid(short).name():
+        case typeid(int).name():
+        case typeid(long long).name():
+        case typeid(float).name():
+        case typeid(double).name():
+            memset(p, 0, sizeof(T));
+            break;
+        default:
+            for (size_t i = 0; i < siz; ++i)
+                p[i] = 0;
+            break;
+    }
+}
+
+template <typename T>
 string Matrix<T>::to_string() const
 {
     string s;
@@ -64,10 +83,11 @@ bool Matrix<T>::operator==(const Matrix &mat) const
 template <typename T>
 Matrix<T> &Matrix<T>::operator=(const Matrix &mat)
 {
-    this->channel = mat.channel;
-    this->row = mat.row;
-    this->col = mat.col;
-    this->entry = mat.entry;
+    uniquify();
+    channel = mat.channel;
+    row = mat.row;
+    col = mat.col;
+    entry = mat.entry;
 }
 
 template <typename T>
@@ -75,19 +95,182 @@ Matrix<T> Matrix<T>::operator+(const Matrix &mat) const
 {
     Matrix<T> res(this->channel, this->row, this->col, nullptr);
     size_t siz = this->channel*this->row*this->col;
-    T *p = res.entry.get(), *src[2] = {this->entry.get(), mat.entry.get()};
+    T *dest = res.entry.get(), *src[2] = {this->entry.get(), mat.entry.get()};
     for (size_t i = 0; i < siz; ++i)
-        p[i] = src[0][i]+src[1][i];
+        dest[i] = src[0][i]+src[1][i];
     return res;
 }
 
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix &mat) const
 {
-    Matrix<T> res(this->channel, this->row, this->col, nullptr);
-    size_t siz = this->channel*this->row*this->col;
-    T *p = res.entry.get(), *src[2] = {this->entry.get(), mat.entry.get()};
+    Matrix<T> res(channel, row, col, nullptr);
+    size_t siz = channel*row*col;
+    T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
     for (size_t i = 0; i < siz; ++i)
-        p[i] = src[0][i]-src[1][i];
+        dest[i] = src[0][i]-src[1][i];
     return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(const Matrix &mat) const
+{
+    Matrix<T> res(channel, row, mat.col, nullptr);
+    T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
+    set_zero(p, channel*row*mat.col);
+    for (size_t t = 0, area[3] = {row*col, mat.row*mat.col, row*mat.col};          t < channel; ++t)
+    for (size_t i = 0, head_row[3] = {t*area[0], t*area[1], t*area[2]};            i < row;     ++i)
+    for (size_t k = 0, head_i = head_row[0]+i*col, head_p = head_row[2]+i*mat.col; k < col;     ++k)
+    for (size_t j = 0, ik = head_i+k, head_k = head_row[1]+k*mat.col;              j < mat.col; ++j)
+        dest[head_p+j] += src[0][ik]*src[1][head_k+j];
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+(const T &x) const
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]+x;
+    return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(const T &x) const
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]-x;
+    return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(const T &x) const
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]*x;
+    return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator/(const T &x) const
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]/x;
+    return res;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator+=(const Matrix &mat)
+{
+    uniquify();
+    T *dest = entry.get(), *src = mat.entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] += src[i];
+    return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator-=(const Matrix &mat)
+{
+    uniquify();
+    T *dest = entry.get(), *src = mat.entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] -= src[i];
+    return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator*=(const Matrix &mat)
+{
+    *this = (*this)*mat;
+    return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator+=(const T &x)
+{
+    T *p = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        p[i] += x;
+    return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator-=(const T &x)
+{
+    T *p = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        p[i] -= x;
+    return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator*=(const T &x)
+{
+    T *p = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        p[i] *= x;
+    return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator/=(const T &x)
+{
+    T *p = entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        p[i] /= x;
+    return *this;
+}
+
+template <typename T>
+Matrix<T> operator+(const T &x, Matrix<T> &mat)
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = mat.entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]+x;
+    return res;
+}
+
+template <typename T>
+Matrix<T> operator-(const T &x, Matrix<T> &mat)
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = mat.entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]-x;
+    return res;
+}
+
+template <typename T>
+Matrix<T> operator*(const T &x, Matrix<T> &mat)
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = mat.entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]*x;
+    return res;
+}
+
+template <typename T>
+Matrix<T> operator/(const T &x, Matrix<T> &mat)
+{
+    Matrix<T> res(channel, row, col, nullptr);
+    T *dest = res.entry.get(), *src = mat.entry.get();
+    for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
+        dest[i] = src[i]/x;
+    return res;
+}
+
+template <typename T>
+ostream &operator<<(ostream &os, Matrix<T> &mat)
+{
+    os << mat.to_string();
+    return os;
 }
