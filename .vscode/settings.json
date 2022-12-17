@@ -11,6 +11,8 @@
         "typeinfo": "cpp",
         "tuple": "cpp",
         "array": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "memory": "cpp",
+        "vector": "cpp"
     }
 }
