@@ -13,6 +13,8 @@
         "array": "cpp",
         "utility": "cpp",
         "memory": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "limits": "cpp",
+        "streambuf": "cpp"
     }
 }

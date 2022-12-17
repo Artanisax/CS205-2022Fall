@@ -7,9 +7,9 @@ int main () {
     // Matrix<double> m0(2, 1, 2, e[0]);
     // Matrix<double> m1(2, 2, 1, e[1]);
     // cout << m0*m1;
-    double *entry = new double;
-    *entry = 1;
-    Matrix<double> mat(1, 1, 1, entry);
-    cout << mat.get(0,0,0) << ' ' << mat.get(0,0,1) << '\n';
+    double *entry = new double[4];
+    entry[0] = 0, entry[1] = 1, entry[2] = 2, entry[3] = 3;
+    Matrix<double> mat(2, 1, 2, entry);
+    cout << mat;
     return 0;
 }
