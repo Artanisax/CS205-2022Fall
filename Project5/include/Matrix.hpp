@@ -67,13 +67,18 @@ public:
 
 	Matrix &operator/=(const T &x);
 
-	friend Matrix operator+(const T &x, const Matrix &mat);
+	template <typename t>
+	friend Matrix operator+(const t &x, const Matrix<t> &mat);
 
-	friend Matrix operator-(const T &x, const Matrix &mat);
+	template <typename t>
+	friend Matrix operator-(const t &x, const Matrix<t> &mat);
 
-	friend Matrix operator*(const T &x, const Matrix &mat);
+	template <typename t>
+	friend Matrix operator*(const t &x, const Matrix<t> &mat);
 
-	friend Matrix operator/(const T &x, const Matrix &mat);
+	template <typename t>
+	friend Matrix operator/(const t &x, const Matrix<t> &mat);
 
-	friend ostream &operator<<(ostream &os, const Matrix mat);
+	template <typename t>
+	friend ostream &operator<<(ostream &os, const Matrix<t> mat);
 };

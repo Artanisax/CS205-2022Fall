@@ -117,7 +117,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix &mat) const
 {
     Matrix<T> res(channel, row, mat.col, nullptr);
     T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
-    set_zero(p, channel*row*mat.col);
+    set_zero(dest, channel*row*mat.col);
     for (size_t t = 0, area[3] = {row*col, mat.row*mat.col, row*mat.col};          t < channel; ++t)
     for (size_t i = 0, head_row[3] = {t*area[0], t*area[1], t*area[2]};            i < row;     ++i)
     for (size_t k = 0, head_i = head_row[0]+i*col, head_p = head_row[2]+i*mat.col; k < col;     ++k)
@@ -229,8 +229,9 @@ Matrix<T> &Matrix<T>::operator/=(const T &x)
 }
 
 template <typename T>
-Matrix<T> operator+(const T &x, Matrix<T> &mat)
+Matrix<T> operator+(const T &x, const Matrix<T> &mat)
 {
+    size_t channel = mat.channel, row = mat.row, col = mat.col;
     Matrix<T> res(channel, row, col, nullptr);
     T *dest = res.entry.get(), *src = mat.entry.get();
     for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
@@ -239,8 +240,9 @@ Matrix<T> operator+(const T &x, Matrix<T> &mat)
 }
 
 template <typename T>
-Matrix<T> operator-(const T &x, Matrix<T> &mat)
+Matrix<T> operator-(const T &x, const Matrix<T> &mat)
 {
+    size_t channel = mat.channel, row = mat.row, col = mat.col;
     Matrix<T> res(channel, row, col, nullptr);
     T *dest = res.entry.get(), *src = mat.entry.get();
     for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
@@ -249,8 +251,9 @@ Matrix<T> operator-(const T &x, Matrix<T> &mat)
 }
 
 template <typename T>
-Matrix<T> operator*(const T &x, Matrix<T> &mat)
+Matrix<T> operator*(const T &x, const Matrix<T> &mat)
 {
+    size_t channel = mat.channel, row = mat.row, col = mat.col;
     Matrix<T> res(channel, row, col, nullptr);
     T *dest = res.entry.get(), *src = mat.entry.get();
     for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
@@ -259,8 +262,9 @@ Matrix<T> operator*(const T &x, Matrix<T> &mat)
 }
 
 template <typename T>
-Matrix<T> operator/(const T &x, Matrix<T> &mat)
+Matrix<T> operator/(const T &x, const Matrix<T> &mat)
 {
+    size_t channel = mat.channel, row = mat.row, col = mat.col;
     Matrix<T> res(channel, row, col, nullptr);
     T *dest = res.entry.get(), *src = mat.entry.get();
     for (size_t i = 0, siz = channel*row*col; i < siz; ++i)
@@ -269,7 +273,7 @@ Matrix<T> operator/(const T &x, Matrix<T> &mat)
 }
 
 template <typename T>
-ostream &operator<<(ostream &os, Matrix<T> &mat)
+ostream &operator<<(ostream &os, const Matrix<T> &mat)
 {
     os << mat.to_string();
     return os;
