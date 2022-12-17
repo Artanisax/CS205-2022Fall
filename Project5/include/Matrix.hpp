@@ -2,7 +2,6 @@
 
 #include <cstddef>
 #include <memory>
-#include <vector>
 #include <string>
 #include <cstring>
 #include <iostream>
@@ -30,6 +29,9 @@ public:
 	{ if (entry)  hard_copy(this->entry.get(), entry, row*col*channel); }
 
 	Matrix(const Matrix &mat): row(mat.row), col(mat.col), entry(mat.entry) {}
+
+	T get(size_t k, size_t i, size_t j) const
+	{ return entry.get()[k*row*col+i*col+j]; }
 
 	string to_string() const;
 
@@ -86,45 +88,45 @@ public:
 template <typename T>
 void Matrix<T>::hard_copy(T *dest, const T *src, const size_t siz)
 {
-    switch (typeid(T).name())
-    {
-        case typeid(short).name():
-        case typeid(int).name():
-        case typeid(long long).name():
-        case typeid(float).name():
-        case typeid(double).name():
+    // switch (typeid(T).name())
+    // {
+    //     case typeid(short).name():
+    //     case typeid(int).name():
+    //     case typeid(long long).name():
+    //     case typeid(float).name():
+    //     case typeid(double).name():
             memcpy(dest, src, siz*sizeof(T));
-            break;
-        default:
-            for (size_t i = 0; i < siz; ++i)
-                dest[i] = src[i];
-            break;
-    }
+    //         break;
+    //     default:
+    //         for (size_t i = 0; i < siz; ++i)
+    //             dest[i] = src[i];
+    //         break;
+    // }
 }
 
 template <typename T>
 void Matrix<T>::set_zero(T *p, const size_t siz)
 {
-    switch (typeid(T).name())
-    {
-        case typeid(short).name():
-        case typeid(int).name():
-        case typeid(long long).name():
-        case typeid(float).name():
-        case typeid(double).name():
+    // switch (typeid(T).name())
+    // {
+    //     case typeid(short).name():
+    //     case typeid(int).name():
+    //     case typeid(long long).name():
+    //     case typeid(float).name():
+    //     case typeid(double).name():
             memset(p, 0, sizeof(T));
-            break;
-        default:
-            for (size_t i = 0; i < siz; ++i)
-                p[i] = 0;
-            break;
-    }
+        //     break;
+        // default:
+        //     for (size_t i = 0; i < siz; ++i)
+        //         p[i] = 0;
+        //     break;
+    // }
 }
 
 template <typename T>
 string Matrix<T>::to_string() const
 {
-    string s;
+    string s = "\n";
     T *p = entry.get();
     size_t area = row*col;
     for (size_t i = 0; i < channel; ++i)
@@ -206,6 +208,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix &mat) const
     for (size_t k = 0, head_i = head_row[0]+i*col, head_p = head_row[2]+i*mat.col; k < col;     ++k)
     for (size_t j = 0, ik = head_i+k, head_k = head_row[1]+k*mat.col;              j < mat.col; ++j)
         dest[head_p+j] += src[0][ik]*src[1][head_k+j];
+	return res;
 }
 
 template <typename T>
