@@ -88,39 +88,25 @@ public:
 template <typename T>
 void Matrix<T>::hard_copy(T *dest, const T *src, const size_t siz)
 {
-    // switch (typeid(T).name())
-    // {
-    //     case typeid(short).name():
-    //     case typeid(int).name():
-    //     case typeid(long long).name():
-    //     case typeid(float).name():
-    //     case typeid(double).name():
-            memcpy(dest, src, siz*sizeof(T));
-    //         break;
-    //     default:
-    //         for (size_t i = 0; i < siz; ++i)
-    //             dest[i] = src[i];
-    //         break;
-    // }
+    if (typeid(T) == typeid(short) || typeid(T) == typeid(int) ||
+		typeid(T) == typeid(long long) || typeid(T) == typeid(float) ||
+		typeid(T) == typeid(double))
+		memcpy(dest, src, siz*sizeof(T));
+	else
+		for (size_t i = 0; i < siz; ++i)
+			dest[i] = src[i];
 }
 
 template <typename T>
 void Matrix<T>::set_zero(T *p, const size_t siz)
 {
-    // switch (typeid(T).name())
-    // {
-    //     case typeid(short).name():
-    //     case typeid(int).name():
-    //     case typeid(long long).name():
-    //     case typeid(float).name():
-    //     case typeid(double).name():
-            memset(p, 0, sizeof(T));
-        //     break;
-        // default:
-        //     for (size_t i = 0; i < siz; ++i)
-        //         p[i] = 0;
-        //     break;
-    // }
+    if (typeid(T) == typeid(short) || typeid(T) == typeid(int) ||
+		typeid(T) == typeid(long long) || typeid(T) == typeid(float) ||
+		typeid(T) == typeid(double))
+		bzero(p, siz*sizeof(T));
+	else
+		for (size_t i = 0; i < siz; ++i)
+			dest[i] = 0;
 }
 
 template <typename T>
