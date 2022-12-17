@@ -41,46 +41,48 @@ public:
 
 	bool operator==(const Matrix &mat) const;
 
-	Matrix &operator=(const Matrix &mat);
-
 	Matrix operator+(const Matrix &mat) const;
 
 	Matrix operator-(const Matrix &mat) const;
 
 	Matrix operator*(const Matrix &mat) const;
 
-	Matrix operator+(const T &x) const;
+	Matrix operator+(const T x) const;
 
-	Matrix operator-(const T &x) const;
+	Matrix operator-(const T x) const;
 
-	Matrix operator*(const T &x) const;
+	Matrix operator*(const T x) const;
 
-	Matrix operator/(const T &x) const;
+	Matrix operator/(const T x) const;
+	
+	Matrix &operator=(const Matrix &mat);
 
 	Matrix &operator+=(const Matrix &mat);
 
 	Matrix &operator-=(const Matrix &mat);
 
 	Matrix &operator*=(const Matrix &mat);
+	
+	Matrix &operator=(const T x);
 
-	Matrix &operator+=(const T &x);
+	Matrix &operator+=(const T x);
 
-	Matrix &operator-=(const T &x);
+	Matrix &operator-=(const T x);
 
-	Matrix &operator*=(const T &x);
+	Matrix &operator*=(const T x);
 
-	Matrix &operator/=(const T &x);
+	Matrix &operator/=(const T x);
 
-	friend Matrix operator+(const T &x, const Matrix<T> &mat)
+	friend Matrix operator+(const T x, const Matrix<T> &mat)
 	{ return mat+x; }
 
-	friend Matrix operator-(const T &x, const Matrix<T> &mat)
+	friend Matrix operator-(const T x, const Matrix<T> &mat)
 	{ return mat-x; }
 
-	friend Matrix operator*(const T &x, const Matrix<T> &mat)
+	friend Matrix operator*(const T x, const Matrix<T> &mat)
 	{ return mat*x; }
 
-	friend Matrix operator/(const T &x, const Matrix<T> &mat)
+	friend Matrix operator/(const T x, const Matrix<T> &mat)
 	{ return mat/x; }
 
 	friend ostream &operator<<(ostream &os, const Matrix<T> &mat)
@@ -134,8 +136,7 @@ string Matrix<T>::to_string() const
 {
     string s("\n");
     T *p = entry.get();
-    size_t area = row*col;
-    for (size_t k = 0; k < channel; ++k)
+    for (size_t k = 0, area = row*col; k < channel; ++k)
     {
         for (size_t i = 0, head_i = k*area; i < row; ++i)
         {
@@ -158,4 +159,41 @@ void Matrix<T>::uniquify()
 	for (size_t i = 0, krc = k*r*c, krcr = k*row*col+roi; i < r; ++i)
 		memcpy(dest+krc+i*c, src+krcr+i*col, len);
 	*this = res;
+}
+
+template <typename T>
+bool Matrix<T>::operator==(const Matrix<T> &mat) const
+{
+	if (r != mat.r || c != mat.c)  return false;
+	T *p[2] = {entry.get(), mat.entry.get()};
+	if (p[0] == p[1] && roi == mat.roi)  return true;
+	for (size_t k = 0, area[2] = {row*col, mat.row*mat.col}; k < channel; ++k)
+	for (size_t i = 0, head_i[2] = {k*area[0]+roi, k*area[1]+mat.roi}; i < r; ++i)
+	for (size_t j = 0, head_j[2] = {head_i[0]+i*col, head_i[1]+i*mat.col}; j < c; ++j)
+		if (p[0][head_j[0]+j] != p[1][head_j[1]+j])  return false;
+	return true;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+(const Matrix<T> &mat) const
+{
+	Matrix<T> res(channel, r, c, nullptr);
+	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
+	for (size_t k = 0, area[3] = {row*col, mat.row*mat.col, r*c}; k < channel; ++k)
+	for (size_t i = 0, head_i[3] = {k*area[0]+roi, k*area[1]+mat.roi, k*area[2]}; i < r; ++i)
+	for (size_t j = 0, head_j[3] = {head_i[0]+i*col, head_i[1]+i*mat.col, head_i[2]+i*c}; j < c; ++j)
+		dest[head_j[2]+j] = src[0][head_j[0]+j]+src[1][head_j[1]+j];
+	return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(const Matrix<T> &mat) const
+{
+	Matrix<T> res(channel, r, c, nullptr);
+	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
+	for (size_t k = 0, area[3] = {row*col, mat.row*mat.col, r*c}; k < channel; ++k)
+	for (size_t i = 0, head_i[3] = {k*area[0]+roi, k*area[1]+mat.roi, k*area[2]}; i < r; ++i)
+	for (size_t j = 0, head_j[3] = {head_i[0]+i*col, head_i[1]+i*mat.col, head_i[2]+i*c}; j < c; ++j)
+		dest[head_j[2]+j] = src[0][head_j[0]+j]-src[1][head_j[1]+j];
+	return res;
 }

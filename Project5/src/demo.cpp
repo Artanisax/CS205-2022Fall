@@ -9,7 +9,8 @@ int main () {
     // cout << m0*m1;
     double *entry = new double[4];
     entry[0] = 0, entry[1] = 1, entry[2] = 2, entry[3] = 3;
-    Matrix<double> mat(2, 1, 2, entry);
-    cout << mat;
+    Matrix<double> m0(2, 1, 2, entry);
+    Matrix<double> m1(2, 1, 2, entry);
+    cout << (m0-m1).to_string();
     return 0;
 }
