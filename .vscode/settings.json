@@ -9,6 +9,8 @@
         "string_view": "cpp",
         "system_error": "cpp",
         "typeinfo": "cpp",
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "array": "cpp",
+        "utility": "cpp"
     }
 }
