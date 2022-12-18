@@ -8,7 +8,6 @@
 // #include <omp.h>
 
 using std::shared_ptr;
-using std::make_shared;
 using std::default_delete;
 using std::string;
 using std::ostream;
