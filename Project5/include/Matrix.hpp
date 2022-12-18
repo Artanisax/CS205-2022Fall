@@ -119,7 +119,7 @@ Matrix<T>::Matrix(const size_t channel, const size_t row, const size_t col, cons
 { if (data)  memcpy(entry.get(), data, channel*row*col*sizeof(T)); }
 
 /**
- * @brief Construct a sub matrix from an exist matrix
+ * @brief Construct a sub matrix from an exist matrix via soft copy.
  * @param mat the source matrix
  * @param hr the head row of the roi
  * @param hc the head column of the roi
