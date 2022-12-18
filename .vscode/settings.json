@@ -17,6 +17,7 @@
         "limits": "cpp",
         "streambuf": "cpp",
         "compare": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "bit": "cpp"
     }
 }

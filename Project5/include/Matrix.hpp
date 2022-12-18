@@ -20,10 +20,10 @@ template <typename T>
 class Matrix
 {
 private:
-	size_t channel, row, col;  // Three dimensions of the original matrix
-	size_t roi;                // The starting index of the the region of interest
-	size_t r, c;               // Two dimensions of the interesting matrix
-	shared_ptr<T> entry;       // A shared pointer managing the original data
+	size_t channel = 0, row = 0, col = 0;  // Three dimensions of the original matrix
+	size_t roi = 0;                        // The starting index of the the region of interest
+	size_t r = 0, c = 0;                   // Two dimensions of the interesting matrix
+	shared_ptr<T> entry;                   // A shared pointer managing the original data
 	// Attention: shared_ptr destruct containing object by calling default_delete<T>().
 	// So we need to costomize its deleter into default_delete<T[]>().
 
@@ -33,11 +33,14 @@ public:
 
 	Matrix(const size_t channel, const size_t row, const size_t col, const T *data);
 
-	Matrix(const Matrix &mat);
+	// No need for defualt copy constructor can achieve soft copy by using shared_ptr.
+	// Matrix(const Matrix &mat);
 
 	Matrix(const Matrix &mat, size_t hr, size_t hc, size_t r, size_t c);
 
-	T get(size_t k, size_t i, size_t j) const;
+	T get(const size_t k, const size_t i, const size_t j) const;
+
+	T set(const size_t k, const size_t i, const size_t j, const T x);
 
 	string to_string() const;
 
@@ -64,6 +67,7 @@ public:
 
 	Matrix operator/(const T x) const;
 	
+	// No need for defualt assignment can achieve soft copy by using shared_ptr.
 	// Matrix &operator=(const Matrix &mat);
 
 	Matrix &operator+=(const Matrix &mat);
@@ -116,14 +120,6 @@ Matrix<T>::Matrix(const size_t channel, const size_t row, const size_t col, cons
 { if (data)  memcpy(entry.get(), data, channel*row*col*sizeof(T)); }
 
 /**
- * @brief Soft copy construct with an exist matrix.
- * @param mat the source matrix
-*/
-template <typename T>
-Matrix<T>::Matrix(const Matrix<T> &mat): channel(mat.channel), row(mat.row), col(mat.col),
-	roi(mat.roi), r(mat.r), c(mat.c), entry(mat.entry) {}
-
-/**
  * @brief Construct a sub matrix from an exist matrix
  * @param mat the source matrix
  * @param hr the head row of the roi
@@ -138,7 +134,7 @@ Matrix<T>::Matrix(const Matrix<T> &mat, size_t hr, size_t hc, size_t r, size_t c
 {
 	if (roi/col+r > row || roi%col+c > col)
 	{
-		cerr << "Error: Out of Range in" << __func__ << endl;
+		cerr << "Error: Out of Range in " << __func__ << endl;
 		*this = Matrix(0, 0, 0, nullptr);
 	}
 }
@@ -160,6 +156,23 @@ T Matrix<T>::get(const size_t k, const size_t i, const size_t j) const
 	return entry.get()[k*row*col+roi+i*col+j];
 }
 
+/**
+ * @brief Set a value about corresponding indexes.
+ * @param k channel
+ * @param i row
+ * @param j column
+*/
+template <typename T>
+T Matrix<T>::set(const size_t k, const size_t i, const size_t j, const T x)
+{
+	if (i >= r || j >= c)
+	{
+		cerr << "Error: Out of Range in " << __func__ << endl;
+		return (T)0;
+	}
+	entry.get()[k*row*col+roi+i*col+j] = x;
+}
+
 // Covert Matrix into string.
 template <typename T>
 string Matrix<T>::to_string() const
@@ -168,9 +181,9 @@ string Matrix<T>::to_string() const
     T *p = entry.get();
     for (size_t k = 0, area = row*col; k < channel; ++k)
     {
-        for (size_t i = 0, head_i = k*area; i < row; ++i)
+        for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
         {
-            for (size_t j = 0, head_j = head_i+i*col; j < col; ++j)
+            for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
                 s += std::to_string(p[head_j+j])+" ";
             s += "\n";
         }
@@ -248,7 +261,7 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &mat) const
 	if (channel != mat.channel|| c != mat.r)
 	{
 		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
-		return *this = Matrix();
+		return Matrix();
 	}
 	Matrix<T> res(channel, r, mat.c, nullptr);
 	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
