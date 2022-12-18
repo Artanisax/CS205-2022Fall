@@ -123,17 +123,24 @@ Matrix<T>::Matrix(const Matrix<T> &mat, size_t hr, size_t hc, size_t r, size_t c
 	channel(mat.channel), row(mat.row), col(mat.col), entry(mat.entry),
 	r(r), c(c), roi(mat.roi+hr*col+hc) {}
 
+/**
+ * @brief Get the value about corresponding indexes.
+ * @param k channel
+ * @param i row
+ * @param j column
+*/
 template <typename T>
 T Matrix<T>::get(const size_t k, const size_t i, const size_t j) const
 {
 	if (i >= r || j >= c)
 	{
 		cerr << "\nError: Out of Range in " << __func__ << endl;
-		return 0;
+		return (T)0;
 	}
 	return entry.get()[k*row*col+roi+i*col+j];
 }
 
+// Covert Matrix into string.
 template <typename T>
 string Matrix<T>::to_string() const
 {
@@ -152,6 +159,8 @@ string Matrix<T>::to_string() const
     return s;
 }
 
+// Use hard copy to refactor a unique Matrix with the same content.
+// If its entry pointer is not shared, then it will do nothing.
 template <typename T>
 void Matrix<T>::uniquify()
 {
