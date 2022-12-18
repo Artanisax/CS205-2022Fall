@@ -11,4 +11,4 @@ add_compile_options(-fopenmp)
 add_executable(Matrix ${DIR_SRCS})
 
 find_package(OpenMP REQUIRED)
-target_link_libraries(Matrix PUBLIC OpenMP::OpenMP_C)
+target_link_libraries(Matrix PUBLIC OpenMP::OpenMP_CXX)

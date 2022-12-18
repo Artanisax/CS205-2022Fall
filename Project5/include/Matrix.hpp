@@ -5,7 +5,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
-#include <omp.h>
+// #include <omp.h>
 
 using std::shared_ptr;
 using std::make_shared;
@@ -179,7 +179,6 @@ string Matrix<T>::to_string() const
 {
     string s("\n");
     T *p = entry.get();
-	#pragma omp parallel for
     for (size_t k = 0, area = row*col; k < channel; ++k)
     {
         for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
@@ -190,7 +189,6 @@ string Matrix<T>::to_string() const
         }
         s += "\n";
     }
-	s += "Used count: "+std::to_string(entry.use_count())+"\n";
     return s;
 }
 
@@ -202,7 +200,6 @@ void Matrix<T>::uniquify()
 	if (entry.unique())  return; 
 	Matrix<T> res(channel, r, c, nullptr);
 	T *dest = res.entry.get(), *src = entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, len = c*sizeof(T); k < channel; ++k)
 	for (size_t i = 0, krc = k*r*c, krcr = k*row*col+roi; i < r; ++i)
 		memcpy(dest+krc+i*c, src+krcr+i*col, len);
@@ -215,7 +212,6 @@ bool Matrix<T>::operator==(const Matrix<T> &mat) const
 	if (!dimension_match(*this, mat))  return false;
 	T *p[2] = {entry.get(), mat.entry.get()};
 	if (p[0] == p[1] && roi == mat.roi)  return true;
-	#pragma omp parallel for
 	for (size_t k = 0, area[2] = {row*col, mat.row*mat.col}; k < channel; ++k)
 	for (size_t i = 0, head_i[2] = {k*area[0]+roi, k*area[1]+mat.roi}; i < r; ++i)
 	for (size_t j = 0, head_j[2] = {head_i[0]+i*col, head_i[1]+i*mat.col}; j < c; ++j)
@@ -234,7 +230,6 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T> &mat) const
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *dest = res.entry.get(), *src = mat.entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area[2] = {mat.row*mat.col, r*c}; k < channel; ++k)
 	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]}; i < r; ++i)
 	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*c}; j < c; ++j)
@@ -253,7 +248,6 @@ Matrix<T> Matrix<T>::operator-(const Matrix<T> &mat) const
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *dest = res.entry.get(), *src = mat.entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area[2] = {mat.row*mat.col, r*c}; k < channel; ++k)
 	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]}; i < r; ++i)
 	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*c}; j < c; ++j)
@@ -272,7 +266,6 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &mat) const
 	Matrix<T> res(channel, r, mat.c, nullptr);
 	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
 	bzero(dest, channel*res.row*res.col*sizeof(T));
-	#pragma omp parallel for
 	for (size_t t = 0, area[3] = {row*col, mat.row*mat.col, res.row*res.col}; t < channel; ++t)
 	for (size_t i = 0, head_i[3] = {t*area[0]+roi, t*area[1]+mat.roi, t*area[2]}; i < r; ++i)
 	for (size_t k = 0, head0 = head_i[0]+i*col, head2 = head_i[2]+i*res.col; k < c; ++k)
@@ -287,7 +280,6 @@ Matrix<T> Matrix<T>::operator+(const T x) const
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *p = res.entry.get();
-	#pragma omp parallel for
 	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
 		p[i] += x;
 	return res;
@@ -299,7 +291,6 @@ Matrix<T> Matrix<T>::operator-(const T x) const
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *p = res.entry.get();
-	#pragma omp parallel for
 	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
 		p[i] -= x;
 	return res;
@@ -311,7 +302,6 @@ Matrix<T> Matrix<T>::operator*(const T x) const
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *p = res.entry.get();
-	#pragma omp parallel for
 	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
 		p[i] *= x;
 	return res;
@@ -323,7 +313,6 @@ Matrix<T> Matrix<T>::operator/(const T x) const
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *p = res.entry.get();
-	#pragma omp parallel for
 	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
 		p[i] /= x;
 	return res;
@@ -339,7 +328,6 @@ Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &mat)
 	}
 	uniquify();
 	T *dest = entry.get(), *src = mat.entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area[2] = {mat.row*mat.col, row*col}; k < channel; ++k)
 	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]+roi}; i < r; ++i)
 	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*col}; j < c; ++j)
@@ -357,7 +345,6 @@ Matrix<T> &Matrix<T>::operator-=(const Matrix<T> &mat)
 	}
 	uniquify();
 	T *dest = entry.get(), *src = mat.entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area[2] = {mat.row*mat.col, row*col}; k < channel; ++k)
 	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]+roi}; i < r; ++i)
 	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*col}; j < c; ++j)
@@ -381,7 +368,6 @@ Matrix<T> &Matrix<T>::operator=(const T x)
 {
 	uniquify();
 	T *p = entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
@@ -394,7 +380,6 @@ Matrix<T> &Matrix<T>::operator+=(const T x)
 {
 	uniquify();
 	T *p = entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
@@ -407,7 +392,6 @@ Matrix<T> &Matrix<T>::operator-=(const T x)
 {
 	uniquify();
 	T *p = entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
@@ -420,7 +404,6 @@ Matrix<T> &Matrix<T>::operator*=(const T x)
 {
 	uniquify();
 	T *p = entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
@@ -433,7 +416,6 @@ Matrix<T> &Matrix<T>::operator/=(const T x)
 {
 	uniquify();
 	T *p = entry.get();
-	#pragma omp parallel for
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
