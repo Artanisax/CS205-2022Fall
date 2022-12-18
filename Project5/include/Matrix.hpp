@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 #include <iostream>
+#include <omp.h>
 
 using std::shared_ptr;
 using std::make_shared;
@@ -23,8 +24,13 @@ private:
 	size_t roi;                // The starting index of the the region of interest
 	size_t r, c;               // Two dimensions of the interesting matrix
 	shared_ptr<T> entry;       // A shared pointer managing the original data
+	// Attention: shared_ptr destruct containing object by calling default_delete<T>().
+	// So we need to costomize its deleter into default_delete<T[]>().
+
 
 public:
+	Matrix();
+
 	Matrix(const size_t channel, const size_t row, const size_t col, const T *data);
 
 	Matrix(const Matrix &mat);
@@ -38,6 +44,9 @@ public:
 	void print() const { cout << to_string(); }
 
 	void uniquify();
+	
+	static bool dimension_match(const Matrix &a, const Matrix &b)
+	{ return a.channel == b.channel && a.r == b.r && a.c == b.c; }
 
 	bool operator==(const Matrix &mat) const;
 
@@ -89,6 +98,10 @@ public:
 	{ return os << mat.to_string(); }
 };
 
+// Construct an empty Matrix, usually used in exception handling
+template <typename T>
+Matrix<T>::Matrix(): entry(new T[0], default_delete<T[]>()) {}
+
 /**
  * @brief Construct a matrix with interest on its whole region.
  * @param channel the number of channels
@@ -99,7 +112,7 @@ public:
 template <typename T>
 Matrix<T>::Matrix(const size_t channel, const size_t row, const size_t col, const T *data):
 	channel(channel), row(row), col(col), entry(new T[channel*row*col], default_delete<T[]>()),
-	roi(0), r(row), c(col)
+	r(row), c(col)
 { if (data)  memcpy(entry.get(), data, channel*row*col*sizeof(T)); }
 
 /**
@@ -121,7 +134,14 @@ Matrix<T>::Matrix(const Matrix<T> &mat): channel(mat.channel), row(mat.row), col
 template <typename T>
 Matrix<T>::Matrix(const Matrix<T> &mat, size_t hr, size_t hc, size_t r, size_t c):
 	channel(mat.channel), row(mat.row), col(mat.col), entry(mat.entry),
-	r(r), c(c), roi(mat.roi+hr*col+hc) {}
+	r(r), c(c), roi(mat.roi+hr*col+hc)
+{
+	if (roi/col+r > row || roi%col+c > col)
+	{
+		cerr << "Error: Out of Range in" << __func__ << endl;
+		*this = Matrix(0, 0, 0, nullptr);
+	}
+}
 
 /**
  * @brief Get the value about corresponding indexes.
@@ -134,7 +154,7 @@ T Matrix<T>::get(const size_t k, const size_t i, const size_t j) const
 {
 	if (i >= r || j >= c)
 	{
-		cerr << "\nError: Out of Range in " << __func__ << endl;
+		cerr << "Error: Out of Range in " << __func__ << endl;
 		return (T)0;
 	}
 	return entry.get()[k*row*col+roi+i*col+j];
@@ -160,7 +180,7 @@ string Matrix<T>::to_string() const
 }
 
 // Use hard copy to refactor a unique Matrix with the same content.
-// If its entry pointer is not shared, then it will do nothing.
+// If its entry pointer is not shared, then this will do nothing.
 template <typename T>
 void Matrix<T>::uniquify()
 {
@@ -176,7 +196,7 @@ void Matrix<T>::uniquify()
 template <typename T>
 bool Matrix<T>::operator==(const Matrix<T> &mat) const
 {
-	if (r != mat.r || c != mat.c)  return false;
+	if (!dimension_match(*this, mat))  return false;
 	T *p[2] = {entry.get(), mat.entry.get()};
 	if (p[0] == p[1] && roi == mat.roi)  return true;
 	for (size_t k = 0, area[2] = {row*col, mat.row*mat.col}; k < channel; ++k)
@@ -189,6 +209,11 @@ bool Matrix<T>::operator==(const Matrix<T> &mat) const
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix<T> &mat) const
 {
+	if (!dimension_match(*this, mat))
+	{
+		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
+		return Matrix();
+	}
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *dest = res.entry.get(), *src = mat.entry.get();
@@ -202,6 +227,11 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T> &mat) const
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix<T> &mat) const
 {
+	if (!dimension_match(*this, mat))
+	{
+		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
+		return Matrix();
+	}
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *dest = res.entry.get(), *src = mat.entry.get();
@@ -215,6 +245,11 @@ Matrix<T> Matrix<T>::operator-(const Matrix<T> &mat) const
 template <typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T> &mat) const
 {
+	if (channel != mat.channel|| c != mat.r)
+	{
+		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
+		return *this = Matrix();
+	}
 	Matrix<T> res(channel, r, mat.c, nullptr);
 	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
 	bzero(dest, channel*res.row*res.col*sizeof(T));
@@ -273,6 +308,11 @@ Matrix<T> Matrix<T>::operator/(const T x) const
 template <typename T>
 Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &mat)
 {
+	if (!dimension_match(*this, mat))
+	{
+		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
+		return *this = Matrix();
+	}
 	uniquify();
 	T *dest = entry.get(), *src = mat.entry.get();
 	for (size_t k = 0, area[2] = {mat.row*mat.col, row*col}; k < channel; ++k)
@@ -285,6 +325,11 @@ Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &mat)
 template <typename T>
 Matrix<T> &Matrix<T>::operator-=(const Matrix<T> &mat)
 {
+	if (!dimension_match(*this, mat))
+	{
+		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
+		return *this = Matrix();
+	}
 	uniquify();
 	T *dest = entry.get(), *src = mat.entry.get();
 	for (size_t k = 0, area[2] = {mat.row*mat.col, row*col}; k < channel; ++k)
@@ -296,7 +341,14 @@ Matrix<T> &Matrix<T>::operator-=(const Matrix<T> &mat)
 
 template <typename T>
 Matrix<T> &Matrix<T>::operator*=(const Matrix<T> &mat)
-{ return this = (*this)*mat; }
+{
+	if (channel != mat.channel|| c != mat.r)
+	{
+		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
+		return *this = Matrix();
+	}
+	return this = (*this)*mat;
+}
 
 template <typename T>
 Matrix<T> &Matrix<T>::operator=(const T x)

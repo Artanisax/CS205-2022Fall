@@ -210,7 +210,8 @@ CMakeFiles/Matrix.dir/src/Matrix.cpp.o: ../src/Matrix.cpp \
   /usr/include/c++/11/bits/basic_ios.tcc \
   /usr/include/c++/11/bits/ostream.tcc \
   /usr/include/c++/11/istream \
-  /usr/include/c++/11/bits/istream.tcc
+  /usr/include/c++/11/bits/istream.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/omp.h
 
 CMakeFiles/Matrix.dir/src/demo.cpp.o: ../src/demo.cpp \
   /usr/include/stdc-predef.h \
@@ -421,7 +422,8 @@ CMakeFiles/Matrix.dir/src/demo.cpp.o: ../src/demo.cpp \
   /usr/include/c++/11/bits/basic_ios.tcc \
   /usr/include/c++/11/bits/ostream.tcc \
   /usr/include/c++/11/istream \
-  /usr/include/c++/11/bits/istream.tcc
+  /usr/include/c++/11/bits/istream.tcc \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/omp.h
 
 
 ../src/demo.cpp:
@@ -491,6 +493,8 @@ CMakeFiles/Matrix.dir/src/demo.cpp.o: ../src/demo.cpp \
 /usr/include/x86_64-linux-gnu/sys/types.h:
 
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/omp.h:
 
 /usr/include/stdlib.h:
 

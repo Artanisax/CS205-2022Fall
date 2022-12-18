@@ -15,6 +15,8 @@
         "memory": "cpp",
         "vector": "cpp",
         "limits": "cpp",
-        "streambuf": "cpp"
+        "streambuf": "cpp",
+        "compare": "cpp",
+        "type_traits": "cpp"
     }
 }
