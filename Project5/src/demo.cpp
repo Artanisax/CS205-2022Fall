@@ -13,7 +13,7 @@ int main () {
     Matrix mat(1, 4, 4, e);
     Matrix m1(mat, 0, 0, 2, 2), m2(mat, 2, 2, 2, 2);
     cout << mat << m1 << m2 << m1*m2/2;
-    cout << m1.get(1, 0, 1) << '\n';
+    cout << m2.get(0, 0, 1) << '\n';
     // cout << mat.entry.use_count() << endl;
     return 0;
 }

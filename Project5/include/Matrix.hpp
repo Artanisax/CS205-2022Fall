@@ -135,7 +135,7 @@ Matrix<T>::Matrix(const Matrix<T> &mat, size_t hr, size_t hc, size_t r, size_t c
 	if (roi/col+r > row || roi%col+c > col)
 	{
 		cerr << "Error: Out of Range in " << __func__ << endl;
-		*this = Matrix(0, 0, 0, nullptr);
+		*this = Matrix();
 	}
 }
 
@@ -148,10 +148,10 @@ Matrix<T>::Matrix(const Matrix<T> &mat, size_t hr, size_t hc, size_t r, size_t c
 template <typename T>
 T Matrix<T>::get(const size_t k, const size_t i, const size_t j) const
 {
-	if (i >= r || j >= c)
+	if (k >= channel || i >= r || j >= c)
 	{
 		cerr << "Error: Out of Range in " << __func__ << endl;
-		return (T)0;
+		return 0;
 	}
 	return entry.get()[k*row*col+roi+i*col+j];
 }
@@ -165,7 +165,7 @@ T Matrix<T>::get(const size_t k, const size_t i, const size_t j) const
 template <typename T>
 T Matrix<T>::set(const size_t k, const size_t i, const size_t j, const T x)
 {
-	if (i >= r || j >= c)
+	if (k >= channel || i >= r || j >= c)
 	{
 		cerr << "Error: Out of Range in " << __func__ << endl;
 		return (T)0;
