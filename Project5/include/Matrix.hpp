@@ -297,7 +297,8 @@ Matrix<T> &Matrix<T>::operator=(const T x)
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
-		dest[head_j+j] = x;
+		p[head_j+j] = x;
+	return *this;
 }
 
 template <typename T>
@@ -308,7 +309,8 @@ Matrix<T> &Matrix<T>::operator+=(const T x)
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
-		dest[head_j+j] += x;
+		p[head_j+j] += x;
+	return *this;
 }
 
 template <typename T>
@@ -319,7 +321,8 @@ Matrix<T> &Matrix<T>::operator-=(const T x)
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
-		dest[head_j+j] -= x;
+		p[head_j+j] -= x;
+	return *this;
 }
 
 template <typename T>
@@ -330,7 +333,8 @@ Matrix<T> &Matrix<T>::operator*=(const T x)
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
-		dest[head_j+j] *= x;
+		p[head_j+j] *= x;
+	return *this;
 }
 
 template <typename T>
@@ -341,5 +345,6 @@ Matrix<T> &Matrix<T>::operator/=(const T x)
 	for (size_t k = 0, area = row*col; k < channel; ++k)
 	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
 	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
-		dest[head_j+j] /= x;
+		p[head_j+j] /= x;
+	return *this;
 }
