@@ -29,7 +29,7 @@ public:
 
 	Matrix(const Matrix &mat);
 
-	Matrix(const Matrix &mat, size_t r, size_t c);
+	Matrix(const Matrix &mat, size_t hr, size_t hc, size_t r, size_t c);
 
 	T get(size_t k, size_t i, size_t j) const;
 
@@ -55,7 +55,7 @@ public:
 
 	Matrix operator/(const T x) const;
 	
-	Matrix &operator=(const Matrix &mat);
+	// Matrix &operator=(const Matrix &mat);
 
 	Matrix &operator+=(const Matrix &mat);
 
@@ -113,12 +113,15 @@ Matrix<T>::Matrix(const Matrix<T> &mat): channel(mat.channel), row(mat.row), col
 /**
  * @brief Construct a sub matrix from an exist matrix
  * @param mat the source matrix
- * @param 
+ * @param hr the head row of the roi
+ * @param hc the head column of the roi
+ * @param r the rows of the roi
+ * @param c the columns of the roi
 */
 template <typename T>
-Matrix<T>::Matrix(const Matrix<T> &mat, size_t r, size_t c):
-	channel(mat.channel), row(mat.row), col(mat.col), r(r), c(c), entry(mat.entry)
-{ roi = (mat.r+r)*col; }
+Matrix<T>::Matrix(const Matrix<T> &mat, size_t hr, size_t hc, size_t r, size_t c):
+	channel(mat.channel), row(mat.row), col(mat.col), entry(mat.entry),
+	r(r), c(c), roi(mat.roi+hr*col+hc) {}
 
 template <typename T>
 T Matrix<T>::get(const size_t k, const size_t i, const size_t j) const
@@ -177,23 +180,166 @@ bool Matrix<T>::operator==(const Matrix<T> &mat) const
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix<T> &mat) const
 {
-	Matrix<T> res(channel, r, c, nullptr);
-	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
-	for (size_t k = 0, area[3] = {row*col, mat.row*mat.col, r*c}; k < channel; ++k)
-	for (size_t i = 0, head_i[3] = {k*area[0]+roi, k*area[1]+mat.roi, k*area[2]}; i < r; ++i)
-	for (size_t j = 0, head_j[3] = {head_i[0]+i*col, head_i[1]+i*mat.col, head_i[2]+i*c}; j < c; ++j)
-		dest[head_j[2]+j] = src[0][head_j[0]+j]+src[1][head_j[1]+j];
+	Matrix<T> res(*this);
+	res.uniquify();
+	T *dest = res.entry.get(), *src = mat.entry.get();
+	for (size_t k = 0, area[2] = {mat.row*mat.col, r*c}; k < channel; ++k)
+	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]}; i < r; ++i)
+	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*c}; j < c; ++j)
+		dest[head_j[1]+j] += src[head_j[0]+j];
 	return res;
 }
 
 template <typename T>
 Matrix<T> Matrix<T>::operator-(const Matrix<T> &mat) const
 {
-	Matrix<T> res(channel, r, c, nullptr);
-	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
-	for (size_t k = 0, area[3] = {row*col, mat.row*mat.col, r*c}; k < channel; ++k)
-	for (size_t i = 0, head_i[3] = {k*area[0]+roi, k*area[1]+mat.roi, k*area[2]}; i < r; ++i)
-	for (size_t j = 0, head_j[3] = {head_i[0]+i*col, head_i[1]+i*mat.col, head_i[2]+i*c}; j < c; ++j)
-		dest[head_j[2]+j] = src[0][head_j[0]+j]-src[1][head_j[1]+j];
+	Matrix<T> res(*this);
+	res.uniquify();
+	T *dest = res.entry.get(), *src = mat.entry.get();
+	for (size_t k = 0, area[2] = {mat.row*mat.col, r*c}; k < channel; ++k)
+	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]}; i < r; ++i)
+	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*c}; j < c; ++j)
+		dest[head_j[1]+j] -= src[head_j[0]+j];
 	return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(const Matrix<T> &mat) const
+{
+	Matrix<T> res(channel, r, mat.c, nullptr);
+	T *dest = res.entry.get(), *src[2] = {entry.get(), mat.entry.get()};
+	bzero(dest, channel*res.row*res.col*sizeof(T));
+	for (size_t t = 0, area[3] = {row*col, mat.row*mat.col, res.row*res.col}; t < channel; ++t)
+	for (size_t i = 0, head_i[3] = {t*area[0]+roi, t*area[1]+mat.roi, t*area[2]}; i < r; ++i)
+	for (size_t k = 0, head0 = head_i[0]+i*col, head2 = head_i[2]+i*res.col; k < c; ++k)
+	for (size_t j = 0, head1 = head_i[1]+k*mat.col, src0 = src[0][head0+k]; j < mat.c; ++j)
+		dest[head2+j] += src0*src[1][head1+j];
+	return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+(const T x) const
+{
+	Matrix<T> res(*this);
+	res.uniquify();
+	T *p = res.entry.get();
+	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
+		p[i] += x;
+	return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator-(const T x) const
+{
+	Matrix<T> res(*this);
+	res.uniquify();
+	T *p = res.entry.get();
+	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
+		p[i] -= x;
+	return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(const T x) const
+{
+	Matrix<T> res(*this);
+	res.uniquify();
+	T *p = res.entry.get();
+	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
+		p[i] *= x;
+	return res;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator/(const T x) const
+{
+	Matrix<T> res(*this);
+	res.uniquify();
+	T *p = res.entry.get();
+	for (size_t i = 0, siz = channel*r*c; i < siz; ++i)
+		p[i] /= x;
+	return res;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &mat)
+{
+	uniquify();
+	T *dest = entry.get(), *src = mat.entry.get();
+	for (size_t k = 0, area[2] = {mat.row*mat.col, row*col}; k < channel; ++k)
+	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]+roi}; i < r; ++i)
+	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*col}; j < c; ++j)
+		dest[head_j[1]+j] += src[head_j[0]+j];
+	return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator-=(const Matrix<T> &mat)
+{
+	uniquify();
+	T *dest = entry.get(), *src = mat.entry.get();
+	for (size_t k = 0, area[2] = {mat.row*mat.col, row*col}; k < channel; ++k)
+	for (size_t i = 0, head_i[2] = {k*area[0]+mat.roi, k*area[1]+roi}; i < r; ++i)
+	for (size_t j = 0, head_j[2] = {head_i[0]+i*mat.col, head_i[1]+i*col}; j < c; ++j)
+		dest[head_j[1]+j] -= src[head_j[0]+j];
+	return *this;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator*=(const Matrix<T> &mat)
+{ return this = (*this)*mat; }
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator=(const T x)
+{
+	uniquify();
+	T *p = entry.get();
+	for (size_t k = 0, area = row*col; k < channel; ++k)
+	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
+	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
+		dest[head_j+j] = x;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator+=(const T x)
+{
+	uniquify();
+	T *p = entry.get();
+	for (size_t k = 0, area = row*col; k < channel; ++k)
+	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
+	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
+		dest[head_j+j] += x;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator-=(const T x)
+{
+	uniquify();
+	T *p = entry.get();
+	for (size_t k = 0, area = row*col; k < channel; ++k)
+	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
+	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
+		dest[head_j+j] -= x;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator*=(const T x)
+{
+	uniquify();
+	T *p = entry.get();
+	for (size_t k = 0, area = row*col; k < channel; ++k)
+	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
+	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
+		dest[head_j+j] *= x;
+}
+
+template <typename T>
+Matrix<T> &Matrix<T>::operator/=(const T x)
+{
+	uniquify();
+	T *p = entry.get();
+	for (size_t k = 0, area = row*col; k < channel; ++k)
+	for (size_t i = 0, head_i = k*area+roi; i < r; ++i)
+	for (size_t j = 0, head_j = head_i+i*col; j < c; ++j)
+		dest[head_j+j] /= x;
 }
