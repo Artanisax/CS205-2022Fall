@@ -165,10 +165,7 @@ template <typename T>
 T Matrix<T>::set(const size_t k, const size_t i, const size_t j, const T x)
 {
 	if (k >= channel || i >= r || j >= c)
-	{
-		cerr << "Error: Out of Range in " << __func__ << endl;
-		return (T)0;
-	}
+	{ cerr << "Error: Out of Range in " << __func__ << endl; }
 	entry.get()[k*row*col+roi+i*col+j] = x;
 }
 
