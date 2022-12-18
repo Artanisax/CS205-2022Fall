@@ -129,30 +129,6 @@ Matrix/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/build
 .PHONY : Matrix/fast
 
-src/Matrix.o: src/Matrix.cpp.o
-.PHONY : src/Matrix.o
-
-# target to build an object file
-src/Matrix.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.cpp.o
-.PHONY : src/Matrix.cpp.o
-
-src/Matrix.i: src/Matrix.cpp.i
-.PHONY : src/Matrix.i
-
-# target to preprocess a source file
-src/Matrix.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.cpp.i
-.PHONY : src/Matrix.cpp.i
-
-src/Matrix.s: src/Matrix.cpp.s
-.PHONY : src/Matrix.s
-
-# target to generate assembly for a file
-src/Matrix.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Matrix.dir/build.make CMakeFiles/Matrix.dir/src/Matrix.cpp.s
-.PHONY : src/Matrix.cpp.s
-
 src/demo.o: src/demo.cpp.o
 .PHONY : src/demo.o
 
@@ -186,9 +162,6 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... Matrix"
-	@echo "... src/Matrix.o"
-	@echo "... src/Matrix.i"
-	@echo "... src/Matrix.s"
 	@echo "... src/demo.o"
 	@echo "... src/demo.i"
 	@echo "... src/demo.s"
