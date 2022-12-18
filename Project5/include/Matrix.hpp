@@ -134,7 +134,7 @@ Matrix<T>::Matrix(const Matrix<T> &mat, size_t hr, size_t hc, size_t r, size_t c
 	if (roi/col+r > row || roi%col+c > col)
 	{
 		cerr << "Error: Out of Range in " << __func__ << endl;
-		*this = Matrix();
+		*this = Matrix<T>();
 	}
 }
 
@@ -306,6 +306,11 @@ Matrix<T> Matrix<T>::operator*(const T x) const
 template <typename T>
 Matrix<T> Matrix<T>::operator/(const T x) const
 {
+	if (x == 0)
+	{
+		cerr << "Error: Divide by 0 in " << __func__ << endl;
+		return Matrix<T>();
+	}
 	Matrix<T> res(*this);
 	res.uniquify();
 	T *p = res.entry.get();
@@ -320,7 +325,7 @@ Matrix<T> &Matrix<T>::operator+=(const Matrix<T> &mat)
 	if (!dimension_match(*this, mat))
 	{
 		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
-		return *this = Matrix();
+		return *this = Matrix<T>();
 	}
 	uniquify();
 	T *dest = entry.get(), *src = mat.entry.get();
@@ -354,7 +359,7 @@ Matrix<T> &Matrix<T>::operator*=(const Matrix<T> &mat)
 	if (channel != mat.channel|| c != mat.r)
 	{
 		cerr << "\nError: Dimension Mismatch in " << __func__ << endl;
-		return *this = Matrix();
+		return *this = Matrix<T>();
 	}
 	return this = (*this)*mat;
 }
@@ -410,6 +415,11 @@ Matrix<T> &Matrix<T>::operator*=(const T x)
 template <typename T>
 Matrix<T> &Matrix<T>::operator/=(const T x)
 {
+	if (x == 0)
+	{
+		cerr << "Error: Divide by 0 in " << __func__ << endl;
+		return *this = Matrix<T>();
+	}
 	uniquify();
 	T *p = entry.get();
 	for (size_t k = 0, area = row*col; k < channel; ++k)
